@@ -327,29 +327,10 @@
 
       <form class="rsvp__form fade-in" id="rsvpForm" novalidate>
 
-        <div class="form__row">
-          <div class="form__field">
-            <label for="firstName">First Name <span aria-hidden="true">*</span></label>
-            <input type="text" id="firstName" name="firstName" placeholder="Your first name" required autocomplete="given-name" />
-            <span class="form__error" role="alert"></span>
-          </div>
-          <div class="form__field">
-            <label for="lastName">Last Name <span aria-hidden="true">*</span></label>
-            <input type="text" id="lastName" name="lastName" placeholder="Your last name" required autocomplete="family-name" />
-            <span class="form__error" role="alert"></span>
-          </div>
-        </div>
-
-        <div class="form__row">
-          <div class="form__field">
-            <label for="email">Email Address <span aria-hidden="true">*</span></label>
-            <input type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email" />
-            <span class="form__error" role="alert"></span>
-          </div>
-          <div class="form__field">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" placeholder="+62 8XX XXXX XXXX" autocomplete="tel" />
-          </div>
+        <div class="form__field">
+          <label for="guestName">Guest Name <span aria-hidden="true">*</span></label>
+          <input type="text" id="guestName" name="guestName" placeholder="Your full name" required autocomplete="name" />
+          <span class="form__error" role="alert"></span>
         </div>
 
         <div class="form__row">
@@ -364,7 +345,7 @@
             <span class="form__error" role="alert"></span>
           </div>
           <div class="form__field" id="guestField">
-            <label for="guests">Number of Guests (including yourself)</label>
+            <label for="guests">Number of Guests (Including Yourself)</label>
             <select id="guests" name="guests">
               <option value="1">1</option>
               <option value="2">2</option>
@@ -376,12 +357,7 @@
         </div>
 
         <div class="form__field">
-          <label for="dietary">Dietary Requirements or Special Requests</label>
-          <textarea id="dietary" name="dietary" rows="3" placeholder="e.g. vegetarian, allergies, mobility requirements…"></textarea>
-        </div>
-
-        <div class="form__field">
-          <label for="message">Leave a Message for Jei &amp; Angie</label>
+          <label for="message">Leave a Message &amp; Wishes for Jei &amp; Angie</label>
           <textarea id="message" name="message" rows="4" placeholder="Share your wishes with the couple…"></textarea>
         </div>
 
