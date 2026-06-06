@@ -212,10 +212,6 @@
         wrap.classList.add('error');
         if (err) err.textContent = 'This field is required.';
         ok = false;
-      } else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
-        wrap.classList.add('error');
-        if (err) err.textContent = 'Please enter a valid email address.';
-        ok = false;
       } else {
         wrap.classList.remove('error');
         if (err) err.textContent = '';
