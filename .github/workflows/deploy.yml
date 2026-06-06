@@ -16,10 +16,12 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_JEIMANDEI_PK }}
 
+      - name: Add server to known hosts
+        run: ssh-keyscan -p 3099 jeimandei.com >> ~/.ssh/known_hosts
+
       - name: Pull latest & restart container
         run: |
-          ssh -i ~/.ssh/deploy_key \
-              -p 3099 \
+          ssh -p 3099 \
               jeimandei@jeimandei.com \
               'set -e
                cd ~/Wedding-Invitation
