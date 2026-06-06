@@ -57,14 +57,7 @@ img { display: block; max-width: 100%; height: auto; }
 a   { color: inherit; text-decoration: none; }
 ul  { list-style: none; }
 
-/* ─── HIDDEN YOUTUBE PLAYER ─── */
-#ytPlayer {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
+
 
 /* ─── FLOATING MUSIC BUTTON ─── */
 .music-btn {
