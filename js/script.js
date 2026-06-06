@@ -24,6 +24,39 @@
 })();
 
 
+/* ─── COUNTDOWN TIMER ─── */
+(function initCountdown() {
+  const target = new Date('2026-07-26T13:00:00+08:00').getTime();
+  const els = {
+    days:    document.getElementById('cdDays'),
+    hours:   document.getElementById('cdHours'),
+    minutes: document.getElementById('cdMinutes'),
+    seconds: document.getElementById('cdSeconds'),
+  };
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      Object.values(els).forEach(el => { if (el) el.textContent = '00'; });
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    if (els.days)    els.days.textContent    = pad(d);
+    if (els.hours)   els.hours.textContent   = pad(h);
+    if (els.minutes) els.minutes.textContent = pad(m);
+    if (els.seconds) els.seconds.textContent = pad(s);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+
+
 /* ─── NAV: scroll effect ─── */
 (function initNav() {
   const nav = document.getElementById('nav');
