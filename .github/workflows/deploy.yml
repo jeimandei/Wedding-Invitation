@@ -22,7 +22,7 @@ jobs:
           ssh -p 3099 \
               jeimandei@jeimandei.com \
               'set -e
-               cd "/home/jeimandei/Container_data/Website/Wedding Invitation"
+               cd "/home/jeimandei/Container_data/Websites/Wedding Invitation"
                git pull origin main
                if podman ps -a --format "{{.Names}}" | grep -qx "wedding-invitation"; then
                  podman restart wedding-invitation
