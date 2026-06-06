@@ -2,6 +2,28 @@
    JEI & ANGIE — Wedding Website JS
    ═══════════════════════════════════════════ */
 
+/* ─── SPLASH PAGE ─── */
+(function initSplash() {
+  const splash   = document.getElementById('splash');
+  const guestEl  = document.getElementById('splashGuest');
+  const btn      = document.getElementById('splashBtn');
+
+  const name = new URLSearchParams(window.location.search).get('to');
+  if (name) guestEl.textContent = name;
+
+  document.body.style.overflow = 'hidden';
+
+  btn.addEventListener('click', function () {
+    splash.classList.add('is-hidden');
+    document.body.style.overflow = '';
+    splash.addEventListener('transitionend', function () {
+      splash.hidden = true;
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }, { once: true });
+  });
+})();
+
+
 /* ─── NAV: scroll effect ─── */
 (function initNav() {
   const nav = document.getElementById('nav');
