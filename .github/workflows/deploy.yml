@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: SSH deploy → jeimandei.com:3099
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull latest & restart container
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: jeimandei.com
+          port: 3099
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            # Go to repo dir and pull latest
+            cd ~/Wedding-Invitation
+            git pull origin main
+
+            # Restart if already running; otherwise start fresh
+            if podman ps -a --format '{{.Names}}' | grep -qx 'wedding-nginx'; then
+              podman restart wedding-nginx
+            else
+              podman run -d \
+                --name wedding-nginx \
+                --network=public \
+                -p 9000:80 \
+                -v "$(pwd):/usr/share/nginx/html:ro" \
+                nginx:alpine
+            fi
