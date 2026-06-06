@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 104">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Interlocking clip regions -->
+    <clipPath id="above"><rect x="0" y="0" width="160" height="58"/></clipPath>
+    <clipPath id="below"><rect x="0" y="58" width="160" height="46"/></clipPath>
+    <clipPath id="leftOf"><rect x="0" y="0" width="80" height="104"/></clipPath>
+  </defs>
+
+  <!-- ── RIGHT RING (full, base layer) ── -->
+  <circle cx="94" cy="62" r="34" fill="none" stroke="#C9A96E" stroke-width="6.5" filter="url(#glow)" opacity="0.95"/>
+  <circle cx="94" cy="62" r="34" fill="none" stroke="#E8D5B0" stroke-width="1.2" opacity="0.30"/>
+
+  <!-- ── LEFT RING bottom half: goes BEHIND right ring ── -->
+  <circle cx="66" cy="62" r="34" fill="none" stroke="#C9A96E" stroke-width="6.5" opacity="0.95" clip-path="url(#below)"/>
+
+  <!-- ── RIGHT RING left side re-drawn: covers left ring's bottom arc in overlap ── -->
+  <circle cx="94" cy="62" r="34" fill="none" stroke="#C9A96E" stroke-width="6.5" opacity="0.95" clip-path="url(#leftOf)"/>
+  <circle cx="94" cy="62" r="34" fill="none" stroke="#E8D5B0" stroke-width="1.2" opacity="0.30" clip-path="url(#leftOf)"/>
+
+  <!-- ── LEFT RING top half: goes IN FRONT of right ring ── -->
+  <circle cx="66" cy="62" r="34" fill="none" stroke="#C9A96E" stroke-width="6.5" opacity="0.95" clip-path="url(#above)"/>
+  <circle cx="66" cy="62" r="34" fill="none" stroke="#E8D5B0" stroke-width="1.2" opacity="0.30" clip-path="url(#above)"/>
+
+  <!-- ── DIAMOND gem on left ring (sits on ring top at y=28) ── -->
+  <g transform="translate(66,21)">
+    <!-- Outer prong setting -->
+    <polygon points="0,-8 7,0 0,7 -7,0" fill="none" stroke="#C9A96E" stroke-width="1.2"/>
+    <!-- Stone faces -->
+    <polygon points="0,-8 7,0 0,1 -7,0" fill="#E8D5B0" opacity="0.90"/>
+    <polygon points="0,1 7,0 0,7 -7,0" fill="#C9A96E" opacity="0.55"/>
+    <!-- Top-left sparkle -->
+    <polygon points="0,-8 7,0 0,1" fill="#fff" opacity="0.45"/>
+    <!-- Center facet line -->
+    <line x1="-7" y1="0" x2="7" y2="0" stroke="#C9A96E" stroke-width="0.6" opacity="0.5"/>
+    <line x1="0" y1="-8" x2="0" y2="7" stroke="#C9A96E" stroke-width="0.6" opacity="0.5"/>
+    <!-- Tiny highlight dot -->
+    <circle cx="-2" cy="-3" r="1.2" fill="#fff" opacity="0.7"/>
+  </g>
+
+  <!-- ── DIAMOND gem on right ring ── -->
+  <g transform="translate(94,21)">
+    <polygon points="0,-8 7,0 0,7 -7,0" fill="none" stroke="#C9A96E" stroke-width="1.2"/>
+    <polygon points="0,-8 7,0 0,1 -7,0" fill="#E8D5B0" opacity="0.90"/>
+    <polygon points="0,1 7,0 0,7 -7,0" fill="#C9A96E" opacity="0.55"/>
+    <polygon points="0,-8 7,0 0,1" fill="#fff" opacity="0.45"/>
+    <line x1="-7" y1="0" x2="7" y2="0" stroke="#C9A96E" stroke-width="0.6" opacity="0.5"/>
+    <line x1="0" y1="-8" x2="0" y2="7" stroke="#C9A96E" stroke-width="0.6" opacity="0.5"/>
+    <circle cx="-2" cy="-3" r="1.2" fill="#fff" opacity="0.7"/>
+  </g>
+</svg>
