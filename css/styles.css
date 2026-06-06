@@ -1015,6 +1015,10 @@ em { font-style: italic; color: var(--lilac-dark); }
   grid-template-columns: 1fr 2fr;
 }
 
+.portrait-feature--bride .portrait-feature__photos--solo {
+  grid-template-columns: 1fr;
+}
+
 .portrait-feature__main img {
   width: 100%;
   aspect-ratio: 3/4;
