@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 2048">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- ═══ OUTER BORDER ═══ -->
+  <rect x="28" y="28" width="1480" height="1992" rx="22" ry="22"
+        fill="none" stroke="#C9A96E" stroke-width="2.8" opacity="0.92"/>
+
+  <!-- ═══ INNER BORDER ═══ -->
+  <rect x="58" y="58" width="1420" height="1932" rx="12" ry="12"
+        fill="none" stroke="#C9A96E" stroke-width="1.1" opacity="0.48"/>
+
+  <!-- ═══════════════════════════════════
+       TOP-LEFT CORNER ORNAMENT
+  ═══════════════════════════════════ -->
+  <g transform="translate(43, 43)" filter="url(#glow)">
+    <!-- Central diamond -->
+    <path d="M0,-22 L22,0 L0,22 L-22,0Z" fill="#C9A96E" opacity="0.92"/>
+    <path d="M0,-13 L13,0 L0,13 L-13,0Z" fill="#E8D5B0" opacity="0.5"/>
+
+    <!-- Horizontal arm (right along top edge) -->
+    <path d="M28,0 Q70,-24 112,-5 Q142,10 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <!-- Scroll curl at end -->
+    <path d="M168,0 C184,-16 192,-4 183,8 C175,17 161,8 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <!-- Leaf accent on horizontal arm -->
+    <path d="M109,-5 Q114,-24 111,-38 Q108,-24 109,-5" fill="#C9A96E" opacity="0.52"/>
+    <!-- Dot trail -->
+    <circle cx="148" cy="1" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="160" cy="0.5" r="2.1" fill="#C9A96E" opacity="0.42"/>
+
+    <!-- Vertical arm (down along left edge) -->
+    <path d="M0,28 Q-24,70 -5,112 Q10,142 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <!-- Scroll curl at end -->
+    <path d="M0,168 C-16,184 -4,192 8,183 C17,175 8,161 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <!-- Leaf accent on vertical arm -->
+    <path d="M-5,109 Q-24,114 -38,111 Q-24,108 -5,109" fill="#C9A96E" opacity="0.52"/>
+    <!-- Dot trail -->
+    <circle cx="1" cy="148" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="0.5" cy="160" r="2.1" fill="#C9A96E" opacity="0.42"/>
+  </g>
+
+  <!-- ═══════════════════════════════════
+       TOP-RIGHT CORNER (mirror-x of TL)
+  ═══════════════════════════════════ -->
+  <g transform="translate(1493, 43) scale(-1,1)" filter="url(#glow)">
+    <path d="M0,-22 L22,0 L0,22 L-22,0Z" fill="#C9A96E" opacity="0.92"/>
+    <path d="M0,-13 L13,0 L0,13 L-13,0Z" fill="#E8D5B0" opacity="0.5"/>
+    <path d="M28,0 Q70,-24 112,-5 Q142,10 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <path d="M168,0 C184,-16 192,-4 183,8 C175,17 161,8 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <path d="M109,-5 Q114,-24 111,-38 Q108,-24 109,-5" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="148" cy="1" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="160" cy="0.5" r="2.1" fill="#C9A96E" opacity="0.42"/>
+    <path d="M0,28 Q-24,70 -5,112 Q10,142 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <path d="M0,168 C-16,184 -4,192 8,183 C17,175 8,161 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <path d="M-5,109 Q-24,114 -38,111 Q-24,108 -5,109" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="1" cy="148" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="0.5" cy="160" r="2.1" fill="#C9A96E" opacity="0.42"/>
+  </g>
+
+  <!-- ═══════════════════════════════════
+       BOTTOM-LEFT CORNER (mirror-y of TL)
+  ═══════════════════════════════════ -->
+  <g transform="translate(43, 2005) scale(1,-1)" filter="url(#glow)">
+    <path d="M0,-22 L22,0 L0,22 L-22,0Z" fill="#C9A96E" opacity="0.92"/>
+    <path d="M0,-13 L13,0 L0,13 L-13,0Z" fill="#E8D5B0" opacity="0.5"/>
+    <path d="M28,0 Q70,-24 112,-5 Q142,10 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <path d="M168,0 C184,-16 192,-4 183,8 C175,17 161,8 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <path d="M109,-5 Q114,-24 111,-38 Q108,-24 109,-5" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="148" cy="1" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="160" cy="0.5" r="2.1" fill="#C9A96E" opacity="0.42"/>
+    <path d="M0,28 Q-24,70 -5,112 Q10,142 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <path d="M0,168 C-16,184 -4,192 8,183 C17,175 8,161 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <path d="M-5,109 Q-24,114 -38,111 Q-24,108 -5,109" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="1" cy="148" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="0.5" cy="160" r="2.1" fill="#C9A96E" opacity="0.42"/>
+  </g>
+
+  <!-- ═══════════════════════════════════
+       BOTTOM-RIGHT CORNER (mirror-xy)
+  ═══════════════════════════════════ -->
+  <g transform="translate(1493, 2005) scale(-1,-1)" filter="url(#glow)">
+    <path d="M0,-22 L22,0 L0,22 L-22,0Z" fill="#C9A96E" opacity="0.92"/>
+    <path d="M0,-13 L13,0 L0,13 L-13,0Z" fill="#E8D5B0" opacity="0.5"/>
+    <path d="M28,0 Q70,-24 112,-5 Q142,10 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <path d="M168,0 C184,-16 192,-4 183,8 C175,17 161,8 168,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <path d="M109,-5 Q114,-24 111,-38 Q108,-24 109,-5" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="148" cy="1" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="160" cy="0.5" r="2.1" fill="#C9A96E" opacity="0.42"/>
+    <path d="M0,28 Q-24,70 -5,112 Q10,142 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.9" stroke-linecap="round" opacity="0.78"/>
+    <path d="M0,168 C-16,184 -4,192 8,183 C17,175 8,161 0,168"
+          fill="none" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" opacity="0.68"/>
+    <path d="M-5,109 Q-24,114 -38,111 Q-24,108 -5,109" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="1" cy="148" r="3.2" fill="#C9A96E" opacity="0.58"/>
+    <circle cx="0.5" cy="160" r="2.1" fill="#C9A96E" opacity="0.42"/>
+  </g>
+
+  <!-- ═══════════════════════════════════
+       TOP CENTER ORNAMENT
+  ═══════════════════════════════════ -->
+  <g transform="translate(768, 43)" filter="url(#glow)">
+    <!-- Large center diamond -->
+    <path d="M0,-24 L24,0 L0,24 L-24,0Z" fill="#C9A96E" opacity="0.92"/>
+    <path d="M0,-14 L14,0 L0,14 L-14,0Z" fill="#E8D5B0" opacity="0.5"/>
+
+    <!-- Left scroll arm -->
+    <path d="M-30,0 Q-75,-22 -118,-4 Q-148,10 -176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.7" stroke-linecap="round" opacity="0.75"/>
+    <path d="M-176,0 C-193,-15 -200,-3 -191,9 C-183,18 -168,8 -176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.1" stroke-linecap="round" opacity="0.65"/>
+    <path d="M-115,-4 Q-120,-22 -117,-36 Q-114,-22 -115,-4" fill="#C9A96E" opacity="0.5"/>
+    <circle cx="-154" cy="2" r="3.2" fill="#C9A96E" opacity="0.55"/>
+    <circle cx="-165" cy="1" r="2" fill="#C9A96E" opacity="0.4"/>
+    <!-- Left outer small diamond -->
+    <path d="M-224,0 L-210,-14 L-196,0 L-210,14Z" fill="#C9A96E" opacity="0.62"/>
+
+    <!-- Right scroll arm -->
+    <path d="M30,0 Q75,-22 118,-4 Q148,10 176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.7" stroke-linecap="round" opacity="0.75"/>
+    <path d="M176,0 C193,-15 200,-3 191,9 C183,18 168,8 176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.1" stroke-linecap="round" opacity="0.65"/>
+    <path d="M115,-4 Q120,-22 117,-36 Q114,-22 115,-4" fill="#C9A96E" opacity="0.5"/>
+    <circle cx="154" cy="2" r="3.2" fill="#C9A96E" opacity="0.55"/>
+    <circle cx="165" cy="1" r="2" fill="#C9A96E" opacity="0.4"/>
+    <!-- Right outer small diamond -->
+    <path d="M224,0 L210,-14 L196,0 L210,14Z" fill="#C9A96E" opacity="0.62"/>
+  </g>
+
+  <!-- ═══════════════════════════════════
+       BOTTOM CENTER ORNAMENT (flipped)
+  ═══════════════════════════════════ -->
+  <g transform="translate(768, 2005) scale(1,-1)" filter="url(#glow)">
+    <path d="M0,-24 L24,0 L0,24 L-24,0Z" fill="#C9A96E" opacity="0.92"/>
+    <path d="M0,-14 L14,0 L0,14 L-14,0Z" fill="#E8D5B0" opacity="0.5"/>
+    <path d="M-30,0 Q-75,-22 -118,-4 Q-148,10 -176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.7" stroke-linecap="round" opacity="0.75"/>
+    <path d="M-176,0 C-193,-15 -200,-3 -191,9 C-183,18 -168,8 -176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.1" stroke-linecap="round" opacity="0.65"/>
+    <path d="M-115,-4 Q-120,-22 -117,-36 Q-114,-22 -115,-4" fill="#C9A96E" opacity="0.5"/>
+    <circle cx="-154" cy="2" r="3.2" fill="#C9A96E" opacity="0.55"/>
+    <circle cx="-165" cy="1" r="2" fill="#C9A96E" opacity="0.4"/>
+    <path d="M-224,0 L-210,-14 L-196,0 L-210,14Z" fill="#C9A96E" opacity="0.62"/>
+    <path d="M30,0 Q75,-22 118,-4 Q148,10 176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.7" stroke-linecap="round" opacity="0.75"/>
+    <path d="M176,0 C193,-15 200,-3 191,9 C183,18 168,8 176,0"
+          fill="none" stroke="#C9A96E" stroke-width="1.1" stroke-linecap="round" opacity="0.65"/>
+    <path d="M115,-4 Q120,-22 117,-36 Q114,-22 115,-4" fill="#C9A96E" opacity="0.5"/>
+    <circle cx="154" cy="2" r="3.2" fill="#C9A96E" opacity="0.55"/>
+    <circle cx="165" cy="1" r="2" fill="#C9A96E" opacity="0.4"/>
+    <path d="M224,0 L210,-14 L196,0 L210,14Z" fill="#C9A96E" opacity="0.62"/>
+  </g>
+
+  <!-- ═══════════════════════════════════
+       SIDE CENTER ORNAMENTS
+  ═══════════════════════════════════ -->
+  <!-- Left -->
+  <g transform="translate(43, 1024)" filter="url(#glow)">
+    <path d="M0,-16 L16,0 L0,16 L-16,0Z" fill="#C9A96E" opacity="0.82"/>
+    <path d="M0,-9 L9,0 L0,9 L-9,0Z" fill="#E8D5B0" opacity="0.45"/>
+    <circle cx="0" cy="-38" r="3.5" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="0" cy="-54" r="2.2" fill="#C9A96E" opacity="0.36"/>
+    <circle cx="0" cy="38" r="3.5" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="0" cy="54" r="2.2" fill="#C9A96E" opacity="0.36"/>
+  </g>
+  <!-- Right -->
+  <g transform="translate(1493, 1024)" filter="url(#glow)">
+    <path d="M0,-16 L16,0 L0,16 L-16,0Z" fill="#C9A96E" opacity="0.82"/>
+    <path d="M0,-9 L9,0 L0,9 L-9,0Z" fill="#E8D5B0" opacity="0.45"/>
+    <circle cx="0" cy="-38" r="3.5" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="0" cy="-54" r="2.2" fill="#C9A96E" opacity="0.36"/>
+    <circle cx="0" cy="38" r="3.5" fill="#C9A96E" opacity="0.52"/>
+    <circle cx="0" cy="54" r="2.2" fill="#C9A96E" opacity="0.36"/>
+  </g>
+
+  <!-- ═══════════════════════════════════
+       QUARTER-POINT ACCENT DOTS
+       (midpoints between corner and center ornaments)
+  ═══════════════════════════════════ -->
+  <!-- Top edge -->
+  <g transform="translate(384, 43)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+  <g transform="translate(1152, 43)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+  <!-- Bottom edge -->
+  <g transform="translate(384, 2005)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+  <g transform="translate(1152, 2005)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+  <!-- Left edge -->
+  <g transform="translate(43, 512)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+  <g transform="translate(43, 1536)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+  <!-- Right edge -->
+  <g transform="translate(1493, 512)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+  <g transform="translate(1493, 1536)">
+    <circle cx="0" cy="0" r="5" fill="#C9A96E" opacity="0.28"/>
+    <circle cx="0" cy="0" r="2.5" fill="#C9A96E" opacity="0.55"/>
+  </g>
+
+</svg>
