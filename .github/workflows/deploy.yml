@@ -16,7 +16,7 @@ jobs:
         with:
           host: jeimandei.com
           port: 3099
-          username: ${{ secrets.SSH_USER }}
+          username: jeimandei
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
