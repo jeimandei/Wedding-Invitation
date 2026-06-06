@@ -17,7 +17,7 @@ jobs:
           host: jeimandei.com
           port: 3099
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_JEIMANDEI_PK }}
           script: |
             set -e
 
