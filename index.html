@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
@@ -30,6 +31,22 @@
       <button class="splash__btn" id="splashBtn">Open Invitation</button>
     </div>
   </div>
+
+  <!-- Hidden YouTube audio player -->
+  <div id="ytPlayer"></div>
+
+  <!-- Floating music toggle -->
+  <button class="music-btn" id="musicBtn" aria-label="Mute music" hidden>
+    <svg class="music-btn__icon music-btn__icon--on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+      <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>
+    </svg>
+    <svg class="music-btn__icon music-btn__icon--off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+      <line x1="23" y1="9" x2="17" y2="15"/>
+      <line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+  </button>
 
   <!-- ════════════════════════════════
        NAVIGATION

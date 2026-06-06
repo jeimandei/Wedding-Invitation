@@ -2,6 +2,54 @@
    JEI & ANGIE — Wedding Website JS
    ═══════════════════════════════════════════ */
 
+/* ─── BACKGROUND MUSIC (YouTube IFrame API) ─── */
+(function initMusic() {
+  var musicBtn  = document.getElementById('musicBtn');
+  var ytPlayer  = null;
+  var playPending = false;
+
+  window.onYouTubeIframeAPIReady = function () {
+    ytPlayer = new YT.Player('ytPlayer', {
+      videoId: 'QA-Zp-D9L6M',
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        loop: 1,
+        playlist: 'QA-Zp-D9L6M',
+        enablejsapi: 1,
+      },
+      events: {
+        onReady: function () {
+          if (playPending) { ytPlayer.playVideo(); playPending = false; }
+        },
+      },
+    });
+  };
+
+  window.__musicStart = function () {
+    musicBtn.hidden = false;
+    if (ytPlayer && ytPlayer.playVideo) {
+      ytPlayer.playVideo();
+    } else {
+      playPending = true;
+    }
+  };
+
+  musicBtn.addEventListener('click', function () {
+    if (!ytPlayer) return;
+    if (musicBtn.classList.contains('is-muted')) {
+      ytPlayer.unMute();
+      musicBtn.classList.remove('is-muted');
+      musicBtn.setAttribute('aria-label', 'Mute music');
+    } else {
+      ytPlayer.mute();
+      musicBtn.classList.add('is-muted');
+      musicBtn.setAttribute('aria-label', 'Unmute music');
+    }
+  });
+})();
+
+
 /* ─── SPLASH PAGE ─── */
 (function initSplash() {
   const splash   = document.getElementById('splash');
@@ -14,6 +62,7 @@
   document.body.style.overflow = 'hidden';
 
   btn.addEventListener('click', function () {
+    window.__musicStart();
     splash.classList.add('is-hidden');
     document.body.style.overflow = '';
     splash.addEventListener('transitionend', function () {
