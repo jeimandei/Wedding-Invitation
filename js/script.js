@@ -2,50 +2,20 @@
    JEI & ANGIE — Wedding Website JS
    ═══════════════════════════════════════════ */
 
-/* ─── BACKGROUND MUSIC (YouTube IFrame API) ─── */
+/* ─── BACKGROUND MUSIC ─── */
 (function initMusic() {
-  var musicBtn  = document.getElementById('musicBtn');
-  var ytPlayer  = null;
-  var playPending = false;
-
-  window.onYouTubeIframeAPIReady = function () {
-    ytPlayer = new YT.Player('ytPlayer', {
-      videoId: 'QA-Zp-D9L6M',
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        loop: 1,
-        playlist: 'QA-Zp-D9L6M',
-        enablejsapi: 1,
-      },
-      events: {
-        onReady: function () {
-          if (playPending) { ytPlayer.playVideo(); playPending = false; }
-        },
-      },
-    });
-  };
+  var audio    = document.getElementById('bgAudio');
+  var musicBtn = document.getElementById('musicBtn');
 
   window.__musicStart = function () {
     musicBtn.hidden = false;
-    if (ytPlayer && ytPlayer.playVideo) {
-      ytPlayer.playVideo();
-    } else {
-      playPending = true;
-    }
+    audio.play().catch(function () {});
   };
 
   musicBtn.addEventListener('click', function () {
-    if (!ytPlayer) return;
-    if (musicBtn.classList.contains('is-muted')) {
-      ytPlayer.unMute();
-      musicBtn.classList.remove('is-muted');
-      musicBtn.setAttribute('aria-label', 'Mute music');
-    } else {
-      ytPlayer.mute();
-      musicBtn.classList.add('is-muted');
-      musicBtn.setAttribute('aria-label', 'Unmute music');
-    }
+    audio.muted = !audio.muted;
+    musicBtn.classList.toggle('is-muted', audio.muted);
+    musicBtn.setAttribute('aria-label', audio.muted ? 'Unmute music' : 'Mute music');
   });
 })();
 
