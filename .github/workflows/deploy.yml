@@ -18,8 +18,8 @@ jobs:
 
       - name: Pull latest & restart container
         run: |
-          ssh -i ~/.ssh/deploy_key \
-              -p 3099 \
+          ssh-keyscan -p 3099 jeimandei.com >> ~/.ssh/known_hosts
+          ssh -p 3099 \
               jeimandei@jeimandei.com \
               'set -e
                cd ~/Wedding-Invitation
