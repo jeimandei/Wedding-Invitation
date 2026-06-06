@@ -22,7 +22,7 @@ jobs:
           ssh -p 3099 \
               jeimandei@jeimandei.com \
               'set -e
-               cd "/home/jeimandei/Container_data/Websites/Wedding\ Invitation"
+               cd "/home/jeimandei/Container_Data/Websites/Wedding Invitation"
                git pull origin main
                podman-compose down --remove-orphans
                podman-compose up -d --build'
