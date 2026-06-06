@@ -22,7 +22,7 @@ jobs:
           ssh -p 3099 \
               jeimandei@jeimandei.com \
               'set -e
-               cd ~/Wedding-Invitation
+               cd "/home/jeimandei/Container_data/Wedding/Wedding Invitation"
                git pull origin main
                if podman ps -a --format "{{.Names}}" | grep -qx "wedding-nginx"; then
                  podman restart wedding-nginx
