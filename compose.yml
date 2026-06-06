@@ -1,0 +1,15 @@
+services:
+  wedding-invitation:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: wedding-invitation
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    networks:
+      - public
+
+networks:
+  public:
+    external: true
