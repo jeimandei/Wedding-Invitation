@@ -16,13 +16,13 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_JEIMANDEI_PK }}
 
-      - name: Pull latest & restart container
+      - name: Build & deploy on server
         run: |
           ssh-keyscan -p 3099 jeimandei.com >> ~/.ssh/known_hosts
           ssh -p 3099 \
               jeimandei@jeimandei.com \
               'set -e
-               cd "/home/jeimandei/Container_Data/Websites/Wedding Invitation"
+               cd /home/jeimandei/Container_Data/Websites/Wedding-Invitation
                git pull origin main
                podman-compose down --remove-orphans
                podman-compose up -d --build'
