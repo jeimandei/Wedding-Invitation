@@ -5,7 +5,7 @@ RUN rm -rf /usr/share/nginx/html/*
 
 # Custom nginx config: gzip + cache headers
 RUN printf 'server {\n\
-    listen 80;\n\
+    listen 9000;\n\
     server_name _;\n\
     root /usr/share/nginx/html;\n\
     index index.html;\n\
@@ -35,4 +35,4 @@ COPY css/        /usr/share/nginx/html/css/
 COPY js/         /usr/share/nginx/html/js/
 COPY images/     /usr/share/nginx/html/images/
 
-EXPOSE 80
+EXPOSE 9000
