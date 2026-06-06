@@ -2,6 +2,11 @@
    JEI & ANGIE — Wedding Website JS
    ═══════════════════════════════════════════ */
 
+/* ─── CONFIG ─── */
+// After deploying the Apps Script (see apps-script.js), paste the Web App URL here:
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
+
 /* ─── BACKGROUND MUSIC ─── */
 (function initMusic() {
   var audio    = document.getElementById('bgAudio');
@@ -228,25 +233,30 @@
     });
   });
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
     if (!validate()) return;
 
-    // Collect data (replace this block with real backend/Formspree/etc.)
     const data = Object.fromEntries(new FormData(form));
-    console.log('RSVP submitted:', data);
-
-    // Simulate async submission
     const btn = form.querySelector('button[type="submit"]');
     btn.textContent = 'Sending…';
     btn.disabled = true;
 
-    setTimeout(() => {
-      form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
-        el.style.display = 'none';
-      });
-      success.hidden = false;
-    }, 1200);
+    if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(data)
+        });
+      } catch (_) {}
+    }
+
+    form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
+      el.style.display = 'none';
+    });
+    success.hidden = false;
   });
 })();
 
@@ -262,6 +272,59 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     window.scrollTo({ top, behavior: 'smooth' });
   });
 });
+
+
+/* ─── MESSAGES & WISHES ─── */
+(function initWishes() {
+  const track = document.getElementById('wishesTrack');
+  if (!track) return;
+
+  function esc(str) {
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(String(str)));
+    return d.innerHTML;
+  }
+
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+  fetch(url)
+    .then(r => r.text())
+    .then(text => {
+      const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?\s*$/);
+      if (!match) throw new Error('parse error');
+
+      const json = JSON.parse(match[1]);
+      const rows = json.table?.rows || [];
+
+      // Columns: 0=Timestamp, 1=Guest Name, 2=Attendance, 3=Guests, 4=Message
+      const wishes = rows
+        .map(row => ({
+          name:    row.c?.[1]?.v || '',
+          message: row.c?.[4]?.v || ''
+        }))
+        .filter(w => w.name && w.message);
+
+      if (!wishes.length) {
+        track.innerHTML = '<p class="wishes__empty">Be the first to leave a message!</p>';
+        return;
+      }
+
+      // Duplicate array for seamless infinite loop
+      const doubled = [...wishes, ...wishes];
+      track.innerHTML = doubled.map(w => `
+        <div class="wish-card">
+          <p class="wish-card__name">${esc(w.name)}</p>
+          <p class="wish-card__message">"${esc(w.message)}"</p>
+        </div>
+      `).join('');
+
+      // ~5s per card, clamped between 20s and 120s
+      track.style.animationDuration = Math.min(Math.max(wishes.length * 5, 20), 120) + 's';
+    })
+    .catch(() => {
+      track.innerHTML = '<p class="wishes__empty">Messages coming soon…</p>';
+    });
+})();
 
 
 /* ─── PARALLAX: subtle hero bg movement ─── */

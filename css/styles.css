@@ -1315,6 +1315,103 @@ textarea { resize: vertical; min-height: 90px; }
 
 
 /* ════════════════════════════════════════════
+   MESSAGES & WISHES
+════════════════════════════════════════════ */
+.wishes {
+  padding: 8rem 0;
+  background: var(--warm-white);
+  overflow: hidden;
+}
+
+.wishes__track-wrap {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem 0;
+}
+
+.wishes__track-wrap::before,
+.wishes__track-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8rem;
+  z-index: 2;
+  pointer-events: none;
+}
+.wishes__track-wrap::before {
+  left: 0;
+  background: linear-gradient(to right, var(--warm-white), transparent);
+}
+.wishes__track-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, var(--warm-white), transparent);
+}
+
+.wishes__track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  padding: 0.75rem 0;
+  animation: wishesScroll 40s linear infinite;
+}
+.wishes__track:hover { animation-play-state: paused; }
+
+@keyframes wishesScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.wish-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 1.75rem 2rem;
+  width: 280px;
+  min-height: 140px;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+  border: 1px solid rgba(201,169,110,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.wish-card__name {
+  font-family: var(--font-script);
+  font-size: 1.5rem;
+  color: var(--lilac-dark);
+  line-height: 1.2;
+}
+
+.wish-card__message {
+  font-family: var(--font-head);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--text-mid);
+  line-height: 1.8;
+}
+
+.wishes__loading,
+.wishes__empty {
+  font-family: var(--font-head);
+  font-style: italic;
+  color: var(--text-light);
+  font-size: 1rem;
+  padding: 2rem 5vw;
+  text-align: center;
+  width: 100vw;
+}
+
+@media (max-width: 900px) {
+  .wishes { padding: 5rem 0; }
+}
+@media (max-width: 600px) {
+  .wishes { padding: 3.5rem 0; }
+  .wish-card { width: 240px; padding: 1.25rem 1.5rem; }
+}
+
+
+/* ════════════════════════════════════════════
    FOOTER
 ════════════════════════════════════════════ */
 .footer {
