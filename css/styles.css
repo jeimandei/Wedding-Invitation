@@ -823,8 +823,8 @@ em { font-style: italic; color: var(--lilac-dark); }
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: 3rem;
-  align-items: center;
-  margin-bottom: 4rem;
+  align-items: stretch;
+  margin-bottom: 0;
 }
 
 /* Detail cards */
@@ -915,12 +915,13 @@ em { font-style: italic; color: var(--lilac-dark); }
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 1.5rem;
 }
 
 .details__rings {
-  width: 120px;
-  filter: drop-shadow(0 4px 16px rgba(201,166,201,0.5));
+  width: 160px;
+  filter: drop-shadow(0 4px 20px rgba(201,169,110,0.4));
 }
 
 .details__date-badge {
@@ -956,42 +957,6 @@ em { font-style: italic; color: var(--lilac-dark); }
   opacity: 0.85;
 }
 
-/* Dress code */
-.dress-code {
-  text-align: center;
-  padding-top: 2rem;
-}
-
-.dress-code__theme {
-  font-family: var(--font-head);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 400;
-  color: var(--text-dark);
-  margin: 0.75rem 0;
-}
-
-.dress-code__desc {
-  font-size: 0.9rem;
-  color: var(--text-mid);
-  max-width: 500px;
-  margin: 0 auto 1.5rem;
-}
-
-.dress-code__swatches {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-}
-
-.swatch {
-  display: block;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12), 0 0 0 3px #fff, 0 0 0 4.5px rgba(0,0,0,0.08);
-  transition: transform var(--transition);
-}
-.swatch:hover { transform: scale(1.2); }
 
 
 /* ════════════════════════════════════════════
