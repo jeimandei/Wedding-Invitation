@@ -819,6 +819,49 @@ em { font-style: italic; color: var(--lilac-dark); }
   overflow: hidden;
 }
 
+/* Date badge above cards */
+.details__date {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+.details__date-line {
+  flex: 1;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.3;
+}
+.details__date-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+.details__date-month {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.2rem;
+}
+.details__date-num {
+  font-family: var(--font-head);
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 400;
+  color: var(--text-dark);
+  margin-bottom: 0.1rem;
+}
+.details__date-year {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  color: var(--text-mid);
+}
+
 .details__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1435,11 +1478,19 @@ textarea { resize: vertical; min-height: 90px; }
 
   .story__chapter-photo { max-width: 420px; margin: 0 auto; }
 
+  /* Reduce all section paddings on tablet/mobile */
+  .story, .details, .portraits, .gallery, .rsvp { padding: 5rem 0; }
+  .save-date { padding: 3.5rem 5vw; }
+  .quote-section { padding: 3.5rem 5vw; }
+
   /* Details */
   .details__grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
   }
+  .detail-card__photo { height: 180px; }
+  .detail-card__body { padding: 1.5rem; }
+  .details__date { margin-bottom: 2rem; }
 
   /* Portraits */
   .portraits__grid {
@@ -1456,9 +1507,19 @@ textarea { resize: vertical; min-height: 90px; }
   .gallery__item:nth-child(4n+1) { grid-column: span 2; }
   .gallery__item:nth-child(4n+1) img { aspect-ratio: 3/2; }
 
+  /* Portraits */
+  .portrait-feature__text { text-align: center; }
+  .portrait-feature__role { display: block; margin-bottom: 0.4rem; }
+
+  /* Gallery */
+  .gallery__grid { gap: 0.5rem; }
+
   /* RSVP form */
-  .rsvp__form { padding: 2rem 1.5rem; }
+  .rsvp__form { padding: 2rem 1.25rem; }
   .form__row { grid-template-columns: 1fr; }
+
+  /* Section headers */
+  .section-header { padding-bottom: 2rem; }
 }
 
 /* ════════════════════════════════════════════
@@ -1466,23 +1527,46 @@ textarea { resize: vertical; min-height: 90px; }
 ════════════════════════════════════════════ */
 @media (max-width: 600px) {
 
-  .gallery__grid { grid-template-columns: repeat(2, 1fr); }
+  /* Tighter section padding on phones */
+  .story, .details, .portraits, .gallery, .rsvp { padding: 3.5rem 0; }
+  .save-date { padding: 2.5rem 5vw; }
+  .quote-section { padding: 2.5rem 5vw; }
+
+  /* Hero tweaks */
+  .hero { padding: 6rem 5vw 4rem; }
+  .hero__frame-wrap { width: min(260px, 72vw); }
+  .hero__names { font-size: clamp(3rem, 12vw, 5rem); }
+  .hero__subtitle { font-size: 0.65rem; }
+  .hero__invite { font-size: 0.85rem; }
+
+  /* Save the date */
+  .save-date__heading { font-size: clamp(2rem, 9vw, 3rem); }
+
+  /* Gallery */
+  .gallery__grid { grid-template-columns: repeat(2, 1fr); gap: 0.35rem; }
   .gallery__item:nth-child(4n+1),
   .gallery__item:nth-child(5n+1) { grid-column: span 1; }
   .gallery__item img { aspect-ratio: 1/1; }
 
-  .portrait-feature__photos {
-    grid-template-columns: 1fr;
-  }
-  .portrait-feature--bride .portrait-feature__photos {
-    grid-template-columns: 1fr;
-  }
-  .portrait-feature__secondary {
-    flex-direction: row;
-  }
+  /* Portrait adjustments */
+  .portrait-feature__photos { grid-template-columns: 1fr; }
+  .portrait-feature--bride .portrait-feature__photos { grid-template-columns: 1fr; }
+  .portrait-feature__secondary { flex-direction: row; }
   .portrait-feature__secondary img { aspect-ratio: 1/1; }
+  .portrait-feature__name { font-size: clamp(1.8rem, 8vw, 2.5rem); }
 
+  /* Details card */
+  .detail-card__photo { height: 150px; }
+  .detail-card__body { padding: 1.25rem; }
+  .details__date-num { font-size: clamp(2.2rem, 10vw, 3.5rem); }
 
+  /* RSVP */
+  .rsvp__form { padding: 1.5rem 1rem; }
+
+  /* Lightbox */
   .lightbox__prev { left: 0.5rem; }
   .lightbox__next { right: 0.5rem; }
+
+  /* Music button — avoid overlap with scroll content */
+  .music-btn { bottom: 1rem; right: 1rem; width: 2.5rem; height: 2.5rem; }
 }
