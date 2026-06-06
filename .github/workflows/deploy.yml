@@ -24,11 +24,11 @@ jobs:
               'set -e
                cd "/home/jeimandei/Container_data/Wedding/Wedding Invitation"
                git pull origin main
-               if podman ps -a --format "{{.Names}}" | grep -qx "wedding-nginx"; then
-                 podman restart wedding-nginx
+               if podman ps -a --format "{{.Names}}" | grep -qx "wedding-invitation"; then
+                 podman restart wedding-invitation
                else
                  podman run -d \
-                   --name wedding-nginx \
+                   --name wedding-invitation \
                    --network=public \
                    -p 9000:80 \
                    -v "$(pwd):/usr/share/nginx/html:ro" \
