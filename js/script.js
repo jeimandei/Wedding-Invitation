@@ -9,18 +9,61 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 
 /* ─── BACKGROUND MUSIC ─── */
 (function initMusic() {
-  var audio    = document.getElementById('bgAudio');
-  var musicBtn = document.getElementById('musicBtn');
+  var audio       = document.getElementById('bgAudio');
+  var musicBtn    = document.getElementById('musicBtn');
+  var musicPlayer = document.getElementById('musicPlayer');
+  var closeBtn    = document.getElementById('musicPlayerClose');
+  var playBtn     = document.getElementById('musicPlayBtn');
+  var muteBtn     = document.getElementById('musicMuteBtn');
+
+  musicPlayer.classList.add('is-hidden');
 
   window.__musicStart = function () {
     musicBtn.hidden = false;
     audio.play().catch(function () {});
+    playBtn.classList.add('is-playing');
+    playBtn.setAttribute('aria-label', 'Pause');
   };
 
+  // Toggle player open / close
   musicBtn.addEventListener('click', function () {
+    var nowHidden = musicPlayer.classList.toggle('is-hidden');
+    musicBtn.setAttribute('aria-label', nowHidden ? 'Open music player' : 'Close music player');
+  });
+
+  closeBtn.addEventListener('click', function () {
+    musicPlayer.classList.add('is-hidden');
+    musicBtn.setAttribute('aria-label', 'Open music player');
+  });
+
+  // Click outside to close
+  document.addEventListener('click', function (e) {
+    if (!musicPlayer.classList.contains('is-hidden') &&
+        !musicPlayer.contains(e.target) &&
+        e.target !== musicBtn) {
+      musicPlayer.classList.add('is-hidden');
+      musicBtn.setAttribute('aria-label', 'Open music player');
+    }
+  });
+
+  // Play / Pause
+  playBtn.addEventListener('click', function () {
+    if (audio.paused) {
+      audio.play().catch(function () {});
+      playBtn.classList.add('is-playing');
+      playBtn.setAttribute('aria-label', 'Pause');
+    } else {
+      audio.pause();
+      playBtn.classList.remove('is-playing');
+      playBtn.setAttribute('aria-label', 'Play');
+    }
+  });
+
+  // Mute / Unmute
+  muteBtn.addEventListener('click', function () {
     audio.muted = !audio.muted;
-    musicBtn.classList.toggle('is-muted', audio.muted);
-    musicBtn.setAttribute('aria-label', audio.muted ? 'Unmute music' : 'Mute music');
+    muteBtn.classList.toggle('is-muted', audio.muted);
+    muteBtn.setAttribute('aria-label', audio.muted ? 'Unmute' : 'Mute');
   });
 })();
 
