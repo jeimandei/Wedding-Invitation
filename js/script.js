@@ -32,7 +32,11 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
   const btn      = document.getElementById('splashBtn');
 
   const name = new URLSearchParams(window.location.search).get('to');
-  if (name) guestEl.textContent = name;
+  if (name) {
+    guestEl.textContent = name;
+    const nameField = document.getElementById('guestName');
+    if (nameField) nameField.value = name;
+  }
 
   document.body.style.overflow = 'hidden';
 
