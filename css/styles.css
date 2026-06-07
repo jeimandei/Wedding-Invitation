@@ -138,50 +138,44 @@ ul  { list-style: none; }
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--gold-light);
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.75rem;
 }
-.splash__dear {
-  font-family: var(--font-head);
-  font-size: 1.25rem;
-  font-style: italic;
-  color: var(--gold-light);
-  margin-bottom: 0.15rem;
-}
-.splash__guest {
+.splash__names {
   font-family: var(--font-script);
-  font-size: clamp(2.4rem, 9vw, 4.2rem);
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  font-weight: 400;
   color: #fff;
-  line-height: 1.1;
-  margin-bottom: 1.75rem;
+  line-height: 1.05;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  margin-bottom: 0;
+}
+.splash__names span {
+  font-family: var(--font-head);
+  font-size: 0.55em;
+  color: var(--gold-light);
+  vertical-align: middle;
+  font-style: normal;
 }
 .splash__line {
   width: 72px;
   height: 1px;
   background: var(--gold);
-  margin: 0 auto 1.75rem;
+  margin: 1.75rem auto;
   opacity: 0.65;
 }
-.splash__names {
-  font-family: var(--font-script);
-  font-size: clamp(1.8rem, 6vw, 3.2rem);
-  font-weight: 400;
-  color: var(--gold-light);
-  margin-bottom: 0.5rem;
-}
-.splash__names span {
+.splash__dear {
   font-family: var(--font-head);
-  font-size: 0.55em;
-  color: var(--gold);
-  vertical-align: middle;
-  font-style: normal;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--gold-light);
+  margin-bottom: 0.2rem;
 }
-.splash__date {
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 2.75rem;
+.splash__guest {
+  font-family: var(--font-script);
+  font-size: clamp(2rem, 7vw, 3.2rem);
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 2.5rem;
 }
 .splash__btn {
   display: inline-block;
