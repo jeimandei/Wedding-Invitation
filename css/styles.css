@@ -1240,6 +1240,12 @@ textarea {
   appearance: none;
 }
 
+input[readonly] {
+  background: rgba(201,166,201,0.08);
+  cursor: default;
+  color: var(--text-mid);
+}
+
 input:focus,
 select:focus,
 textarea:focus {

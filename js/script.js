@@ -35,7 +35,10 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
   if (name) {
     guestEl.textContent = name;
     const nameField = document.getElementById('guestName');
-    if (nameField) nameField.value = name;
+    if (nameField) {
+      nameField.value = name;
+      nameField.readOnly = true;
+    }
   }
 
   document.body.style.overflow = 'hidden';
