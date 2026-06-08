@@ -235,7 +235,7 @@ ul  { list-style: none; }
   margin-bottom: 0.75rem;
 }
 .splash__names {
-  font-family: var(--font-script);
+  font-family: var(--font-display);
   font-size: clamp(3rem, 10vw, 5.5rem);
   font-weight: 400;
   color: #fff;
@@ -412,7 +412,7 @@ ul  { list-style: none; }
 }
 
 .nav__logo {
-  font-family: var(--font-script);
+  font-family: var(--font-display);
   font-size: 1.9rem;
   color: #fff;
   transition: color var(--transition);
@@ -570,7 +570,7 @@ ul  { list-style: none; }
 }
 
 .hero__names {
-  font-family: var(--font-script);
+  font-family: var(--font-display);
   font-size: clamp(3.5rem, 8vw, 6.5rem);
   font-weight: 400;
   line-height: 1.0;
@@ -1539,7 +1539,7 @@ textarea { resize: vertical; min-height: 90px; }
 }
 
 .footer__names {
-  font-family: var(--font-script);
+  font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   color: var(--text-dark);
   margin-bottom: 0.5rem;
