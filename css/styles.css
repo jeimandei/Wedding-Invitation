@@ -23,6 +23,7 @@
 
   --font-head:   'Cormorant Garamond', Georgia, serif;
   --font-script: 'Great Vibes', cursive;
+  --font-display:'Blacksword', cursive;
   --font-body:   'Montserrat', 'Helvetica Neue', sans-serif;
 
   --radius-sm:   8px;
@@ -56,6 +57,14 @@ body {
 img { display: block; max-width: 100%; height: auto; }
 a   { color: inherit; text-decoration: none; }
 ul  { list-style: none; }
+
+@font-face {
+  font-family: 'Blacksword';
+  src: url('../fonts/Blacksword.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 
 
@@ -1143,8 +1152,8 @@ em { font-style: italic; color: var(--lilac-dark); }
 }
 
 .portrait-feature__name {
-  font-family: var(--font-script);
-  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
   font-weight: 400;
   color: var(--text-dark);
   margin-bottom: 0.75rem;
