@@ -11,7 +11,7 @@ RUN printf 'server {\n\
     index index.html;\n\
 \n\
     gzip on;\n\
-    gzip_types text/css application/javascript image/svg+xml image/png image/jpeg;\n\
+    gzip_types text/css application/javascript image/svg+xml image/png image/jpeg font/otf font/ttf font/woff font/woff2;\n\
     gzip_min_length 1024;\n\
 \n\
     location ~* \\.(jpg|jpeg|png|gif|svg|ico|webp)$ {\n\
@@ -35,5 +35,6 @@ COPY css/        /usr/share/nginx/html/css/
 COPY js/         /usr/share/nginx/html/js/
 COPY images/     /usr/share/nginx/html/images/
 COPY audio/      /usr/share/nginx/html/audio/
+COPY fonts/      /usr/share/nginx/html/fonts/
 
 EXPOSE 9000
