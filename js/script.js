@@ -370,6 +370,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   const track = document.getElementById('wishesTrack');
   if (!track) return;
 
+  const modal       = document.getElementById('wishModal');
+  const modalName   = document.getElementById('wishModalName');
+  const modalMsg    = document.getElementById('wishModalMessage');
+  const modalClose  = document.getElementById('wishModalClose');
+  const backdrop    = modal.querySelector('.wish-modal__backdrop');
+
+  function openWish(name, message) {
+    modalName.textContent    = name;
+    modalMsg.textContent     = message;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    modalClose.focus();
+  }
+
+  function closeWish() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  modalClose.addEventListener('click', closeWish);
+  backdrop.addEventListener('click', closeWish);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeWish(); });
+
   function esc(str) {
     const d = document.createElement('div');
     d.appendChild(document.createTextNode(String(str)));
@@ -387,7 +410,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       const json = JSON.parse(match[1]);
       const rows = json.table?.rows || [];
 
-      // Columns: 0=Timestamp, 1=Guest Name, 2=Attendance, 3=Guests, 4=Message
       const wishes = rows
         .map(row => ({
           name:    row.c?.[1]?.v || '',
@@ -400,16 +422,21 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         return;
       }
 
-      // Duplicate array for seamless infinite loop
       const doubled = [...wishes, ...wishes];
-      track.innerHTML = doubled.map(w => `
-        <div class="wish-card">
+      track.innerHTML = doubled.map((w, i) => `
+        <div class="wish-card" role="button" tabindex="${i < wishes.length ? '0' : '-1'}"
+             data-name="${esc(w.name)}" data-message="${esc(w.message)}"
+             aria-label="Read wish from ${esc(w.name)}">
           <p class="wish-card__name">${esc(w.name)}</p>
           <p class="wish-card__message">"${esc(w.message)}"</p>
         </div>
       `).join('');
 
-      // ~5s per card, clamped between 20s and 120s
+      track.querySelectorAll('.wish-card').forEach(card => {
+        card.addEventListener('click', () => openWish(card.dataset.name, card.dataset.message));
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWish(card.dataset.name, card.dataset.message); } });
+      });
+
       track.style.animationDuration = Math.min(Math.max(wishes.length * 5, 20), 120) + 's';
     })
     .catch(() => {
