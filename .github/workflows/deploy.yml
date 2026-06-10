@@ -18,7 +18,7 @@ jobs:
 
       - name: Build & deploy on server
         run: |
-          ssh-keyscan -p 3099 jeimandei.com >> ~/.ssh/known_hosts
+          ssh-keyscan -p 3099 203.83.37.247 >> ~/.ssh/known_hosts
           ssh -p 3099 \
               jeimandei@203.83.37.247 \
               'set -e
