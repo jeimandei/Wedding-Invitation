@@ -659,7 +659,9 @@ ul  { list-style: none; }
   width: 100%;
   aspect-ratio: 3/4;
   object-fit: cover;
+  object-position: center 35%;
   border-radius: var(--radius-md);
+  cursor: pointer;
   box-shadow: var(--shadow-lg);
   position: relative;
   z-index: 1;
@@ -861,11 +863,11 @@ em { font-style: italic; color: var(--lilac-dark); }
 .quote-section__text {
   grid-area: 1 / 1;
   align-self: start;
-  justify-self: start;
-  padding: 6% 0 0 8%;
-  text-align: left;
-  width: 55%;
-  max-width: 420px;
+  justify-self: center;
+  padding-top: 7%;
+  text-align: center;
+  width: 80%;
+  max-width: 560px;
   z-index: 1;
   line-height: 1.5;
 }
@@ -1723,7 +1725,7 @@ textarea { resize: vertical; min-height: 90px; }
   /* Reduce all section paddings on tablet/mobile */
   .story, .details, .portraits, .gallery, .rsvp { padding: 5rem 0; }
   .save-date { padding: 3.5rem 5vw; }
-  .quote-section__text { padding: 5% 0 0 6%; width: 60%; }
+  .quote-section__text { padding-top: 6%; width: 80%; }
 
   /* Details */
   .details__grid {
@@ -1783,7 +1785,7 @@ textarea { resize: vertical; min-height: 90px; }
   /* Tighter section padding on phones */
   .story, .details, .portraits, .gallery, .rsvp { padding: 3.5rem 0; }
   .save-date { padding: 2.5rem 5vw; }
-  .quote-section__text { padding: 5% 0 0 5%; width: 70%; }
+  .quote-section__text { padding-top: 5%; width: 85%; }
 
   /* Hero tweaks */
   .hero { padding: 6rem 5vw 4rem; }

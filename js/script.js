@@ -179,6 +179,43 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 })();
 
 
+/* ─── HERO PHOTO LIGHTBOX ─── */
+(function initHeroLightbox() {
+  const heroPhoto = document.getElementById('heroPhoto');
+  const lightbox  = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lightboxImg');
+  const btnClose  = lightbox.querySelector('.lightbox__close');
+  const btnPrev   = lightbox.querySelector('.lightbox__prev');
+  const btnNext   = lightbox.querySelector('.lightbox__next');
+
+  function openHero() {
+    lbImg.src = heroPhoto.src;
+    lbImg.alt = heroPhoto.alt;
+    lightbox.hidden = false;
+    lightbox.dataset.mode = 'single';
+    btnPrev.hidden = true;
+    btnNext.hidden = true;
+    document.body.style.overflow = 'hidden';
+    btnClose.focus();
+  }
+
+  function closeHero() {
+    lightbox.hidden = true;
+    delete lightbox.dataset.mode;
+    btnPrev.hidden = false;
+    btnNext.hidden = false;
+    document.body.style.overflow = '';
+  }
+
+  heroPhoto.addEventListener('click', openHero);
+  heroPhoto.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHero(); } });
+
+  btnClose.addEventListener('click', () => { if (lightbox.dataset.mode === 'single') closeHero(); });
+  lightbox.addEventListener('click', e => { if (e.target === lightbox && lightbox.dataset.mode === 'single') closeHero(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && lightbox.dataset.mode === 'single') closeHero(); });
+})();
+
+
 /* ─── GALLERY LIGHTBOX ─── */
 (function initLightbox() {
   const carousel = document.getElementById('galleryCarousel');
