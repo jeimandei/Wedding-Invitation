@@ -578,8 +578,13 @@ ul  { list-style: none; }
   text-shadow: 0 4px 24px rgba(0,0,0,0.25);
   margin-bottom: 1rem;
 }
-.hero__names span {
+.hero__names span,
+.nav__logo span {
+  font-family: var(--font-head);
+  font-size: 0.55em;
   color: var(--gold-light);
+  vertical-align: middle;
+  font-style: normal;
 }
 
 .hero__invite {
