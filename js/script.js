@@ -40,7 +40,7 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
   document.addEventListener('click', function (e) {
     if (!musicPlayer.classList.contains('is-hidden') &&
         !musicPlayer.contains(e.target) &&
-        e.target !== musicBtn) {
+        !musicBtn.contains(e.target)) {
       musicPlayer.classList.add('is-hidden');
       musicBtn.setAttribute('aria-label', 'Open music player');
     }
