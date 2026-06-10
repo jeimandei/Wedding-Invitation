@@ -348,6 +348,14 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
       el.style.display = 'none';
     });
     success.hidden = false;
+
+    // After a short pause, scroll to the wishes section
+    setTimeout(function () {
+      const wishes = document.getElementById('wishes');
+      if (!wishes) return;
+      const top = wishes.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }, 1800);
   });
 })();
 
