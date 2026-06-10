@@ -20,11 +20,15 @@ RUN printf 'server {\n\
     }\n\
 \n\
     location ~* \\.(css|js)$ {\n\
-        expires 7d;\n\
-        add_header Cache-Control "public";\n\
+        expires -1;\n\
+        add_header Cache-Control "no-cache, no-store, must-revalidate";\n\
+        add_header Pragma "no-cache";\n\
     }\n\
 \n\
     location / {\n\
+        expires -1;\n\
+        add_header Cache-Control "no-cache, no-store, must-revalidate";\n\
+        add_header Pragma "no-cache";\n\
         try_files $uri $uri/ /index.html;\n\
     }\n\
 }\n' > /etc/nginx/conf.d/default.conf
