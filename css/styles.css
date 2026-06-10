@@ -579,7 +579,8 @@ ul  { list-style: none; }
   margin-bottom: 1rem;
 }
 .hero__names span,
-.nav__logo span {
+.nav__logo span,
+.footer__names span {
   font-family: var(--font-head);
   font-size: 0.55em;
   color: var(--gold-light);
