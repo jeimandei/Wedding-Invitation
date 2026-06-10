@@ -864,7 +864,7 @@ em { font-style: italic; color: var(--lilac-dark); }
   grid-area: 1 / 1;
   align-self: start;
   justify-self: center;
-  padding-top: 7%;
+  padding-top: 28%;
   text-align: center;
   width: 80%;
   max-width: 560px;
@@ -1454,56 +1454,33 @@ textarea { resize: vertical; min-height: 90px; }
 }
 
 .wishes__track-wrap {
-  position: relative;
-  overflow: hidden;
-  padding: 1rem 0;
-}
-
-.wishes__track-wrap::before,
-.wishes__track-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 8rem;
-  z-index: 2;
-  pointer-events: none;
-}
-.wishes__track-wrap::before {
-  left: 0;
-  background: linear-gradient(to right, var(--warm-white), transparent);
-}
-.wishes__track-wrap::after {
-  right: 0;
-  background: linear-gradient(to left, var(--warm-white), transparent);
+  padding: 1rem 5vw 0;
 }
 
 .wishes__track {
-  display: flex;
-  gap: 1.5rem;
-  width: max-content;
-  padding: 0.75rem 0;
-  animation: wishesScroll 40s linear infinite;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  max-height: 520px;
+  overflow-y: auto;
+  padding: 0.5rem 0.25rem 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,169,110,0.4) transparent;
 }
-.wishes__track:hover { animation-play-state: paused; }
-
-@keyframes wishesScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
+.wishes__track::-webkit-scrollbar { width: 5px; }
+.wishes__track::-webkit-scrollbar-track { background: transparent; }
+.wishes__track::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.4); border-radius: 10px; }
 
 .wish-card {
   background: #fff;
   border-radius: var(--radius-md);
-  padding: 1.75rem 2rem;
-  width: 280px;
-  min-height: 140px;
+  padding: 1.5rem 1.75rem;
+  min-height: 120px;
   box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
   border: 1px solid rgba(201,169,110,0.18);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .wish-card__name {
@@ -1623,7 +1600,8 @@ textarea { resize: vertical; min-height: 90px; }
 }
 @media (max-width: 600px) {
   .wishes { padding: 3.5rem 0; }
-  .wish-card { width: 240px; padding: 1.25rem 1.5rem; }
+  .wishes__track { grid-template-columns: 1fr 1fr; max-height: 480px; }
+  .wish-card { padding: 1.25rem 1.25rem; }
 }
 
 
@@ -1811,7 +1789,7 @@ textarea { resize: vertical; min-height: 90px; }
   /* Reduce all section paddings on tablet/mobile */
   .story, .details, .portraits, .gallery, .rsvp { padding: 5rem 0; }
   .save-date { padding: 3.5rem 5vw; }
-  .quote-section__text { padding-top: 6%; width: 80%; }
+  .quote-section__text { padding-top: 22%; width: 80%; }
 
   /* Details */
   .details__grid {
@@ -1871,7 +1849,7 @@ textarea { resize: vertical; min-height: 90px; }
   /* Tighter section padding on phones */
   .story, .details, .portraits, .gallery, .rsvp { padding: 3.5rem 0; }
   .save-date { padding: 2.5rem 5vw; }
-  .quote-section__text { padding-top: 5%; width: 85%; }
+  .quote-section__text { padding-top: 18%; width: 85%; }
 
   /* Hero tweaks */
   .hero { padding: 6rem 5vw 4rem; }

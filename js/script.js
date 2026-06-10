@@ -422,9 +422,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         return;
       }
 
-      const doubled = [...wishes, ...wishes];
-      track.innerHTML = doubled.map((w, i) => `
-        <div class="wish-card" role="button" tabindex="${i < wishes.length ? '0' : '-1'}"
+      track.innerHTML = wishes.map(w => `
+        <div class="wish-card" role="button" tabindex="0"
              data-name="${esc(w.name)}" data-message="${esc(w.message)}"
              aria-label="Read wish from ${esc(w.name)}">
           <p class="wish-card__name">${esc(w.name)}</p>
@@ -436,8 +435,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         card.addEventListener('click', () => openWish(card.dataset.name, card.dataset.message));
         card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWish(card.dataset.name, card.dataset.message); } });
       });
-
-      track.style.animationDuration = Math.min(Math.max(wishes.length * 5, 20), 120) + 's';
     })
     .catch(() => {
       track.innerHTML = '<p class="wishes__empty">Messages coming soon…</p>';
