@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: SSH deploy → jeimandei.com:3099
+    name: Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,7 @@ jobs:
         run: |
           ssh-keyscan -p 3099 jeimandei.com >> ~/.ssh/known_hosts
           ssh -p 3099 \
-              jeimandei@jeimandei.com \
+              jeimandei@203.83.37.247 \
               'set -e
                cd /home/jeimandei/Container_Data/Websites/Wedding-Invitation
                git pull origin main
