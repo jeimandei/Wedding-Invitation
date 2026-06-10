@@ -181,20 +181,27 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 
 /* ─── GALLERY LIGHTBOX ─── */
 (function initLightbox() {
-  const grid     = document.getElementById('galleryGrid');
+  const carousel = document.getElementById('galleryCarousel');
   const lightbox = document.getElementById('lightbox');
   const lbImg    = document.getElementById('lightboxImg');
   const btnClose = lightbox.querySelector('.lightbox__close');
   const btnPrev  = lightbox.querySelector('.lightbox__prev');
   const btnNext  = lightbox.querySelector('.lightbox__next');
 
-  const items = Array.from(grid.querySelectorAll('.gallery__item img'));
+  // Build ordered image list from unique data-idx values (first occurrence only)
+  const total = 20;
+  const imgs = new Array(total);
+  carousel.querySelectorAll('.gallery__item[data-idx]').forEach(item => {
+    const idx = parseInt(item.dataset.idx, 10);
+    if (!imgs[idx]) imgs[idx] = item.querySelector('img');
+  });
+
   let current = 0;
 
   function open(idx) {
-    current = ((idx % items.length) + items.length) % items.length;
-    lbImg.src = items[current].src;
-    lbImg.alt = items[current].alt;
+    current = ((idx % total) + total) % total;
+    lbImg.src = imgs[current].src;
+    lbImg.alt = imgs[current].alt || 'Jei and Angie';
     lightbox.hidden = false;
     document.body.style.overflow = 'hidden';
     btnClose.focus();
@@ -203,18 +210,18 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
   function close() {
     lightbox.hidden = true;
     document.body.style.overflow = '';
-    items[current].closest('.gallery__item').focus();
   }
 
   function prev() { open(current - 1); }
   function next() { open(current + 1); }
 
-  // Attach click to each gallery item
-  items.forEach((img, idx) => {
-    const item = img.closest('.gallery__item');
-    item.setAttribute('tabindex', '0');
+  // Attach click to all items (originals + duplicates share data-idx)
+  carousel.querySelectorAll('.gallery__item').forEach(item => {
+    const idx = parseInt(item.dataset.idx, 10);
+    const isDupe = item.getAttribute('aria-hidden') === 'true';
+    item.setAttribute('tabindex', isDupe ? '-1' : '0');
     item.setAttribute('role', 'button');
-    item.setAttribute('aria-label', `View photo ${idx + 1}`);
+    if (!isDupe) item.setAttribute('aria-label', `View photo ${idx + 1}`);
     item.addEventListener('click', () => open(idx));
     item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(idx); } });
   });
@@ -223,18 +230,15 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
   btnPrev.addEventListener('click', prev);
   btnNext.addEventListener('click', next);
 
-  // Click backdrop to close
   lightbox.addEventListener('click', e => { if (e.target === lightbox) close(); });
 
-  // Keyboard navigation
   document.addEventListener('keydown', e => {
     if (lightbox.hidden) return;
-    if (e.key === 'Escape')      close();
-    if (e.key === 'ArrowLeft')   prev();
-    if (e.key === 'ArrowRight')  next();
+    if (e.key === 'Escape')     close();
+    if (e.key === 'ArrowLeft')  prev();
+    if (e.key === 'ArrowRight') next();
   });
 
-  // Touch swipe support
   let touchStartX = 0;
   lightbox.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
   lightbox.addEventListener('touchend',   e => {
