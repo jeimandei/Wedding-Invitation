@@ -41,4 +41,11 @@ COPY images/     /usr/share/nginx/html/images/
 COPY audio/      /usr/share/nginx/html/audio/
 COPY fonts/      /usr/share/nginx/html/fonts/
 
+# Generate image manifest from actual files (excludes assets/)
+RUN cd /usr/share/nginx/html && \
+    find images/groombride images/solo -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | \
+    sort | \
+    awk 'BEGIN{printf "["} NR>1{printf ","} {printf "\"%s\"", $0} END{printf "]"}' \
+    > images/manifest.json
+
 EXPOSE 9000

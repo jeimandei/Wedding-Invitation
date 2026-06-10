@@ -217,42 +217,34 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 
 
 /* ─── GALLERY LIGHTBOX ─── */
-(function initLightbox() {
-  const carousel = document.getElementById('galleryCarousel');
+function setupLightbox(carousel, images) {
   const lightbox = document.getElementById('lightbox');
   const lbImg    = document.getElementById('lightboxImg');
   const btnClose = lightbox.querySelector('.lightbox__close');
   const btnPrev  = lightbox.querySelector('.lightbox__prev');
   const btnNext  = lightbox.querySelector('.lightbox__next');
 
-  // Build ordered image list from unique data-idx values (first occurrence only)
-  const total = 20;
-  const imgs = new Array(total);
-  carousel.querySelectorAll('.gallery__item[data-idx]').forEach(item => {
-    const idx = parseInt(item.dataset.idx, 10);
-    if (!imgs[idx]) imgs[idx] = item.querySelector('img');
-  });
-
   let current = 0;
 
   function open(idx) {
-    current = ((idx % total) + total) % total;
-    lbImg.src = imgs[current].src;
-    lbImg.alt = imgs[current].alt || 'Jei and Angie';
+    current = ((idx % images.length) + images.length) % images.length;
+    lbImg.src = images[current];
+    lbImg.alt = 'Jei and Angie';
     lightbox.hidden = false;
+    lightbox.dataset.mode = 'gallery';
     document.body.style.overflow = 'hidden';
     btnClose.focus();
   }
 
   function close() {
     lightbox.hidden = true;
+    delete lightbox.dataset.mode;
     document.body.style.overflow = '';
   }
 
   function prev() { open(current - 1); }
   function next() { open(current + 1); }
 
-  // Attach click to all items (originals + duplicates share data-idx)
   carousel.querySelectorAll('.gallery__item').forEach(item => {
     const idx = parseInt(item.dataset.idx, 10);
     const isDupe = item.getAttribute('aria-hidden') === 'true';
@@ -263,14 +255,14 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
     item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(idx); } });
   });
 
-  btnClose.addEventListener('click', close);
-  btnPrev.addEventListener('click', prev);
-  btnNext.addEventListener('click', next);
+  btnClose.addEventListener('click', () => { if (lightbox.dataset.mode === 'gallery') close(); });
+  btnPrev.addEventListener('click',  () => { if (lightbox.dataset.mode === 'gallery') prev(); });
+  btnNext.addEventListener('click',  () => { if (lightbox.dataset.mode === 'gallery') next(); });
 
-  lightbox.addEventListener('click', e => { if (e.target === lightbox) close(); });
+  lightbox.addEventListener('click', e => { if (e.target === lightbox && lightbox.dataset.mode === 'gallery') close(); });
 
   document.addEventListener('keydown', e => {
-    if (lightbox.hidden) return;
+    if (lightbox.hidden || lightbox.dataset.mode !== 'gallery') return;
     if (e.key === 'Escape')     close();
     if (e.key === 'ArrowLeft')  prev();
     if (e.key === 'ArrowRight') next();
@@ -278,10 +270,49 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 
   let touchStartX = 0;
   lightbox.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  lightbox.addEventListener('touchend',   e => {
+  lightbox.addEventListener('touchend', e => {
+    if (lightbox.dataset.mode !== 'gallery') return;
     const dx = e.changedTouches[0].clientX - touchStartX;
     if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
   });
+}
+
+(function initGallery() {
+  const track1   = document.getElementById('galleryTrack1');
+  const track2   = document.getElementById('galleryTrack2');
+  const carousel = document.getElementById('galleryCarousel');
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function buildTrack(trackEl, items, startIdx) {
+    const html = [];
+    items.forEach((src, i) => {
+      const idx = startIdx + i;
+      html.push(`<div class="gallery__item" data-idx="${idx}"><img src="${src}" alt="Jei and Angie" loading="lazy" /></div>`);
+    });
+    items.forEach((src, i) => {
+      const idx = startIdx + i;
+      html.push(`<div class="gallery__item" data-idx="${idx}" aria-hidden="true"><img src="${src}" alt="" loading="lazy" /></div>`);
+    });
+    trackEl.innerHTML = html.join('');
+  }
+
+  fetch('images/manifest.json')
+    .then(r => r.json())
+    .then(all => {
+      const images = shuffle(all.slice());
+      const half   = Math.ceil(images.length / 2);
+      buildTrack(track1, images.slice(0, half), 0);
+      buildTrack(track2, images.slice(half),    half);
+      setupLightbox(carousel, images);
+    })
+    .catch(() => {});
 })();
 
 
