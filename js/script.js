@@ -380,16 +380,20 @@ function setupLightbox(carousel, images) {
     });
     success.hidden = false;
 
-    // After a short pause, scroll to the wishes section then refresh it
+    if (typeof window.__loadWishes === 'function') window.__loadWishes();
+
+    // After a short pause, scroll to the wishes section
     setTimeout(function () {
       const wishes = document.getElementById('wishes');
       if (!wishes) return;
       const top = wishes.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top, behavior: 'smooth' });
     }, 1800);
+
+    // Refresh again once Apps Script has had time to write the row
     setTimeout(function () {
       if (typeof window.__loadWishes === 'function') window.__loadWishes();
-    }, 5000);
+    }, 3000);
   });
 })();
 
