@@ -380,13 +380,16 @@ function setupLightbox(carousel, images) {
     });
     success.hidden = false;
 
-    // After a short pause, scroll to the wishes section
+    // After a short pause, scroll to the wishes section then refresh it
     setTimeout(function () {
       const wishes = document.getElementById('wishes');
       if (!wishes) return;
       const top = wishes.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top, behavior: 'smooth' });
     }, 1800);
+    setTimeout(function () {
+      if (typeof window.__loadWishes === 'function') window.__loadWishes();
+    }, 5000);
   });
 })();
 
@@ -440,44 +443,49 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-  fetch(url)
-    .then(r => r.text())
-    .then(text => {
-      const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?\s*$/);
-      if (!match) throw new Error('parse error');
+  function loadWishes() {
+    fetch(url + '&_=' + Date.now())
+      .then(r => r.text())
+      .then(text => {
+        const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?\s*$/);
+        if (!match) throw new Error('parse error');
 
-      const json = JSON.parse(match[1]);
-      const rows = json.table?.rows || [];
+        const json = JSON.parse(match[1]);
+        const rows = json.table?.rows || [];
 
-      const wishes = rows
-        .map(row => ({
-          name:    row.c?.[1]?.v || '',
-          message: row.c?.[4]?.v || ''
-        }))
-        .filter(w => w.name && w.message);
+        const wishes = rows
+          .map(row => ({
+            name:    row.c?.[1]?.v || '',
+            message: row.c?.[4]?.v || ''
+          }))
+          .filter(w => w.name && w.message);
 
-      if (!wishes.length) {
-        track.innerHTML = '<p class="wishes__empty">Be the first to leave a message!</p>';
-        return;
-      }
+        if (!wishes.length) {
+          track.innerHTML = '<p class="wishes__empty">Be the first to leave a message!</p>';
+          return;
+        }
 
-      track.innerHTML = wishes.map(w => `
-        <div class="wish-card" role="button" tabindex="0"
-             data-name="${esc(w.name)}" data-message="${esc(w.message)}"
-             aria-label="Read wish from ${esc(w.name)}">
-          <p class="wish-card__name">${esc(w.name)}</p>
-          <p class="wish-card__message">"${esc(w.message)}"</p>
-        </div>
-      `).join('');
+        track.innerHTML = wishes.map(w => `
+          <div class="wish-card" role="button" tabindex="0"
+               data-name="${esc(w.name)}" data-message="${esc(w.message)}"
+               aria-label="Read wish from ${esc(w.name)}">
+            <p class="wish-card__name">${esc(w.name)}</p>
+            <p class="wish-card__message">"${esc(w.message)}"</p>
+          </div>
+        `).join('');
 
-      track.querySelectorAll('.wish-card').forEach(card => {
-        card.addEventListener('click', () => openWish(card.dataset.name, card.dataset.message));
-        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWish(card.dataset.name, card.dataset.message); } });
+        track.querySelectorAll('.wish-card').forEach(card => {
+          card.addEventListener('click', () => openWish(card.dataset.name, card.dataset.message));
+          card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWish(card.dataset.name, card.dataset.message); } });
+        });
+      })
+      .catch(() => {
+        track.innerHTML = '<p class="wishes__empty">Messages coming soon…</p>';
       });
-    })
-    .catch(() => {
-      track.innerHTML = '<p class="wishes__empty">Messages coming soon…</p>';
-    });
+  }
+
+  window.__loadWishes = loadWishes;
+  loadWishes();
 })();
 
 
