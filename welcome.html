@@ -328,13 +328,20 @@
     /* ── QR SCANNER ── */
     function startScanner() {
       scanner = new Html5Qrcode('qrReader');
-      /* { ideal: 'environment' } prefers back camera but succeeds with any camera */
       scanner.start(
-        { facingMode: { ideal: 'environment' } },
+        { facingMode: 'environment' },
         { fps: 10, qrbox: { width: 220, height: 220 } },
         onScanSuccess,
         () => {}
-      ).catch(() => {});
+      ).catch(() => {
+        scanner = new Html5Qrcode('qrReader');
+        scanner.start(
+          { facingMode: 'user' },
+          { fps: 10, qrbox: { width: 220, height: 220 } },
+          onScanSuccess,
+          () => {}
+        ).catch(() => {});
+      });
     }
 
     function onScanSuccess(text) {
