@@ -100,20 +100,6 @@ function handleRsvp(data) {
     data.message    || ''
   ]);
 
-  /* Auto-add attending guests to Guests sheet if not already there */
-  if (data.attendance === 'yes' && data.guestName) {
-    var gSheet = ss.getSheetByName('Guests');
-    if (gSheet) {
-      var id      = hashName(String(data.guestName).trim());
-      var allIds  = gSheet.getLastRow() > 1
-        ? gSheet.getRange(2, 1, gSheet.getLastRow() - 1, 1).getValues().map(function(r){ return r[0]; })
-        : [];
-      if (allIds.indexOf(id) === -1) {
-        gSheet.appendRow([id, data.guestName, '', '', data.guests || 1]);
-      }
-    }
-  }
-
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);
