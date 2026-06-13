@@ -311,7 +311,7 @@
       <p class="hdr-title">Guestbook</p>
       <div class="hdr-meta">
         <div>Last updated: <strong id="lastUpdated">—</strong></div>
-        <div style="margin-top:0.2rem">Auto-refresh every 4s</div>
+        <div style="margin-top:0.2rem">Auto-refresh every 5s</div>
       </div>
     </header>
 
@@ -515,7 +515,7 @@
 
     function startDashboard() {
       loadData();
-      setInterval(loadData, 4000);
+      setInterval(loadData, 5000);
     }
 
     document.getElementById('refreshBtn').addEventListener('click', loadData);
