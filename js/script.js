@@ -356,6 +356,7 @@ function setupLightbox(carousel, images) {
     if (qrSection && qrCanvas) {
       qrSection.hidden = false;
       document.getElementById('qrGuestName').textContent = name;
+      qrCanvas.innerHTML = '';
       buildQR(qrCanvas, qrUrl, 200);
       document.getElementById('qrSave').addEventListener('click', () =>
         saveQR(qrCanvas, `entrance-pass-${name.replace(/\s+/g, '-')}.png`)
@@ -463,10 +464,10 @@ function setupLightbox(carousel, images) {
       qrCard.hidden = false;
       const { buildQR, saveQR, url } = window.__guestQR;
       const canvas = document.getElementById('rsvpQrCanvas');
+      canvas.innerHTML = '';
       buildQR(canvas, url, 180);
-      document.getElementById('rsvpQrSave').addEventListener('click', () =>
-        saveQR(canvas, `entrance-pass-${guestName.replace(/\s+/g, '-')}.png`)
-      );
+      document.getElementById('rsvpQrSave').onclick =
+        () => saveQR(canvas, `entrance-pass-${guestName.replace(/\s+/g, '-')}.png`);
     }
 
     success.hidden = false;
