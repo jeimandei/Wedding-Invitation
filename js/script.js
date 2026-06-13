@@ -316,6 +316,74 @@ function setupLightbox(carousel, images) {
 })();
 
 
+/* ─── QR PASS ─── */
+(function initQR() {
+  const SALT = 'ShadowRubyAsh120122';
+  const name = new URLSearchParams(window.location.search).get('to');
+  if (!name) return;
+
+  async function guestId(n) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(n + SALT));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+  }
+
+  function buildQR(el, url, size) {
+    return new QRCode(el, {
+      text: url,
+      width: size,
+      height: size,
+      colorDark: '#3D2B1F',
+      colorLight: '#FDF6EE',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  function saveQR(wrapEl, filename) {
+    const el = wrapEl.querySelector('canvas') || wrapEl.querySelector('img');
+    if (!el) return;
+    const a = document.createElement('a');
+    a.download = filename;
+    a.href = el.tagName === 'CANVAS' ? el.toDataURL('image/png') : el.src;
+    a.click();
+  }
+
+  guestId(name).then(id => {
+    const qrUrl = `${location.origin}/welcome.html?id=${id}`;
+
+    // Standalone QR section (always visible from invite link)
+    const qrSection = document.getElementById('qr');
+    const qrCanvas  = document.getElementById('qrCanvas');
+    if (qrSection && qrCanvas) {
+      qrSection.hidden = false;
+      document.getElementById('qrGuestName').textContent = name;
+      buildQR(qrCanvas, qrUrl, 200);
+      document.getElementById('qrSave').addEventListener('click', () =>
+        saveQR(qrCanvas, `entrance-pass-${name.replace(/\s+/g, '-')}.png`)
+      );
+    }
+
+    window.__guestQR = { name, url: qrUrl, saveQR, buildQR };
+  });
+})();
+
+
+/* ─── GIFT MODAL ─── */
+(function initGiftModal() {
+  const btn      = document.getElementById('giftBtn');
+  const modal    = document.getElementById('giftModal');
+  const closeBtn = document.getElementById('giftModalClose');
+  const backdrop = modal.querySelector('.gift-modal__backdrop');
+
+  function open()  { modal.hidden = false; document.body.style.overflow = 'hidden'; closeBtn.focus(); }
+  function close() { modal.hidden = true;  document.body.style.overflow = ''; }
+
+  btn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
+})();
+
+
 /* ─── RSVP FORM ─── */
 (function initRsvpForm() {
   const form      = document.getElementById('rsvpForm');
@@ -378,6 +446,29 @@ function setupLightbox(carousel, images) {
     form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
       el.style.display = 'none';
     });
+
+    // Attendance-aware success message
+    const isAttending = data.attendance === 'yes';
+    const guestName   = data.guestName || '';
+    document.getElementById('rsvpSuccessTitle').textContent = isAttending
+      ? `You're on the list, ${guestName}!`
+      : `We'll miss you, ${guestName}!`;
+    document.getElementById('rsvpSuccessSub').textContent = isAttending
+      ? "We can't wait to celebrate with you."
+      : 'Thank you for letting us know.';
+
+    // Show entrance QR for attending guests
+    const qrCard = document.getElementById('rsvpQrCard');
+    if (isAttending && qrCard && window.__guestQR) {
+      qrCard.hidden = false;
+      const { buildQR, saveQR, url } = window.__guestQR;
+      const canvas = document.getElementById('rsvpQrCanvas');
+      buildQR(canvas, url, 180);
+      document.getElementById('rsvpQrSave').addEventListener('click', () =>
+        saveQR(canvas, `entrance-pass-${guestName.replace(/\s+/g, '-')}.png`)
+      );
+    }
+
     success.hidden = false;
 
     if (typeof window.__loadWishes === 'function') window.__loadWishes();

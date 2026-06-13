@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -363,15 +364,49 @@
         <div class="rsvp__success" id="rsvpSuccess" role="status" aria-live="polite" hidden>
           <div class="rsvp__success-inner">
             <img src="images/assets/rings-icon-nobg.webp" alt="" aria-hidden="true" />
-            <h3>Thank You!</h3>
-            <p>Your RSVP has been received. We can't wait to celebrate with you.</p>
+            <h3 id="rsvpSuccessTitle">Thank You!</h3>
+            <p id="rsvpSuccessSub">Your RSVP has been received.</p>
             <p class="rsvp__success-names">— Jei &amp; Angie</p>
           </div>
+
+          <!-- Entrance QR card (attending only) -->
+          <div class="rsvp-qr-card" id="rsvpQrCard" hidden>
+            <p class="rsvp-qr-card__label">Your Entrance Pass</p>
+            <div class="rsvp-qr-card__code" id="rsvpQrCanvas"></div>
+            <button class="rsvp-qr-card__save" id="rsvpQrSave">Save to Phone</button>
+          </div>
+
+          <!-- Subtle gift button (all guests) -->
+          <button class="gift-btn" id="giftBtn">&#128157; Send a gift</button>
         </div>
 
       </form>
     </div>
 
+  </section>
+
+  <!-- ════════════════════════════════
+       QR ENTRANCE PASS
+  ════════════════════════════════ -->
+  <section class="qr-section" id="qr" hidden>
+    <div class="container">
+      <div class="section-header fade-in">
+        <p class="section-label">Your Invitation</p>
+        <h2 class="section-title">Your Entrance Pass</h2>
+        <p class="qr-section__sub fade-in">Present this at the entrance on your wedding day</p>
+      </div>
+      <div class="qr-card fade-in">
+        <div class="qr-card__inner">
+          <p class="qr-card__couple">Jei <span>&amp;</span> Angie</p>
+          <div class="qr-card__sep"></div>
+          <div class="qr-card__code" id="qrCanvas"></div>
+          <p class="qr-card__name" id="qrGuestName"></p>
+          <div class="qr-card__sep"></div>
+          <p class="qr-card__date">26 &middot; 07 &middot; 2026</p>
+          <button class="qr-card__save" id="qrSave">Save to Phone</button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ════════════════════════════════
@@ -415,6 +450,21 @@
       <p class="footer__credit">Made with love &hearts; by jeimandei</p>
     </div>
   </footer>
+
+  <!-- ════════════════════════════════
+       GIFT / QRIS MODAL
+  ════════════════════════════════ -->
+  <div class="gift-modal" id="giftModal" hidden role="dialog" aria-modal="true" aria-labelledby="giftModalTitle">
+    <div class="gift-modal__backdrop"></div>
+    <div class="gift-modal__card">
+      <button class="gift-modal__close" id="giftModalClose" aria-label="Close">&times;</button>
+      <h3 class="gift-modal__title" id="giftModalTitle">Thank you for your generosity</h3>
+      <p class="gift-modal__sub">Scan with any m-banking or e-wallet app</p>
+      <img class="gift-modal__qris" src="images/assets/qris.png" alt="QRIS Payment Code" />
+      <p class="gift-modal__name">Jei <span>&amp;</span> Angie</p>
+      <p class="gift-modal__apps">GoPay &middot; OVO &middot; Dana &middot; ShopeePay<br>BCA &middot; BRI &middot; BNI &middot; Mandiri</p>
+    </div>
+  </div>
 
   <!-- ════════════════════════════════
        LIGHTBOX

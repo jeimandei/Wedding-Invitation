@@ -1756,6 +1756,269 @@ textarea { resize: vertical; min-height: 90px; }
 
 
 /* ════════════════════════════════════════════
+   QR ENTRANCE PASS SECTION
+════════════════════════════════════════════ */
+.qr-section {
+  padding: var(--section-pad, 5rem) 0;
+  background: var(--warm-white);
+}
+
+.qr-section__sub {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.qr-card {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.qr-card__inner {
+  background: #FDF6EE;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 2rem 2.5rem 1.75rem;
+  text-align: center;
+  max-width: 300px;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+}
+
+.qr-card__couple {
+  font-family: var(--font-script);
+  font-size: 1.8rem;
+  color: var(--gold);
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.qr-card__couple span {
+  font-family: var(--font-head);
+  font-size: 0.55em;
+  vertical-align: middle;
+  color: var(--gold-light);
+}
+
+.qr-card__sep {
+  width: 48px;
+  height: 1px;
+  background: var(--gold);
+  margin: 1rem auto;
+  opacity: 0.4;
+}
+
+.qr-card__code {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.qr-card__code canvas,
+.qr-card__code img { border-radius: 6px; }
+
+.qr-card__name {
+  font-family: var(--font-head);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text-dark);
+  margin: 0.6rem 0 0.2rem;
+}
+
+.qr-card__date {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--text-light);
+  margin-bottom: 1.25rem;
+}
+
+.qr-card__save {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-full);
+  padding: 0.45rem 1.25rem;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.qr-card__save:hover {
+  background: var(--gold);
+  color: #fff;
+}
+
+/* ─── RSVP SUCCESS QR CARD ─── */
+.rsvp-qr-card {
+  margin: 1.75rem auto 0;
+  background: #FDF6EE;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 1.5rem 1.25rem;
+  text-align: center;
+  max-width: 260px;
+}
+
+.rsvp-qr-card__label {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.rsvp-qr-card__code {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.rsvp-qr-card__code canvas,
+.rsvp-qr-card__code img { border-radius: 6px; }
+
+.rsvp-qr-card__save {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 1.1rem;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.rsvp-qr-card__save:hover {
+  background: var(--gold);
+  color: #fff;
+}
+
+/* ─── GIFT BUTTON ─── */
+.gift-btn {
+  display: inline-block;
+  margin-top: 1.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+  transition: opacity 0.3s, color 0.3s;
+  padding: 0.2rem 0;
+  text-decoration: none;
+}
+
+.gift-btn:hover {
+  opacity: 1;
+  color: var(--gold);
+}
+
+/* ─── GIFT / QRIS MODAL ─── */
+.gift-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-modal[hidden] { display: none; }
+
+.gift-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 12, 10, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.gift-modal__card {
+  position: relative;
+  z-index: 1;
+  background: #FDF6EE;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 2rem 2rem 1.75rem;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  animation: wishModalIn 0.3s ease;
+}
+
+.gift-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.9rem;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+  transition: color 0.2s;
+}
+
+.gift-modal__close:hover { color: var(--text-dark); }
+
+.gift-modal__title {
+  font-family: var(--font-script);
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  font-weight: 400;
+  margin-bottom: 0.3rem;
+}
+
+.gift-modal__sub {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-light);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.25rem;
+}
+
+.gift-modal__qris {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.gift-modal__name {
+  font-family: var(--font-script);
+  font-size: 1.4rem;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.gift-modal__name span {
+  font-family: var(--font-head);
+  font-size: 0.55em;
+  vertical-align: middle;
+  color: var(--gold-light);
+}
+
+.gift-modal__apps {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  color: var(--text-light);
+  letter-spacing: 0.05em;
+  line-height: 1.9;
+}
+
+/* ════════════════════════════════════════════
    RESPONSIVE — TABLET (≤ 900px)
 ════════════════════════════════════════════ */
 @media (max-width: 900px) {
