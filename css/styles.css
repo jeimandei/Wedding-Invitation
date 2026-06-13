@@ -1905,23 +1905,25 @@ textarea { resize: vertical; min-height: 90px; }
 .gift-btn {
   display: inline-block;
   margin-top: 1.75rem;
-  background: none;
-  border: none;
+  background: transparent;
+  border: 1.5px solid var(--gold);
+  border-radius: 99px;
   cursor: pointer;
-  font-family: var(--font-head);
-  font-style: italic;
-  font-size: 0.9rem;
-  color: var(--text-light);
-  letter-spacing: 0.04em;
-  opacity: 0.65;
-  transition: opacity 0.3s, color 0.3s;
-  padding: 0.2rem 0;
+  font-family: 'Montserrat', sans-serif;
+  font-style: normal;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.75rem 2rem;
   text-decoration: none;
+  transition: background 0.25s, color 0.25s;
 }
 
 .gift-btn:hover {
-  opacity: 1;
-  color: var(--gold);
+  background: var(--gold);
+  color: #fff;
 }
 
 /* ─── GIFT / QRIS MODAL ─── */
