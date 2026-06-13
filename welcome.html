@@ -141,9 +141,9 @@
       height: 100% !important;
       object-fit: cover;
     }
-    /* hide html5-qrcode default overlay elements */
-    #qrReader img,
-    #qrReader div[style*="border"] { display: none !important; }
+    /* strip html5-qrcode default border/overlay but keep the video container visible */
+    #qrReader img { display: none !important; }
+    #qrReader div[style*="border"] { border: none !important; box-shadow: none !important; }
 
     .corner {
       position: absolute;
@@ -328,20 +328,13 @@
     /* ── QR SCANNER ── */
     function startScanner() {
       scanner = new Html5Qrcode('qrReader');
+      /* { ideal: 'environment' } prefers back camera but succeeds with any camera */
       scanner.start(
-        { facingMode: 'environment' },
+        { facingMode: { ideal: 'environment' } },
         { fps: 10, qrbox: { width: 220, height: 220 } },
         onScanSuccess,
         () => {}
-      ).catch(() => {
-        /* fallback to any camera if environment not available */
-        scanner.start(
-          { facingMode: 'user' },
-          { fps: 10, qrbox: { width: 220, height: 220 } },
-          onScanSuccess,
-          () => {}
-        );
-      });
+      ).catch(() => {});
     }
 
     function onScanSuccess(text) {
