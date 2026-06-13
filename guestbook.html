@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guestbook — Jei &amp; Angie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:    #C9A96E;
+      --gold-l:  #E8D5B0;
+      --cream:   #FDF6EE;
+      --ivory:   #F5EEE6;
+      --dark:    #3A2E2A;
+      --mid:     #6B5B52;
+      --light:   #A0877C;
+      --green:   #5C8A5C;
+      --radius:  10px;
+      --shadow:  0 4px 20px rgba(58,46,42,0.1);
+    }
+
+    body {
+      background: var(--ivory);
+      color: var(--dark);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── PIN GATE ── */
+    #pinGate {
+      position: fixed; inset: 0;
+      background: var(--ivory);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+    }
+    #pinGate[hidden] { display: none; }
+
+    .pin-box {
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: 16px;
+      padding: 2.5rem 2.5rem 2rem;
+      text-align: center;
+      max-width: 320px;
+      width: 90%;
+      box-shadow: var(--shadow);
+    }
+    .pin-couple {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2rem;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+    .pin-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--light);
+      margin-bottom: 1.5rem;
+    }
+    .pin-input {
+      display: block; width: 100%;
+      padding: 0.7rem 1rem;
+      background: var(--ivory);
+      border: 1px solid var(--gold-l);
+      border-radius: 8px;
+      color: var(--dark);
+      font-size: 1.4rem;
+      text-align: center;
+      letter-spacing: 0.3em;
+      outline: none;
+      margin-bottom: 1rem;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .pin-input:focus { border-color: var(--gold); }
+    .pin-submit {
+      width: 100%;
+      padding: 0.65rem;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .pin-error {
+      margin-top: 0.75rem;
+      font-size: 0.72rem;
+      color: #c0504a;
+    }
+    .pin-error[hidden] { display: none; }
+
+    /* ── DASHBOARD ── */
+    #dashboard[hidden] { display: none; }
+
+    header {
+      background: var(--cream);
+      border-bottom: 1px solid var(--gold-l);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .hdr-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.9rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hdr-meta {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--light);
+      text-align: right;
+    }
+    .hdr-meta strong { color: var(--mid); }
+
+    main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+    /* stats */
+    .stats {
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .stats-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 500;
+      color: var(--dark);
+      line-height: 1;
+    }
+    .stat-num.gold { color: var(--gold); }
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-top: 0.2rem;
+    }
+    .stat-sep {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.8rem;
+      color: var(--gold-l);
+      flex-shrink: 0;
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--ivory);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+
+    /* search */
+    .search-wrap { margin-bottom: 1rem; position: relative; }
+    .search-input {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.5rem;
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: 99px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      color: var(--dark);
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--gold); }
+    .search-icon {
+      position: absolute; left: 0.9rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem; color: var(--light);
+      pointer-events: none;
+    }
+
+    /* table */
+    .guest-table {
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      padding: 0.7rem 1rem;
+      background: rgba(201,169,110,0.1);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--light);
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid var(--gold-l);
+    }
+    td {
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--dark);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr.arrived { background: rgba(92,138,92,0.04); }
+    tr.new-arrival { animation: highlight 1.5s ease; }
+    @keyframes highlight {
+      0%   { background: rgba(201,169,110,0.18); }
+      100% { background: transparent; }
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+    .status-badge.arrived { color: var(--green); }
+    .status-badge.pending { color: var(--light); }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .arrived .status-dot { background: var(--green); }
+    .pending .status-dot { background: var(--light); opacity: 0.5; }
+
+    .time-text { font-size: 0.72rem; color: var(--mid); }
+    .table-text { color: var(--mid); font-size: 0.78rem; }
+
+    .empty-row td {
+      text-align: center;
+      padding: 3rem;
+      color: var(--light);
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* footer */
+    .refresh-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      color: var(--light);
+    }
+    .refresh-btn {
+      background: none;
+      border: 1px solid var(--gold-l);
+      border-radius: 99px;
+      padding: 0.35rem 0.9rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--mid);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    @media (max-width: 600px) {
+      .col-phone { display: none; }
+      .stat-num  { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PIN GATE -->
+  <div id="pinGate">
+    <div class="pin-box">
+      <p class="pin-couple">Jei &amp; Angie</p>
+      <p class="pin-label">Guestbook — Enter PIN</p>
+      <input class="pin-input" type="password" id="pinInput"
+             maxlength="6" inputmode="numeric" autocomplete="off"
+             placeholder="• • • •" />
+      <button class="pin-submit" id="pinSubmit">Enter</button>
+      <p class="pin-error" id="pinError" hidden>Incorrect PIN.</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" hidden>
+
+    <header>
+      <p class="hdr-title">Guestbook</p>
+      <div class="hdr-meta">
+        <div>Last updated: <strong id="lastUpdated">—</strong></div>
+        <div style="margin-top:0.2rem">Auto-refresh every 4s</div>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-num gold" id="statArrived">0</div>
+            <div class="stat-label">Arrived</div>
+          </div>
+          <div class="stat-sep">/</div>
+          <div class="stat">
+            <div class="stat-num" id="statTotal">0</div>
+            <div class="stat-label">Expected</div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="stat">
+            <div class="stat-num" id="statPct">0%</div>
+            <div class="stat-label">Check-in rate</div>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="search" id="searchInput"
+               placeholder="Search by name or table…" />
+      </div>
+
+      <!-- Guest table -->
+      <div class="guest-table">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Table</th>
+              <th class="col-phone">Pax</th>
+              <th>Status</th>
+              <th>Arrived at</th>
+            </tr>
+          </thead>
+          <tbody id="guestTableBody">
+            <tr class="empty-row"><td colspan="6">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Refresh row -->
+      <div class="refresh-row">
+        <span id="countLabel">—</span>
+        <button class="refresh-btn" id="refreshBtn">↻ Refresh now</button>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
+    const PIN      = '3099';
+
+    /* ── PIN GATE ── */
+    const pinGate   = document.getElementById('pinGate');
+    const dashboard = document.getElementById('dashboard');
+    const pinInput  = document.getElementById('pinInput');
+    const pinError  = document.getElementById('pinError');
+
+    function unlock() {
+      pinGate.hidden  = true;
+      dashboard.hidden = false;
+      startDashboard();
+    }
+
+    function checkPin(val) {
+      if (val.trim() === PIN) {
+        localStorage.setItem('wb_gb_ok', '1');
+        unlock();
+      } else {
+        pinError.hidden = false;
+        pinInput.value = '';
+        pinInput.focus();
+      }
+    }
+
+    document.getElementById('pinSubmit').addEventListener('click', () => checkPin(pinInput.value));
+    pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') checkPin(pinInput.value); });
+
+    if (localStorage.getItem('wb_gb_ok') === '1') unlock();
+
+    /* ── DATA ── */
+    let allGuests = [];
+    let scansMap  = {};   // guest_id → { time }
+    let knownArrivals = new Set();
+
+    function gvizUrl(sheet) {
+      return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}&_=${Date.now()}`;
+    }
+
+    function parseGviz(text) {
+      const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if (!match) return [];
+      return JSON.parse(match[1]).table?.rows || [];
+    }
+
+    function loadData() {
+      Promise.all([
+        fetch(gvizUrl('Guests')).then(r => r.text()),
+        fetch(gvizUrl('Scans')).then(r => r.text())
+      ]).then(([gText, sText]) => {
+        const gRows = parseGviz(gText);
+        const sRows = parseGviz(sText);
+
+        /* Build scans map: guest_id → first scan time */
+        scansMap = {};
+        sRows.forEach(row => {
+          const id   = row.c?.[1]?.v;
+          const time = row.c?.[0]?.v;
+          if (id && !scansMap[id]) scansMap[id] = { time };
+        });
+
+        /* Build guest list */
+        allGuests = gRows
+          .filter(row => row.c?.[1]?.v)
+          .map((row, i) => ({
+            idx:   i + 1,
+            id:    row.c?.[0]?.v || '',
+            name:  row.c?.[1]?.v || '',
+            table: row.c?.[2]?.v || '—',
+            pax:   row.c?.[4]?.v || 1
+          }));
+
+        updateUI();
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('id-ID');
+      }).catch(() => {});
+    }
+
+    function updateUI() {
+      const search  = document.getElementById('searchInput').value.toLowerCase();
+      const arrived = allGuests.filter(g => scansMap[g.id]);
+      const total   = allGuests.length;
+      const pct     = total ? Math.round(arrived.length / total * 100) : 0;
+
+      document.getElementById('statArrived').textContent  = arrived.length;
+      document.getElementById('statTotal').textContent    = total;
+      document.getElementById('statPct').textContent      = pct + '%';
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('countLabel').textContent   = `${arrived.length} of ${total} checked in`;
+
+      const filtered = allGuests.filter(g =>
+        !search || g.name.toLowerCase().includes(search) || g.table.toLowerCase().includes(search)
+      );
+
+      /* Sort: arrived first (by time desc), then pending (by name) */
+      filtered.sort((a, b) => {
+        const aA = !!scansMap[a.id], bA = !!scansMap[b.id];
+        if (aA !== bA) return bA - aA;
+        if (aA) return (scansMap[b.id]?.time || '').localeCompare(scansMap[a.id]?.time || '');
+        return a.name.localeCompare(b.name);
+      });
+
+      const tbody = document.getElementById('guestTableBody');
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No guests found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(g => {
+        const scan    = scansMap[g.id];
+        const isNew   = scan && !knownArrivals.has(g.id);
+        const rowCls  = scan ? 'arrived' + (isNew ? ' new-arrival' : '') : '';
+        const badge   = scan
+          ? `<span class="status-badge arrived"><span class="status-dot"></span>Arrived</span>`
+          : `<span class="status-badge pending"><span class="status-dot"></span>Pending</span>`;
+        const time    = scan ? `<span class="time-text">${scan.time}</span>` : '—';
+
+        return `<tr class="${rowCls}">
+          <td style="color:var(--light);font-size:.7rem">${g.idx}</td>
+          <td><strong>${esc(g.name)}</strong></td>
+          <td class="table-text">${esc(g.table)}</td>
+          <td class="col-phone table-text">${g.pax}</td>
+          <td>${badge}</td>
+          <td>${time}</td>
+        </tr>`;
+      }).join('');
+
+      /* Update known arrivals */
+      arrived.forEach(g => knownArrivals.add(g.id));
+    }
+
+    function esc(str) {
+      const d = document.createElement('div');
+      d.appendChild(document.createTextNode(String(str)));
+      return d.innerHTML;
+    }
+
+    function startDashboard() {
+      loadData();
+      setInterval(loadData, 4000);
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+    document.getElementById('searchInput').addEventListener('input', updateUI);
+  </script>
+</body>
+</html>
