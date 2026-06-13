@@ -205,6 +205,23 @@
       letter-spacing: 0.1em;
       color: #A0877C;
     }
+    .welcome-next {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.55rem 1.4rem;
+      border: 1px solid var(--gold);
+      border-radius: 99px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      cursor: pointer;
+      background: transparent;
+      transition: background 0.2s, color 0.2s;
+    }
+    .welcome-next:hover { background: var(--gold); color: #fff; }
 
     /* ── ERROR OVERLAY ── */
     #errorOverlay {
@@ -270,6 +287,7 @@
       <div class="welcome-sep"></div>
       <p class="welcome-table" id="welcomeTable"></p>
       <p class="welcome-sub">Jei &amp; Angie are so happy to have you here</p>
+      <button class="welcome-next" id="welcomeNext">Next Guest →</button>
     </div>
   </div>
 
@@ -380,15 +398,22 @@
     }
 
     /* ── WELCOME ANIMATION ── */
+    let welcomeTimer = null;
+
+    function dismissWelcome() {
+      if (welcomeTimer) { clearTimeout(welcomeTimer); welcomeTimer = null; }
+      welcomeOverlay.hidden = true;
+      scanner.resume();
+      scanning = true;
+    }
+
+    document.getElementById('welcomeNext').addEventListener('click', dismissWelcome);
+
     function showWelcome(name, table) {
       document.getElementById('welcomeName').textContent  = name;
       document.getElementById('welcomeTable').textContent = table ? table : '';
       welcomeOverlay.hidden = false;
-      setTimeout(() => {
-        welcomeOverlay.hidden = true;
-        scanner.resume();
-        scanning = true;
-      }, 4000);
+      welcomeTimer = setTimeout(dismissWelcome, 10000);
     }
 
     /* ── ERROR ── */
