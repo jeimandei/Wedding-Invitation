@@ -453,10 +453,10 @@ function setupLightbox(carousel, images) {
     const guestName   = data.guestName || '';
     document.getElementById('rsvpSuccessTitle').textContent = isAttending
       ? `You're on the list, ${guestName}!`
-      : `We'll miss you, ${guestName}!`;
+      : `So sad you can't make it 😢`;
     document.getElementById('rsvpSuccessSub').textContent = isAttending
       ? "We can't wait to celebrate with you."
-      : 'Thank you for letting us know.';
+      : 'We really wished you could be there with us. But thank you for letting us know.';
 
     success.hidden = false;
 
