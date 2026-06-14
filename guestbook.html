@@ -126,13 +126,20 @@
     main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 
     /* stats */
-    .stats {
+    .stats-section {
       background: var(--cream);
       border: 1px solid var(--gold-l);
       border-radius: var(--radius);
       padding: 1.25rem 1.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       box-shadow: var(--shadow);
+    }
+    .stats-section-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 0.9rem;
     }
     .stats-row {
       display: flex;
@@ -317,8 +324,43 @@
 
     <main>
 
-      <!-- Stats -->
-      <div class="stats">
+      <!-- RSVP Stats -->
+      <div class="stats-section">
+        <div class="stats-section-label">RSVP Summary</div>
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-num" id="statInvited">—</div>
+            <div class="stat-label">Invited</div>
+          </div>
+          <div class="stat-sep">·</div>
+          <div class="stat">
+            <div class="stat-num gold" id="statRsvpd">—</div>
+            <div class="stat-label">RSVP'd</div>
+          </div>
+          <div class="stat-sep">·</div>
+          <div class="stat">
+            <div class="stat-num" style="color:var(--green)" id="statAttending">—</div>
+            <div class="stat-label">Attending</div>
+          </div>
+          <div class="stat-sep">·</div>
+          <div class="stat">
+            <div class="stat-num" style="color:#c0504a" id="statDeclined">—</div>
+            <div class="stat-label">Declined</div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="stat">
+            <div class="stat-num" id="statRsvpPct">—</div>
+            <div class="stat-label">Response rate</div>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="rsvpProgressFill" style="width:0%;background:var(--green)"></div>
+        </div>
+      </div>
+
+      <!-- Arrival Stats -->
+      <div class="stats-section">
+        <div class="stats-section-label">Arrivals Today</div>
         <div class="stats-row">
           <div class="stat">
             <div class="stat-num gold" id="statArrived">0</div>
@@ -408,8 +450,9 @@
     if (localStorage.getItem('wb_gb_ok') === '1') unlock();
 
     /* ── DATA ── */
-    let allGuests = [];
-    let scansMap  = {};   // guest_id → { time }
+    let allGuests  = [];
+    let scansMap   = {};   // guest_id → { time }
+    let rsvpStats  = { total: 0, attending: 0, declined: 0 };
     let knownArrivals = new Set();
 
     function gvizUrl(sheet) {
@@ -425,10 +468,12 @@
     function loadData() {
       Promise.all([
         fetch(gvizUrl('Guests')).then(r => r.text()),
-        fetch(gvizUrl('Scans')).then(r => r.text())
-      ]).then(([gText, sText]) => {
+        fetch(gvizUrl('Scans')).then(r => r.text()),
+        fetch(gvizUrl('RSVP')).then(r => r.text())
+      ]).then(([gText, sText, rText]) => {
         const gRows = parseGviz(gText);
         const sRows = parseGviz(sText);
+        const rRows = parseGviz(rText);
 
         /* Build scans map: guest_id → first scan time */
         scansMap = {};
@@ -449,6 +494,20 @@
             pax:   row.c?.[4]?.v || 1
           }));
 
+        /* Build RSVP stats — deduplicate by name (lowercase), keep latest */
+        const rsvpMap = new Map();
+        rRows.forEach(row => {
+          const name       = String(row.c?.[1]?.v || '').trim().toLowerCase();
+          const attendance = String(row.c?.[2]?.v || '').toLowerCase();
+          if (name) rsvpMap.set(name, attendance);
+        });
+        rsvpStats = { total: 0, attending: 0, declined: 0 };
+        rsvpMap.forEach(att => {
+          rsvpStats.total++;
+          if (att === 'yes') rsvpStats.attending++;
+          else if (att === 'no') rsvpStats.declined++;
+        });
+
         updateUI();
         document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('id-ID');
       }).catch(() => {});
@@ -460,6 +519,16 @@
       const total   = allGuests.length;
       const pct     = total ? Math.round(arrived.length / total * 100) : 0;
 
+      /* RSVP stats */
+      const rsvpPct = total ? Math.round(rsvpStats.total / total * 100) : 0;
+      document.getElementById('statInvited').textContent       = total || '—';
+      document.getElementById('statRsvpd').textContent         = rsvpStats.total || '—';
+      document.getElementById('statAttending').textContent     = rsvpStats.attending || '—';
+      document.getElementById('statDeclined').textContent      = rsvpStats.declined || '—';
+      document.getElementById('statRsvpPct').textContent       = total ? rsvpPct + '%' : '—';
+      document.getElementById('rsvpProgressFill').style.width  = rsvpPct + '%';
+
+      /* Arrival stats */
       document.getElementById('statArrived').textContent  = arrived.length;
       document.getElementById('statTotal').textContent    = total;
       document.getElementById('statPct').textContent      = pct + '%';
