@@ -359,7 +359,10 @@
       scanner.pause();
 
       let id;
-      try { id = new URL(text).searchParams.get('id'); } catch (_) { id = text; }
+      try {
+        const u = new URL(text);
+        id = u.searchParams.get('id') || u.searchParams.get('to');
+      } catch (_) { id = text; }
       if (!id) { showError(); return; }
 
       lookupGuest(id);

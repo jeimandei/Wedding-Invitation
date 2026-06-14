@@ -74,13 +74,27 @@ const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
   const guestEl  = document.getElementById('splashGuest');
   const btn      = document.getElementById('splashBtn');
 
-  const name = new URLSearchParams(window.location.search).get('to');
-  if (name) {
-    guestEl.textContent = name;
-    const nameField = document.getElementById('guestName');
-    if (nameField) {
-      nameField.value = name;
-      nameField.readOnly = true;
+  const toParam = new URLSearchParams(window.location.search).get('to');
+  if (toParam) {
+    if (!/^[0-9a-f]{16}$/.test(toParam)) {
+      // Legacy name-based link
+      guestEl.textContent = toParam;
+      const nameField = document.getElementById('guestName');
+      if (nameField) { nameField.value = toParam; nameField.readOnly = true; }
+    } else {
+      // ID-based link — resolve name from Guests sheet
+      fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`)
+        .then(r => r.text())
+        .then(text => {
+          const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+          if (!m) return;
+          const row = (JSON.parse(m[1]).table?.rows || []).find(r => r.c?.[0]?.v === toParam);
+          if (!row) return;
+          const name = String(row.c?.[1]?.v || '').trim();
+          guestEl.textContent = name;
+          const nameField = document.getElementById('guestName');
+          if (nameField) { nameField.value = name; nameField.readOnly = true; }
+        }).catch(() => {});
     }
   }
 
@@ -318,9 +332,11 @@ function setupLightbox(carousel, images) {
 
 /* ─── QR PASS ─── */
 (function initQR() {
-  const SALT = 'ShadowRubyAsh120122';
-  const name = new URLSearchParams(window.location.search).get('to');
-  if (!name) return;
+  const SALT    = 'ShadowRubyAsh120122';
+  const toParam = new URLSearchParams(window.location.search).get('to');
+  if (!toParam) return;
+
+  const isId = /^[0-9a-f]{16}$/.test(toParam);
 
   async function guestId(n) {
     const normalized = n.trim().toLowerCase();
@@ -348,21 +364,7 @@ function setupLightbox(carousel, images) {
     a.click();
   }
 
-  guestId(name).then(async id => {
-    const qrUrl = `${location.origin}/welcome.html?id=${id}`;
-
-    // Verify name is in Guests sheet before revealing QR — fail closed on any error
-    try {
-      const text = await fetch(
-        `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`
-      ).then(r => r.text());
-      const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
-      if (!m) return;
-      const rows = JSON.parse(m[1]).table?.rows || [];
-      const normalized = name.trim().toLowerCase();
-      if (!rows.some(r => String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized)) return;
-    } catch (_) { return; }
-
+  function showQR(name, qrUrl) {
     const qrSection = document.getElementById('qr');
     const qrCanvas  = document.getElementById('qrCanvas');
     if (qrSection && qrCanvas) {
@@ -374,9 +376,39 @@ function setupLightbox(carousel, images) {
         saveQR(qrCanvas, `entrance-pass-${name.replace(/\s+/g, '-')}.png`)
       );
     }
-
     window.__guestQR = { name, url: qrUrl, saveQR, buildQR };
-  });
+  }
+
+  if (isId) {
+    // ID-based link: verify ID in Guests sheet, use current page URL as the unified QR
+    fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`)
+      .then(r => r.text())
+      .then(text => {
+        const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+        if (!m) return;
+        const rows = JSON.parse(m[1]).table?.rows || [];
+        const row  = rows.find(r => r.c?.[0]?.v === toParam);
+        if (!row) return;
+        showQR(String(row.c?.[1]?.v || '').trim(), location.href);
+      })
+      .catch(() => {});
+  } else {
+    // Legacy name-based link: hash the name, verify by name column, QR → welcome.html?id=HASH
+    guestId(toParam).then(async id => {
+      const qrUrl = `${location.origin}/welcome.html?id=${id}`;
+      try {
+        const text = await fetch(
+          `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`
+        ).then(r => r.text());
+        const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+        if (!m) return;
+        const rows       = JSON.parse(m[1]).table?.rows || [];
+        const normalized = toParam.trim().toLowerCase();
+        if (!rows.some(r => String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized)) return;
+      } catch (_) { return; }
+      showQR(toParam, qrUrl);
+    });
+  }
 })();
 
 
