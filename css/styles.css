@@ -1854,6 +1854,10 @@ textarea { resize: vertical; min-height: 90px; }
   color: #fff;
 }
 
+.qr-card__inner .gift-btn {
+  margin-top: 1rem;
+}
+
 /* ─── RSVP SUCCESS QR CARD ─── */
 .rsvp-qr-card {
   margin: 1.75rem auto 0;
