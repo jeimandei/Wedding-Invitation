@@ -42,9 +42,10 @@ const TZ             = 'Asia/Makassar';
 
 /* ─── Hash name → 16-char hex (identical to client-side SHA-256) ─── */
 function hashName(name) {
+  var normalized = String(name).trim().toLowerCase();
   var bytes = Utilities.computeDigest(
     Utilities.DigestAlgorithm.SHA_256,
-    name + SALT,
+    normalized + SALT,
     Utilities.Charset.UTF_8
   );
   return bytes.map(function(b) {

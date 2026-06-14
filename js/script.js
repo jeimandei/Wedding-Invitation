@@ -323,7 +323,8 @@ function setupLightbox(carousel, images) {
   if (!name) return;
 
   async function guestId(n) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(n + SALT));
+    const normalized = n.trim().toLowerCase();
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(normalized + SALT));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
   }
 
