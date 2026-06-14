@@ -478,18 +478,30 @@ function setupLightbox(carousel, images) {
     btn.textContent = 'Checking…';
     btn.disabled = true;
 
-    // Check if already submitted before posting
+    let isListed = false;
+
+    // Check if already submitted and whether guest is on the list (parallel fetches)
     try {
-      const rows = await fetchRsvpRows();
+      const [rsvpRows, guestText] = await Promise.all([
+        fetchRsvpRows(),
+        fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`).then(r => r.text())
+      ]);
       const normalized = String(data.guestName || '').trim().toLowerCase();
-      const match = [...rows].reverse().find(r =>
+
+      const match = [...rsvpRows].reverse().find(r =>
         String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized
       );
       if (match) {
         showAlreadySubmitted(data.guestName, match.c?.[2]?.v || '');
         return;
       }
-    } catch (_) {} // On fetch error: proceed with submission
+
+      const gm = guestText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if (gm) {
+        const guestRows = JSON.parse(gm[1]).table?.rows || [];
+        isListed = guestRows.some(r => String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized);
+      }
+    } catch (_) {} // On error: proceed with submission, treat as unlisted
 
     btn.textContent = 'Sending…';
 
@@ -508,15 +520,19 @@ function setupLightbox(carousel, images) {
       el.style.display = 'none';
     });
 
-    // Attendance-aware success message
     const isAttending = data.attendance === 'yes';
     const guestName   = data.guestName || '';
-    document.getElementById('rsvpSuccessTitle').textContent = isAttending
-      ? `You're on the list, ${guestName}!`
-      : `So sad you can't make it 😢`;
-    document.getElementById('rsvpSuccessSub').textContent = isAttending
-      ? "We can't wait to celebrate with you."
-      : 'We really wished you could be there with us. But thank you for letting us know.';
+    if (!isListed) {
+      document.getElementById('rsvpSuccessTitle').textContent = `Thank you for your wishes, ${guestName}! 🌸`;
+      document.getElementById('rsvpSuccessSub').textContent = 'Your kind words mean the world to us.';
+    } else {
+      document.getElementById('rsvpSuccessTitle').textContent = isAttending
+        ? `You're on the list, ${guestName}!`
+        : `So sad you can't make it 😢`;
+      document.getElementById('rsvpSuccessSub').textContent = isAttending
+        ? "We can't wait to celebrate with you."
+        : 'We really wished you could be there with us. But thank you for letting us know.';
+    }
 
     success.hidden = false;
 
