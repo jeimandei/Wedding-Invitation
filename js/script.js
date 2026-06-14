@@ -462,11 +462,13 @@ function setupLightbox(carousel, images) {
 
     if (typeof window.__loadWishes === 'function') window.__loadWishes();
 
-    // Attending → scroll to the QR entrance pass section after a brief pause
-    // Non-attending → scroll to the wishes section
+    // Attending + QR visible → scroll to entrance pass
+    // Attending + no QR (no ?to= param) → stay on success message
+    // Not attending → scroll to wishes
     setTimeout(function () {
+      const qrSection = document.getElementById('qr');
       const target = isAttending
-        ? document.getElementById('qr')
+        ? (qrSection && !qrSection.hidden ? qrSection : null)
         : document.getElementById('wishes');
       if (!target) return;
       const top = target.getBoundingClientRect().top + window.scrollY - 80;
