@@ -458,29 +458,20 @@ function setupLightbox(carousel, images) {
       ? "We can't wait to celebrate with you."
       : 'Thank you for letting us know.';
 
-    // Show entrance QR for attending guests
-    const qrCard = document.getElementById('rsvpQrCard');
-    if (isAttending && qrCard && window.__guestQR) {
-      qrCard.hidden = false;
-      const { buildQR, saveQR, url } = window.__guestQR;
-      const canvas = document.getElementById('rsvpQrCanvas');
-      canvas.innerHTML = '';
-      buildQR(canvas, url, 180);
-      document.getElementById('rsvpQrSave').onclick =
-        () => saveQR(canvas, `entrance-pass-${guestName.replace(/\s+/g, '-')}.png`);
-    }
-
     success.hidden = false;
 
     if (typeof window.__loadWishes === 'function') window.__loadWishes();
 
-    // After a short pause, scroll to the wishes section
+    // Attending → scroll to the QR entrance pass section after a brief pause
+    // Non-attending → scroll to the wishes section
     setTimeout(function () {
-      const wishes = document.getElementById('wishes');
-      if (!wishes) return;
-      const top = wishes.getBoundingClientRect().top + window.scrollY - 80;
+      const target = isAttending
+        ? document.getElementById('qr')
+        : document.getElementById('wishes');
+      if (!target) return;
+      const top = target.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top, behavior: 'smooth' });
-    }, 1800);
+    }, 1500);
 
     // Refresh again once Apps Script has had time to write the row
     setTimeout(function () {
