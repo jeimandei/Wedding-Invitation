@@ -399,8 +399,8 @@ function setupLightbox(carousel, images) {
 
 /* ─── RSVP FORM ─── */
 (function initRsvpForm() {
-  const form      = document.getElementById('rsvpForm');
-  const success   = document.getElementById('rsvpSuccess');
+  const form       = document.getElementById('rsvpForm');
+  const success    = document.getElementById('rsvpSuccess');
   const attendance = document.getElementById('attendance');
   const guestField = document.getElementById('guestField');
 
@@ -411,7 +411,6 @@ function setupLightbox(carousel, images) {
 
   function validate() {
     let ok = true;
-
     const required = form.querySelectorAll('[required]');
     required.forEach(field => {
       const wrap = field.closest('.form__field');
@@ -425,7 +424,6 @@ function setupLightbox(carousel, images) {
         if (err) err.textContent = '';
       }
     });
-
     return ok;
   }
 
@@ -436,14 +434,64 @@ function setupLightbox(carousel, images) {
     });
   });
 
+  async function fetchRsvpRows() {
+    const text = await fetch(
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=RSVP&_=${Date.now()}`
+    ).then(r => r.text());
+    const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+    if (!m) return [];
+    return JSON.parse(m[1]).table?.rows || [];
+  }
+
+  function showAlreadySubmitted(name, prevAttendance) {
+    form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
+      el.style.display = 'none';
+    });
+    const isAttending = String(prevAttendance).toLowerCase() === 'yes';
+    document.getElementById('rsvpSuccessTitle').textContent =
+      `You've already RSVP'd, ${name}!`;
+    document.getElementById('rsvpSuccessSub').textContent = isAttending
+      ? "We already have you down as attending. See you at the wedding!"
+      : "We already have your regrets on record. Thank you for letting us know.";
+    success.hidden = false;
+  }
+
+  // If name is pre-filled from ?to= param, check for prior submission on load
+  const nameField = document.getElementById('guestName');
+  if (nameField && nameField.readOnly && nameField.value.trim()) {
+    const prefilledName = nameField.value.trim();
+    fetchRsvpRows().then(rows => {
+      const normalized = prefilledName.toLowerCase();
+      const match = [...rows].reverse().find(r =>
+        String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized
+      );
+      if (match) showAlreadySubmitted(prefilledName, match.c?.[2]?.v || '');
+    }).catch(() => {});
+  }
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
     if (!validate()) return;
 
     const data = Object.fromEntries(new FormData(form));
-    const btn = form.querySelector('button[type="submit"]');
-    btn.textContent = 'Sending…';
+    const btn  = form.querySelector('button[type="submit"]');
+    btn.textContent = 'Checking…';
     btn.disabled = true;
+
+    // Check if already submitted before posting
+    try {
+      const rows = await fetchRsvpRows();
+      const normalized = String(data.guestName || '').trim().toLowerCase();
+      const match = [...rows].reverse().find(r =>
+        String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized
+      );
+      if (match) {
+        showAlreadySubmitted(data.guestName, match.c?.[2]?.v || '');
+        return;
+      }
+    } catch (_) {} // On fetch error: proceed with submission
+
+    btn.textContent = 'Sending…';
 
     if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
       try {
