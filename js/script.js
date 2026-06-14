@@ -348,10 +348,21 @@ function setupLightbox(carousel, images) {
     a.click();
   }
 
-  guestId(name).then(id => {
+  guestId(name).then(async id => {
     const qrUrl = `${location.origin}/welcome.html?id=${id}`;
 
-    // Standalone QR section (always visible from invite link)
+    // Verify name is in Guests sheet before revealing QR — fail closed on any error
+    try {
+      const text = await fetch(
+        `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`
+      ).then(r => r.text());
+      const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if (!m) return;
+      const rows = JSON.parse(m[1]).table?.rows || [];
+      const normalized = name.trim().toLowerCase();
+      if (!rows.some(r => String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized)) return;
+    } catch (_) { return; }
+
     const qrSection = document.getElementById('qr');
     const qrCanvas  = document.getElementById('qrCanvas');
     if (qrSection && qrCanvas) {

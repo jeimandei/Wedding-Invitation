@@ -84,13 +84,24 @@ function doPost(e) {
   return handleRsvp(data);
 }
 
-/* ─── RSVP write (existing behaviour, now also writes to Guests) ─── */
+/* ─── RSVP write ─── */
 function handleRsvp(data) {
   var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName('RSVP') || ss.getActiveSheet();
 
+  // Cross-check name against Guests sheet to flag unlisted submissions
+  var guestsSheet = ss.getSheetByName('Guests');
+  var listed = 'NO';
+  if (guestsSheet && guestsSheet.getLastRow() > 1) {
+    var guestNames = guestsSheet.getRange(2, 2, guestsSheet.getLastRow() - 1, 1).getValues();
+    var normalized = String(data.guestName || '').trim().toLowerCase();
+    listed = guestNames.some(function(row) {
+      return String(row[0]).trim().toLowerCase() === normalized;
+    }) ? 'YES' : 'NO';
+  }
+
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['Timestamp', 'Guest Name', 'Attendance', 'Guests', 'Message']);
+    sheet.appendRow(['Timestamp', 'Guest Name', 'Attendance', 'Guests', 'Message', 'Listed']);
   }
 
   sheet.appendRow([
@@ -98,7 +109,8 @@ function handleRsvp(data) {
     data.guestName  || '',
     data.attendance || '',
     data.guests     || '',
-    data.message    || ''
+    data.message    || '',
+    listed
   ]);
 
   return ContentService
