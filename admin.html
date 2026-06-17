@@ -297,7 +297,7 @@
         grid.appendChild(card);
 
         if (g.id) {
-          const qrUrl = `${origin}/welcome.html?id=${g.id}`;
+          const qrUrl = `${origin}/?to=${g.id}`;
           new QRCode(card.querySelector('.qr-card__code'), {
             text: qrUrl,
             width: 160, height: 160,
