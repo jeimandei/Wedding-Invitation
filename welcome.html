@@ -309,7 +309,9 @@
     /* ── CONFIG (overridable from admin page via localStorage) ── */
     const APPS_SCRIPT_URL = localStorage.getItem('wb_script_url') || 'https://script.google.com/macros/s/AKfycby65CGQgJ0ox4BHohASwQoKrP93bhiZJvsYqkUo_28qKWj3Fi28UszslHUYuJVN4GLo3w/exec';
     const SHEET_ID        = localStorage.getItem('wb_sheet_id')   || '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
-    const PIN_HASH        = '3c8b996ee07b276ec0f915f23e940adbd1fb336db41a443edb4a089a63c79352';
+    const PIN_HASHES = [
+      '3c8b996ee07b276ec0f915f23e940adbd1fb336db41a443edb4a089a63c79352', // 3099
+    ];
 
     /* ── ELEMENTS ── */
     const pinGate       = document.getElementById('pinGate');
@@ -333,7 +335,7 @@
     async function checkPin(val) {
       const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val.trim()));
       const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-      if (hash === PIN_HASH) {
+      if (PIN_HASHES.includes(hash)) {
         localStorage.setItem('wb_scanner_ok', '1');
         showScanner();
       } else {

@@ -419,7 +419,9 @@
 
   <script>
     const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
-    const PIN      = '3099';
+    const PIN_HASHES = [
+      '3c8b996ee07b276ec0f915f23e940adbd1fb336db41a443edb4a089a63c79352', // 3099
+    ];
 
     /* ── PIN GATE ── */
     const pinGate   = document.getElementById('pinGate');
@@ -433,8 +435,10 @@
       startDashboard();
     }
 
-    function checkPin(val) {
-      if (val.trim() === PIN) {
+    async function checkPin(val) {
+      const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val.trim()));
+      const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      if (PIN_HASHES.includes(hash)) {
         localStorage.setItem('wb_gb_ok', '1');
         unlock();
       } else {
