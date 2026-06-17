@@ -98,6 +98,24 @@
     .btn-danger { background:#7a2020; color:#fff; border:none; }
     .btn-danger:hover { background:#9a2a2a; }
 
+    /* RESET MODAL */
+    #resetModal[hidden] { display: none !important; }
+    .reset-modal-box {
+      background: var(--cream); border: 1px solid var(--gold-l);
+      border-radius: 16px; padding: 2rem 2rem 1.75rem;
+      max-width: 380px; width: 90%; box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .reset-modal-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+      color: var(--dark); margin-bottom: .75rem;
+    }
+    .reset-modal-body {
+      font-size: .75rem; color: var(--mid); line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .reset-modal-actions { display: flex; gap: .75rem; justify-content: center; }
+
     main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 
     .status-bar {
@@ -239,8 +257,6 @@
       <div class="hdr-actions">
         <button class="btn btn-outline" id="generateBtn">⚙ Generate IDs</button>
         <button class="btn btn-primary" onclick="window.print()">🖨 Print All Cards</button>
-        <button class="btn btn-danger" id="resetScansBtn">↺ Reset Check-ins</button>
-        <button class="btn btn-danger" id="resetRsvpBtn">↺ Reset Reservations</button>
         <button class="btn btn-danger" id="resetAllBtn">↺ Reset All</button>
       </div>
     </header>
@@ -282,6 +298,18 @@
       <div class="card-grid" id="cardGrid"></div>
     </main>
 
+  </div>
+
+  <!-- RESET ALL MODAL -->
+  <div id="resetModal" hidden style="position:fixed;inset:0;background:rgba(58,46,42,0.55);display:flex;align-items:center;justify-content:center;z-index:200;">
+    <div class="reset-modal-box">
+      <p class="reset-modal-title">Reset All Data?</p>
+      <p class="reset-modal-body">This will permanently delete all <strong>check-in records</strong>, <strong>RSVP reservations</strong>, and the entire <strong>guest list</strong>. This cannot be undone.</p>
+      <div class="reset-modal-actions">
+        <button class="btn btn-outline" id="resetCancelBtn">Cancel</button>
+        <button class="btn btn-danger" id="resetConfirmBtn">Yes, Reset Everything</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -402,35 +430,31 @@
       });
     });
 
-    /* ── RESET CHECK-INS ── */
-    document.getElementById('resetScansBtn').addEventListener('click', () => {
-      if (!confirm('Clear ALL check-in data? This resets gift tag numbering and cannot be undone.')) return;
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'resetScans' })
-      }).catch(() => {}).finally(() => alert('Check-in data cleared. Verify in the Scans sheet.'));
-    });
-
-    /* ── RESET RESERVATIONS ── */
-    document.getElementById('resetRsvpBtn').addEventListener('click', () => {
-      if (!confirm('Clear ALL RSVP reservation data? This cannot be undone.')) return;
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'resetRsvp' })
-      }).catch(() => {}).finally(() => alert('Reservation data cleared. Verify in the RSVP sheet.'));
-    });
-
-    /* ── RESET ALL ── */
+    /* ── RESET ALL (modal) ── */
+    const resetModal = document.getElementById('resetModal');
     document.getElementById('resetAllBtn').addEventListener('click', () => {
-      if (!confirm('Reset ALL data? This clears check-in records, RSVP reservations, and the entire guest list.\n\nThis cannot be undone.')) return;
-      if (!confirm('Second confirmation: permanently delete all check-in, RSVP, and guest list data?')) return;
+      resetModal.hidden = false;
+    });
+    document.getElementById('resetCancelBtn').addEventListener('click', () => {
+      resetModal.hidden = true;
+    });
+    resetModal.addEventListener('click', e => {
+      if (e.target === resetModal) resetModal.hidden = true;
+    });
+    document.getElementById('resetConfirmBtn').addEventListener('click', () => {
+      resetModal.hidden = true;
+      const btn = document.getElementById('resetAllBtn');
+      btn.textContent = '↺ Resetting…'; btn.disabled = true;
       fetch(APPS_SCRIPT_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'resetAll' })
-      }).catch(() => {}).finally(() => { alert('All data cleared. Verify in the Scans, RSVP, and Guests sheets.'); loadGuests(); });
+      }).catch(() => {}).finally(() => {
+        setTimeout(() => {
+          btn.textContent = '↺ Reset All'; btn.disabled = false;
+          loadGuests();
+        }, 2500);
+      });
     });
 
     /* ── CONFIGURATION ── */
