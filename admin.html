@@ -95,6 +95,8 @@
     .btn-primary:hover { background:#b8945d; }
     .btn-outline { background:transparent; color:var(--gold); }
     .btn-outline:hover { background:var(--gold); color:#fff; }
+    .btn-danger { background:#7a2020; color:#fff; border:none; }
+    .btn-danger:hover { background:#9a2a2a; }
 
     main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 
@@ -201,6 +203,8 @@
       <div class="hdr-actions">
         <button class="btn btn-outline" id="generateBtn">⚙ Generate IDs</button>
         <button class="btn btn-primary" onclick="window.print()">🖨 Print All Cards</button>
+        <button class="btn btn-danger" id="resetScansBtn">↺ Reset Check-ins</button>
+        <button class="btn btn-danger" id="resetRsvpBtn">↺ Reset Reservations</button>
       </div>
     </header>
 
@@ -325,6 +329,26 @@
           loadGuests();
         }, 2500);
       });
+    });
+
+    /* ── RESET CHECK-INS ── */
+    document.getElementById('resetScansBtn').addEventListener('click', () => {
+      if (!confirm('Clear ALL check-in data? This resets gift tag numbering and cannot be undone.')) return;
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'resetScans' })
+      }).catch(() => {}).finally(() => alert('Check-in data cleared. Verify in the Scans sheet.'));
+    });
+
+    /* ── RESET RESERVATIONS ── */
+    document.getElementById('resetRsvpBtn').addEventListener('click', () => {
+      if (!confirm('Clear ALL RSVP reservation data? This cannot be undone.')) return;
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'resetRsvp' })
+      }).catch(() => {}).finally(() => alert('Reservation data cleared. Verify in the RSVP sheet.'));
     });
 
     function slugify(str) { return str.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''); }

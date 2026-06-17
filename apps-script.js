@@ -80,6 +80,8 @@ function doPost(e) {
 
   if (data.action === 'scan')        return handleScan(data);
   if (data.action === 'generateIds') return runGenerateIds();
+  if (data.action === 'resetScans')  return handleResetScans();
+  if (data.action === 'resetRsvp')   return handleResetRsvp();
 
   return handleRsvp(data);
 }
@@ -140,6 +142,28 @@ function handleScan(data) {
     data.pax        || ''
   ]);
 
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Reset Scans sheet (keeps header row) ─── */
+function handleResetScans() {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('Scans');
+  if (sheet && sheet.getLastRow() > 1)
+    sheet.deleteRows(2, sheet.getLastRow() - 1);
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Reset RSVP sheet (keeps header row) ─── */
+function handleResetRsvp() {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('RSVP') || ss.getActiveSheet();
+  if (sheet && sheet.getLastRow() > 1)
+    sheet.deleteRows(2, sheet.getLastRow() - 1);
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);
