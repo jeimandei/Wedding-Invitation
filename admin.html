@@ -186,6 +186,17 @@
     .import-status.ok  { color: #5C8A5C; }
     .import-status.err { color: #c0504a; }
 
+    /* ── CONFIG PANEL ── */
+    .config-fields { display: flex; flex-direction: column; gap: .6rem; margin-bottom: .9rem; }
+    .config-label  { font-size: .72rem; letter-spacing: .05em; color: var(--mid); display: flex; flex-direction: column; gap: .3rem; }
+    .config-input  {
+      font-family: 'Montserrat', sans-serif; font-size: .75rem; color: var(--dark);
+      background: var(--ivory); border: 1px solid var(--gold-l); border-radius: 8px;
+      padding: .55rem .75rem; outline: none; width: 100%;
+    }
+    .config-input:focus { border-color: var(--gold); }
+    .config-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
     /* ── PRINT STYLES ── */
     @media print {
       header, .status-bar { display: none; }
@@ -230,10 +241,31 @@
         <button class="btn btn-primary" onclick="window.print()">🖨 Print All Cards</button>
         <button class="btn btn-danger" id="resetScansBtn">↺ Reset Check-ins</button>
         <button class="btn btn-danger" id="resetRsvpBtn">↺ Reset Reservations</button>
+        <button class="btn btn-danger" id="resetAllBtn">↺ Reset All</button>
       </div>
     </header>
 
     <main>
+
+      <!-- Configuration -->
+      <div class="import-panel">
+        <h3>Configuration</h3>
+        <div class="config-fields">
+          <label class="config-label">
+            Google Sheet ID
+            <input type="text" id="cfgSheetId" class="config-input" placeholder="Sheet ID" />
+          </label>
+          <label class="config-label">
+            Apps Script URL
+            <input type="text" id="cfgScriptUrl" class="config-input" placeholder="https://script.google.com/…" />
+          </label>
+        </div>
+        <div class="config-actions">
+          <button class="btn btn-primary" id="cfgSaveBtn">Save &amp; Reload</button>
+          <button class="btn btn-outline" id="cfgResetBtn">Reset to Defaults</button>
+        </div>
+        <p class="import-status" id="cfgStatus"></p>
+      </div>
 
       <!-- Import Guest List -->
       <div class="import-panel">
@@ -253,8 +285,10 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby65CGQgJ0ox4BHohASwQoKrP93bhiZJvsYqkUo_28qKWj3Fi28UszslHUYuJVN4GLo3w/exec';
-    const SHEET_ID        = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby65CGQgJ0ox4BHohASwQoKrP93bhiZJvsYqkUo_28qKWj3Fi28UszslHUYuJVN4GLo3w/exec';
+    const DEFAULT_SHEET_ID   = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
+    const APPS_SCRIPT_URL = localStorage.getItem('wb_script_url') || DEFAULT_SCRIPT_URL;
+    const SHEET_ID        = localStorage.getItem('wb_sheet_id')   || DEFAULT_SHEET_ID;
     const PIN             = '3099';
 
     /* ── PIN ── */
@@ -386,6 +420,39 @@
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'resetRsvp' })
       }).catch(() => {}).finally(() => alert('Reservation data cleared. Verify in the RSVP sheet.'));
+    });
+
+    /* ── RESET ALL ── */
+    document.getElementById('resetAllBtn').addEventListener('click', () => {
+      if (!confirm('Reset ALL data? This clears both check-in records and RSVP reservations.\n\nThis cannot be undone.')) return;
+      if (!confirm('Second confirmation: permanently delete all check-in and RSVP data?')) return;
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'resetAll' })
+      }).catch(() => {}).finally(() => alert('All data cleared. Verify in the Scans and RSVP sheets.'));
+    });
+
+    /* ── CONFIGURATION ── */
+    document.getElementById('cfgSheetId').value   = SHEET_ID;
+    document.getElementById('cfgScriptUrl').value = APPS_SCRIPT_URL;
+
+    document.getElementById('cfgSaveBtn').addEventListener('click', () => {
+      const sid = document.getElementById('cfgSheetId').value.trim();
+      const url = document.getElementById('cfgScriptUrl').value.trim();
+      const st  = document.getElementById('cfgStatus');
+      if (!sid || !url) {
+        st.textContent = 'Both fields are required.'; st.className = 'import-status err'; return;
+      }
+      localStorage.setItem('wb_sheet_id', sid);
+      localStorage.setItem('wb_script_url', url);
+      location.reload();
+    });
+
+    document.getElementById('cfgResetBtn').addEventListener('click', () => {
+      localStorage.removeItem('wb_sheet_id');
+      localStorage.removeItem('wb_script_url');
+      location.reload();
     });
 
     /* ── TEMPLATE DOWNLOAD ── */
