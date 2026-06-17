@@ -424,13 +424,13 @@
 
     /* ── RESET ALL ── */
     document.getElementById('resetAllBtn').addEventListener('click', () => {
-      if (!confirm('Reset ALL data? This clears both check-in records and RSVP reservations.\n\nThis cannot be undone.')) return;
-      if (!confirm('Second confirmation: permanently delete all check-in and RSVP data?')) return;
+      if (!confirm('Reset ALL data? This clears check-in records, RSVP reservations, and the entire guest list.\n\nThis cannot be undone.')) return;
+      if (!confirm('Second confirmation: permanently delete all check-in, RSVP, and guest list data?')) return;
       fetch(APPS_SCRIPT_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'resetAll' })
-      }).catch(() => {}).finally(() => alert('All data cleared. Verify in the Scans and RSVP sheets.'));
+      }).catch(() => {}).finally(() => { alert('All data cleared. Verify in the Scans, RSVP, and Guests sheets.'); loadGuests(); });
     });
 
     /* ── CONFIGURATION ── */
