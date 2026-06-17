@@ -78,10 +78,12 @@ function generateIds() {
 function doPost(e) {
   var data = JSON.parse(e.postData.contents);
 
-  if (data.action === 'scan')        return handleScan(data);
-  if (data.action === 'generateIds') return runGenerateIds();
-  if (data.action === 'resetScans')  return handleResetScans();
-  if (data.action === 'resetRsvp')   return handleResetRsvp();
+  if (data.action === 'scan')          return handleScan(data);
+  if (data.action === 'generateIds')   return runGenerateIds();
+  if (data.action === 'resetScans')    return handleResetScans();
+  if (data.action === 'resetRsvp')     return handleResetRsvp();
+  if (data.action === 'resetAll')      return handleResetAll();
+  if (data.action === 'importGuests')  return handleImportGuests(data);
 
   return handleRsvp(data);
 }
@@ -167,6 +169,48 @@ function handleResetRsvp() {
     sheet.deleteRows(2, sheet.getLastRow() - 1);
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Reset both Scans and RSVP sheets in one call ─── */
+function handleResetAll() {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var scans = ss.getSheetByName('Scans');
+  var rsvp  = ss.getSheetByName('RSVP') || ss.getActiveSheet();
+  if (scans && scans.getLastRow() > 1) scans.deleteRows(2, scans.getLastRow() - 1);
+  if (rsvp  && rsvp.getLastRow()  > 1) rsvp.deleteRows(2,  rsvp.getLastRow()  - 1);
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Import guest list (replaces Guests sheet rows, auto-generates IDs) ─── */
+function handleImportGuests(data) {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('Guests');
+  if (!sheet) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: 'Guests sheet not found' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // Clear existing data rows, keep header
+  if (sheet.getLastRow() < 1)
+    sheet.appendRow(['id', 'name', 'table', 'phone', 'pax']);
+  if (sheet.getLastRow() > 1)
+    sheet.deleteRows(2, sheet.getLastRow() - 1);
+
+  // Write new rows (id left blank — generateIds fills it)
+  var guests = data.guests || [];
+  guests.forEach(function(g) {
+    sheet.appendRow(['', g.name || '', g.table || '', g.phone || '', g.pax || '']);
+  });
+
+  // Auto-generate IDs for all new rows
+  generateIds();
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success', count: guests.length }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 

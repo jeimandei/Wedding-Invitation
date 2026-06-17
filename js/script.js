@@ -3,9 +3,8 @@
    ═══════════════════════════════════════════ */
 
 /* ─── CONFIG ─── */
-// After deploying the Apps Script (see apps-script.js), paste the Web App URL here:
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby65CGQgJ0ox4BHohASwQoKrP93bhiZJvsYqkUo_28qKWj3Fi28UszslHUYuJVN4GLo3w/exec';
-const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
+const APPS_SCRIPT_URL = localStorage.getItem('wb_script_url') || 'https://script.google.com/macros/s/AKfycby65CGQgJ0ox4BHohASwQoKrP93bhiZJvsYqkUo_28qKWj3Fi28UszslHUYuJVN4GLo3w/exec';
+const SHEET_ID        = localStorage.getItem('wb_sheet_id')   || '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 
 /* ─── BACKGROUND MUSIC ─── */
 (function initMusic() {
