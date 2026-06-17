@@ -401,19 +401,19 @@
             if (sm) giftNum = (JSON.parse(sm[1]).table?.rows || []).length + 1;
           } catch (_) {}
 
-          logScan(id, name, table, pax);
+          logScan(id, name, table, pax, giftNum);
           showWelcome(name, table, giftNum);
         })
         .catch(() => showError());
     }
 
     /* ── LOG SCAN to Apps Script (fire and forget) ── */
-    function logScan(id, name, table, pax) {
+    function logScan(id, name, table, pax, giftTag) {
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'scan', guest_id: id, guest_name: name, table, pax })
+        body: JSON.stringify({ action: 'scan', guest_id: id, guest_name: name, table, pax, gift_tag: giftTag })
       }).catch(() => {});
     }
 

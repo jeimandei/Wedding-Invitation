@@ -131,7 +131,7 @@ function handleScan(data) {
   }
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['scanned_at', 'guest_id', 'guest_name', 'table', 'pax']);
+    sheet.appendRow(['scanned_at', 'guest_id', 'guest_name', 'table', 'pax', 'gift_tag']);
   }
 
   sheet.appendRow([
@@ -139,7 +139,8 @@ function handleScan(data) {
     data.guest_id   || '',
     data.guest_name || '',
     data.table      || '',
-    data.pax        || ''
+    data.pax        || '',
+    data.gift_tag   || ''
   ]);
 
   return ContentService
