@@ -258,6 +258,7 @@
         <button class="btn btn-outline" id="generateBtn">⚙ Generate IDs</button>
         <button class="btn btn-primary" onclick="window.print()">🖨 Print All Cards</button>
         <button class="btn btn-danger" id="resetAllBtn">↺ Reset All</button>
+        <button class="btn btn-outline" id="lockBtn">⏏ Lock</button>
       </div>
     </header>
 
@@ -339,6 +340,12 @@
     document.getElementById('pinSubmit').addEventListener('click', () => checkPin(pinInput.value));
     pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') checkPin(pinInput.value); });
     if (localStorage.getItem('wb_admin_ok') === '1') unlock();
+
+    /* ── LOCK ── */
+    document.getElementById('lockBtn').addEventListener('click', () => {
+      localStorage.removeItem('wb_admin_ok');
+      location.reload();
+    });
 
     /* ── LOAD GUESTS ── */
     function loadGuests() {
