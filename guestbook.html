@@ -420,7 +420,11 @@
   <script>
     const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
     const PIN_HASHES = [
-      '3c8b996ee07b276ec0f915f23e940adbd1fb336db41a443edb4a089a63c79352', // 3099
+      {
+        sha1:   '6590318a70806f5b81e1bab1d862f20e621bc1fd',
+        sha256: '3c8b996ee07b276ec0f915f23e940adbd1fb336db41a443edb4a089a63c79352',
+        sha512: '44e55ab12198cb01cb69e93a25ed1c6b58854b756b458126b14d3b04eb2cf3804cb78f8d72d9f84eb068272318f13fadad302a3bd529095f4384c8f84fd79777',
+      },
     ];
 
     /* ── PIN GATE ── */
@@ -436,9 +440,17 @@
     }
 
     async function checkPin(val) {
-      const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val.trim()));
-      const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-      if (PIN_HASHES.includes(hash)) {
+      const enc  = new TextEncoder().encode(val.trim());
+      const toHex = buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      const [h1, h256, h512] = await Promise.all([
+        crypto.subtle.digest('SHA-1',   enc),
+        crypto.subtle.digest('SHA-256', enc),
+        crypto.subtle.digest('SHA-512', enc),
+      ]);
+      const ok = PIN_HASHES.some(p =>
+        p.sha1 === toHex(h1) && p.sha256 === toHex(h256) && p.sha512 === toHex(h512)
+      );
+      if (ok) {
         localStorage.setItem('wb_gb_ok', '1');
         unlock();
       } else {
