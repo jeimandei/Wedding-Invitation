@@ -174,11 +174,13 @@ function handleResetRsvp() {
 
 /* ─── Reset both Scans and RSVP sheets in one call ─── */
 function handleResetAll() {
-  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var scans = ss.getSheetByName('Scans');
-  var rsvp  = ss.getSheetByName('RSVP') || ss.getActiveSheet();
-  if (scans && scans.getLastRow() > 1) scans.deleteRows(2, scans.getLastRow() - 1);
-  if (rsvp  && rsvp.getLastRow()  > 1) rsvp.deleteRows(2,  rsvp.getLastRow()  - 1);
+  var ss     = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var scans  = ss.getSheetByName('Scans');
+  var rsvp   = ss.getSheetByName('RSVP') || ss.getActiveSheet();
+  var guests = ss.getSheetByName('Guests');
+  if (scans  && scans.getLastRow()  > 1) scans.deleteRows(2,  scans.getLastRow()  - 1);
+  if (rsvp   && rsvp.getLastRow()   > 1) rsvp.deleteRows(2,   rsvp.getLastRow()   - 1);
+  if (guests && guests.getLastRow() > 1) guests.deleteRows(2, guests.getLastRow() - 1);
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);
