@@ -193,6 +193,13 @@
       font-style: italic;
       color: #6B5B52;
       letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .welcome-gift {
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
       margin-bottom: 1.5rem;
     }
     .welcome-sep {
@@ -287,6 +294,7 @@
       <p class="welcome-name" id="welcomeName"></p>
       <div class="welcome-sep"></div>
       <p class="welcome-table" id="welcomeTable"></p>
+      <p class="welcome-gift" id="welcomeGift"></p>
       <p class="welcome-sub">Jei &amp; Angie are so happy to have you here</p>
       <button class="welcome-next" id="welcomeNext">Next Guest →</button>
     </div>
@@ -371,13 +379,14 @@
 
     /* ── GUEST LOOKUP via public gviz API ── */
     function lookupGuest(id) {
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`;
-      fetch(url)
-        .then(r => r.text())
-        .then(text => {
-          const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
-          if (!match) throw new Error('parse');
-          const rows = JSON.parse(match[1]).table?.rows || [];
+      const guestsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`;
+      const scansUrl  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Scans&_=${Date.now()}`;
+
+      Promise.all([fetch(guestsUrl).then(r => r.text()), fetch(scansUrl).then(r => r.text())])
+        .then(([guestsText, scansText]) => {
+          const gm = guestsText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+          if (!gm) throw new Error('parse');
+          const rows = JSON.parse(gm[1]).table?.rows || [];
           const row  = rows.find(r => r.c?.[0]?.v === id);
           if (!row) throw new Error('not found');
 
@@ -385,8 +394,15 @@
           const table = row.c?.[2]?.v || '';
           const pax   = row.c?.[4]?.v || '';
 
+          // Gift tag = current scan count + 1
+          let giftNum = 1;
+          try {
+            const sm = scansText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+            if (sm) giftNum = (JSON.parse(sm[1]).table?.rows || []).length + 1;
+          } catch (_) {}
+
           logScan(id, name, table, pax);
-          showWelcome(name, table);
+          showWelcome(name, table, giftNum);
         })
         .catch(() => showError());
     }
@@ -413,9 +429,10 @@
 
     document.getElementById('welcomeNext').addEventListener('click', dismissWelcome);
 
-    function showWelcome(name, table) {
+    function showWelcome(name, table, giftNum) {
       document.getElementById('welcomeName').textContent  = name;
       document.getElementById('welcomeTable').textContent = table ? table : '';
+      document.getElementById('welcomeGift').textContent  = giftNum ? `Gift Tag  #${giftNum}` : '';
       welcomeOverlay.hidden = false;
       welcomeTimer = setTimeout(dismissWelcome, 10000);
     }
