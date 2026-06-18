@@ -436,6 +436,14 @@ function setupLightbox(carousel, images) {
   const attendance = document.getElementById('attendance');
   const guestField = document.getElementById('guestField');
 
+  // If no personalized invite link, hide attendance + persons fields
+  const toParam = new URLSearchParams(window.location.search).get('to');
+  if (!toParam) {
+    const attendanceRow = form.querySelector('.form__row');
+    if (attendanceRow) attendanceRow.style.display = 'none';
+    attendance.removeAttribute('required');
+  }
+
   // Show/hide guest count based on attendance
   attendance.addEventListener('change', () => {
     guestField.style.display = attendance.value === 'no' ? 'none' : '';
