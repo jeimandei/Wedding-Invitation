@@ -413,7 +413,6 @@ function setupLightbox(carousel, images) {
 
 /* ─── GIFT MODAL ─── */
 (function initGiftModal() {
-  const btn      = document.getElementById('giftBtn');
   const modal    = document.getElementById('giftModal');
   const closeBtn = document.getElementById('giftModalClose');
   const backdrop = modal.querySelector('.gift-modal__backdrop');
@@ -421,10 +420,12 @@ function setupLightbox(carousel, images) {
   function open()  { modal.hidden = false; document.body.style.overflow = 'hidden'; closeBtn.focus(); }
   function close() { modal.hidden = true;  document.body.style.overflow = ''; }
 
-  btn.addEventListener('click', open);
+  document.querySelectorAll('.js-gift-open').forEach(btn => btn.addEventListener('click', open));
   closeBtn.addEventListener('click', close);
   backdrop.addEventListener('click', close);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
+
+  window.__closeGiftModal = close;
 })();
 
 
@@ -475,6 +476,7 @@ function setupLightbox(carousel, images) {
   }
 
   function showAlreadySubmitted(name, prevAttendance) {
+    if (typeof window.__closeGiftModal === 'function') window.__closeGiftModal();
     form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
       el.style.display = 'none';
     });
@@ -547,6 +549,7 @@ function setupLightbox(carousel, images) {
       } catch (_) {}
     }
 
+    if (typeof window.__closeGiftModal === 'function') window.__closeGiftModal();
     form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
       el.style.display = 'none';
     });
