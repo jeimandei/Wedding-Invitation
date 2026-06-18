@@ -320,9 +320,9 @@
   <section class="rsvp" id="rsvp">
     <div class="container">
       <div class="section-header fade-in">
-        <p class="section-label">Kindly Reply By 23 July 2026</p>
-        <h2 class="section-title">RSVP</h2>
-        <p class="rsvp__intro">It would be a great happiness for us if you would be willing to attend this joyful day. Thank you for all the kind words, prayers, and attention you have given. See you on our wedding day!</p>
+        <p class="section-label" id="rsvpLabel">Kindly Reply By 23 July 2026</p>
+        <h2 class="section-title" id="rsvpTitle">RSVP</h2>
+        <p class="rsvp__intro" id="rsvpIntro">It would be a great happiness for us if you would be willing to attend this joyful day. Thank you for all the kind words, prayers, and attention you have given. See you on our wedding day!</p>
       </div>
 
       <form class="rsvp__form fade-in" id="rsvpForm" novalidate>
@@ -388,6 +388,7 @@
       </div>
       <div class="qr-card fade-in">
         <div class="qr-card__inner">
+          <p class="qr-card__title">Entrance Pass</p>
           <p class="qr-card__couple">Jei <span>&amp;</span> Angie</p>
           <div class="qr-card__sep"></div>
           <div class="qr-card__code" id="qrCanvas"></div>
@@ -395,8 +396,10 @@
           <div class="qr-card__sep"></div>
           <p class="qr-card__date">26 &middot; 07 &middot; 2026</p>
           <button class="qr-card__save" id="qrSave">Save to Phone</button>
-          <button class="gift-btn js-gift-open" id="giftBtn">&#128157; Send them a gift</button>
         </div>
+      </div>
+      <div class="qr-section__gift fade-in">
+        <button class="gift-btn js-gift-open" id="giftBtn">&#128157; Send them a gift</button>
       </div>
     </div>
   </section>
@@ -451,9 +454,10 @@
     <div class="gift-modal__card">
       <button class="gift-modal__close" id="giftModalClose" aria-label="Close">&times;</button>
       <h3 class="gift-modal__title" id="giftModalTitle">Thank you for your generosity</h3>
-      <p class="gift-modal__sub">Scan with any m-banking or e-wallet app</p>
+      <p class="gift-modal__scan-label">Scan QRIS</p>
+      <p class="gift-modal__sub">with any m-banking or e-wallet app</p>
       <img class="gift-modal__qris" src="images/assets/qris.png" alt="QRIS Payment Code" />
-      <p class="gift-modal__name">Jei <span>&amp;</span> Angie</p>
+      <p class="gift-modal__name">Jei &amp; Angie</p>
       <p class="gift-modal__apps">GoPay &middot; OVO &middot; Dana &middot; ShopeePay<br>BCA &middot; BRI &middot; BNI &middot; Mandiri</p>
     </div>
   </div>
