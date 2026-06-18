@@ -1996,6 +1996,24 @@ textarea { resize: vertical; min-height: 90px; }
   margin-bottom: 0.3rem;
 }
 
+.gift-modal__scan-label {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0.5rem 0 0.1rem;
+}
+
+.gift-modal__scan-label::before,
+.gift-modal__scan-label::after {
+  content: '·';
+  margin: 0 0.45em;
+  color: var(--gold-light);
+  font-size: 1.1em;
+}
+
 .gift-modal__sub {
   font-family: var(--font-body);
   font-size: 0.72rem;
@@ -2017,13 +2035,7 @@ textarea { resize: vertical; min-height: 90px; }
   font-size: 1.4rem;
   color: var(--gold);
   margin-bottom: 0.5rem;
-}
-
-.gift-modal__name span {
-  font-family: var(--font-head);
-  font-size: 0.55em;
-  vertical-align: middle;
-  color: var(--gold-light);
+  white-space: nowrap;
 }
 
 .gift-modal__apps {
