@@ -436,12 +436,20 @@ function setupLightbox(carousel, images) {
   const attendance = document.getElementById('attendance');
   const guestField = document.getElementById('guestField');
 
-  // If no personalized invite link, hide attendance + persons fields
+  // If no personalized invite link, hide attendance + persons fields and
+  // reframe the section as a message/wishes board rather than an RSVP.
   const toParam = new URLSearchParams(window.location.search).get('to');
   if (!toParam) {
     const attendanceRow = form.querySelector('.form__row');
     if (attendanceRow) attendanceRow.style.display = 'none';
     attendance.removeAttribute('required');
+
+    const label = document.getElementById('rsvpLabel');
+    const title = document.getElementById('rsvpTitle');
+    const intro = document.getElementById('rsvpIntro');
+    if (label) label.textContent = 'Share the Joy';
+    if (title) title.textContent = 'Send Message and Wishes';
+    if (intro) intro.textContent = "We'd be so grateful to hear from you. Leave your heartfelt message and warm wishes for Jei & Angie below — they mean the world to us.";
   }
 
   // Show/hide guest count based on attendance

@@ -1788,6 +1788,16 @@ textarea { resize: vertical; min-height: 90px; }
   box-shadow: var(--shadow-md);
 }
 
+.qr-card__title {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+
 .qr-card__couple {
   font-family: var(--font-script);
   font-size: 1.8rem;
@@ -1854,8 +1864,8 @@ textarea { resize: vertical; min-height: 90px; }
   color: #fff;
 }
 
-.qr-card__inner .gift-btn {
-  margin-top: 1rem;
+.qr-section__gift {
+  text-align: center;
 }
 
 /* ─── RSVP SUCCESS QR CARD ─── */
