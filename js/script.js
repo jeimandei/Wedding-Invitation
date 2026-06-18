@@ -476,7 +476,6 @@ function setupLightbox(carousel, images) {
   }
 
   function showAlreadySubmitted(name, prevAttendance) {
-    if (typeof window.__closeGiftModal === 'function') window.__closeGiftModal();
     form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
       el.style.display = 'none';
     });
@@ -549,7 +548,6 @@ function setupLightbox(carousel, images) {
       } catch (_) {}
     }
 
-    if (typeof window.__closeGiftModal === 'function') window.__closeGiftModal();
     form.querySelectorAll('.form__row, .form__field, .form__submit').forEach(el => {
       el.style.display = 'none';
     });
