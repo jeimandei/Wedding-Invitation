@@ -5,7 +5,7 @@ RUN rm -rf /usr/share/nginx/html/*
 
 # Custom nginx config: gzip + cache headers
 RUN printf 'server {\n\
-    listen 9000;\n\
+    listen 8070;\n\
     server_name _;\n\
     root /usr/share/nginx/html;\n\
     index index.html;\n\
@@ -51,4 +51,4 @@ RUN cd /usr/share/nginx/html && \
     awk 'BEGIN{printf "["} NR>1{printf ","} {printf "\"%s\"", $0} END{printf "]"}' \
     > images/manifest.json
 
-EXPOSE 9000
+EXPOSE 8070
