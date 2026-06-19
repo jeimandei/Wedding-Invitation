@@ -6,7 +6,7 @@ services:
     container_name: wedding-invitation
     restart: unless-stopped
     ports:
-      - "9000:9000"
+      - "8070:8070"
     networks:
       - public
 
