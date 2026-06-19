@@ -229,14 +229,14 @@ To add new photos: drop them in `images/groombride/`, rebuild the container.
 
 ## Deployment
 
-The site runs in an **nginx:alpine** container on port 9000.
+The site runs in an **nginx:alpine** container on port 8070.
 
 ```bash
 # Build
 podman build -t wedding-invite .
 
 # Run
-podman run -p 9000:9000 wedding-invite
+podman run -p 8070:8070 wedding-invite
 ```
 
 CI/CD: push to `main` → GitHub Actions → SSH deploy → `podman-compose up --build -d`
