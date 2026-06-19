@@ -37,6 +37,9 @@ const _I18N = {
     'reception.label':'The Reception',
     'map.btn':        'View Map',
 
+    'video.label': 'Our Story',
+    'video.title': 'Before The Day',
+
     'gallery.label': 'Captured Moments',
     'gallery.title': 'Our Gallery',
 
@@ -123,6 +126,9 @@ const _I18N = {
     'ceremony.label':  'Pemberkatan',
     'reception.label': 'Resepsi',
     'map.btn':         'Lihat Peta',
+
+    'video.label': 'Kisah Kami',
+    'video.title': 'Sebelum Hari Itu',
 
     'gallery.label': 'Momen Berharga',
     'gallery.title': 'Galeri Kami',
