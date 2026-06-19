@@ -452,6 +452,33 @@ ul  { list-style: none; }
 }
 .nav__cta:hover { opacity: 0.85; }
 
+.nav__lang {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.45);
+  border-radius: var(--radius-full);
+  padding: 0.28rem 0.7rem;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  margin-left: 0.5rem;
+}
+.nav.scrolled .nav__lang {
+  color: var(--text-mid);
+  background: transparent;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.nav__lang:hover {
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+}
+
 .nav__hamburger {
   display: none;
   flex-direction: column;

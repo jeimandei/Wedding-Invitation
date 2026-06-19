@@ -6,6 +6,228 @@
 const APPS_SCRIPT_URL = localStorage.getItem('wb_script_url') || 'https://script.google.com/macros/s/AKfycby65CGQgJ0ox4BHohASwQoKrP93bhiZJvsYqkUo_28qKWj3Fi28UszslHUYuJVN4GLo3w/exec';
 const SHEET_ID        = localStorage.getItem('wb_sheet_id')   || '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 
+
+/* ─── I18N ─── */
+const _I18N = {
+  en: {
+    'splash.label': 'The Wedding of',
+    'splash.dear':  'Dear',
+    'splash.btn':   'Open Invitation',
+
+    'hero.subtitle': "By the grace of God, We're tying the knot.",
+    'hero.invite':   'joyfully invite you to celebrate their wedding',
+
+    'std.label': 'Save the Date',
+
+    'cd.days': 'Days', 'cd.hours': 'Hours', 'cd.minutes': 'Minutes', 'cd.seconds': 'Seconds',
+
+    'portraits.label': 'Meet the Couple',
+    'portraits.title': 'The Bride & Groom',
+    'groom.role':  'The Groom',
+    'bride.role':  'The Bride',
+    'groom.parents': 'Son of dr. Jose M. Mandei, Sp.A, Subsp.ETIA(K).<br />&amp; dr. Linda A. Matali, Sp.KKLP., M.Kes.',
+    'bride.parents': 'Daughter of Noldy R. Kumendong, S.Hut.<br />&amp; Ir. Shirly S. Lengkong',
+
+    'quote.text': 'I have found the one whom my soul loves.',
+    'quote.cite': 'Song of Solomon 3:4',
+
+    'details.label':  'Join Us',
+    'details.title':  'Wedding Details',
+    'ceremony.label': 'Holy Matrimony',
+    'reception.label':'The Reception',
+    'map.btn':        'View Map',
+
+    'gallery.label': 'Captured Moments',
+    'gallery.title': 'Our Gallery',
+
+    'rsvp.label': 'Kindly Reply By 23 July 2026',
+    'rsvp.title': 'RSVP',
+    'rsvp.intro': 'It would be a great happiness for us if you would be willing to attend this joyful day. Thank you for all the kind words, prayers, and attention you have given. See you on our wedding day!',
+    'rsvp.label.nowish': 'Share the Joy',
+    'rsvp.title.nowish': 'Send Message and Wishes',
+    'rsvp.intro.nowish': "We'd be so grateful to hear from you. Leave your heartfelt message and warm wishes for Jei & Angie below — they mean the world to us.",
+
+    'form.name':           'Guest Name',
+    'form.name.ph':        'Your full name',
+    'form.attendance':     'Will you be attending?',
+    'form.attendance.ph':  'Please select',
+    'form.attendance.yes': 'Joyfully Accepts',
+    'form.attendance.no':  'Congrats on your wedding day! (Cannot attend)',
+    'form.guests':   'Number of Guests (Including Yourself)',
+    'form.guests.1': '1 person',
+    'form.guests.2': '2 persons',
+    'form.message':    'Leave a Message & Wishes for Jei & Angie',
+    'form.message.ph': 'Share your wishes with the couple…',
+    'form.submit':       'Send My RSVP',
+    'form.submit.nowish':'Send Wishes',
+    'form.checking': 'Checking…',
+    'form.sending':  'Sending…',
+
+    'qr.label': 'Your Invitation',
+    'qr.title': 'Your Entrance Pass',
+    'qr.sub':   'Present this at the entrance on your wedding day',
+    'qr.save':  'Save to Phone',
+
+    'gift.btn': '💝 Send them a gift',
+
+    'wishes.label':   'Kind Words',
+    'wishes.title':   'Messages & Wishes',
+    'wishes.loading': 'Loading messages…',
+    'wishes.empty':   'Be the first to leave a message!',
+    'wishes.soon':    'Messages coming soon…',
+
+    'footer.quote':  '"To God Be The Glory Forever"',
+    'footer.credit': 'Made with love ♥ by jeimandei',
+
+    'gift.modal.title': 'Thank you for your generosity',
+    'gift.modal.scan':  'Scan QRIS',
+    'gift.modal.sub':   'with any m-banking or e-wallet app',
+
+    'nav.meet': 'Meet the Couple', 'nav.details': 'Details', 'nav.gallery': 'Gallery', 'nav.rsvp': 'RSVP',
+
+    'success.already.title':    "You've already RSVP'd, {name}!",
+    'success.already.yes':      "We already have you down as attending. See you at the wedding!",
+    'success.already.no':       "We already have your regrets on record. Thank you for letting us know.",
+    'success.unlisted.title':   'Thank you for your wishes, {name}! 🌸',
+    'success.unlisted.sub':     'Your kind words mean the world to us.',
+    'success.listed.yes.title': "You're on the list, {name}!",
+    'success.listed.yes.sub':   "We can't wait to celebrate with you.",
+    'success.listed.no.title':  "So sad you can't make it 😢",
+    'success.listed.no.sub':    "We really wished you could be there with us. But thank you for letting us know.",
+  },
+
+  id: {
+    'splash.label': 'Pernikahan',
+    'splash.dear':  'Kepada Yth.',
+    'splash.btn':   'Buka Undangan',
+
+    'hero.subtitle': 'Dengan anugerah Tuhan, kami akan menikah.',
+    'hero.invite':   'dengan sukacita mengundang Anda merayakan hari pernikahan kami',
+
+    'std.label': 'Simpan Tanggalnya',
+
+    'cd.days': 'Hari', 'cd.hours': 'Jam', 'cd.minutes': 'Menit', 'cd.seconds': 'Detik',
+
+    'portraits.label': 'Kenali Pasangan',
+    'portraits.title': 'Mempelai',
+    'groom.role':  'Mempelai Pria',
+    'bride.role':  'Mempelai Wanita',
+    'groom.parents': 'Putra dari dr. Jose M. Mandei, Sp.A, Subsp.ETIA(K).<br />&amp; dr. Linda A. Matali, Sp.KKLP., M.Kes.',
+    'bride.parents': 'Putri dari Noldy R. Kumendong, S.Hut.<br />&amp; Ir. Shirly S. Lengkong',
+
+    'quote.text': 'Aku telah menemukan dia yang dicintai jiwaku.',
+    'quote.cite': 'Kidung Agung 3:4',
+
+    'details.label':   'Bergabunglah Bersama Kami',
+    'details.title':   'Detail Pernikahan',
+    'ceremony.label':  'Pemberkatan',
+    'reception.label': 'Resepsi',
+    'map.btn':         'Lihat Peta',
+
+    'gallery.label': 'Momen Berharga',
+    'gallery.title': 'Galeri Kami',
+
+    'rsvp.label': 'Harap Konfirmasi Sebelum 23 Juli 2026',
+    'rsvp.title': 'RSVP',
+    'rsvp.intro': 'Kami akan sangat berbahagia apabila Anda berkenan hadir dalam hari istimewa kami. Terima kasih atas doa, kata-kata baik, dan perhatian yang telah Anda berikan. Sampai jumpa di hari pernikahan kami!',
+    'rsvp.label.nowish': 'Bagikan Sukacita',
+    'rsvp.title.nowish': 'Kirim Pesan & Doa',
+    'rsvp.intro.nowish': 'Kami sangat berterima kasih atas pesan Anda. Tinggalkan pesan dan doa tulus untuk Jei & Angie di bawah ini — setiap kata sangat berarti bagi kami.',
+
+    'form.name':           'Nama Tamu',
+    'form.name.ph':        'Nama lengkap Anda',
+    'form.attendance':     'Apakah Anda akan hadir?',
+    'form.attendance.ph':  'Pilih konfirmasi',
+    'form.attendance.yes': 'Dengan Sukacita Hadir',
+    'form.attendance.no':  'Selamat atas pernikahannya! (Tidak dapat hadir)',
+    'form.guests':   'Jumlah Tamu (Termasuk Anda)',
+    'form.guests.1': '1 orang',
+    'form.guests.2': '2 orang',
+    'form.message':    'Tinggalkan Pesan & Doa untuk Jei & Angie',
+    'form.message.ph': 'Bagikan doa Anda untuk pasangan…',
+    'form.submit':       'Kirim RSVP Saya',
+    'form.submit.nowish':'Kirim Pesan',
+    'form.checking': 'Memeriksa…',
+    'form.sending':  'Mengirim…',
+
+    'qr.label': 'Undangan Anda',
+    'qr.title': 'Tiket Masuk Anda',
+    'qr.sub':   'Tunjukkan ini di pintu masuk pada hari pernikahan',
+    'qr.save':  'Simpan ke Ponsel',
+
+    'gift.btn': '💝 Kirimkan hadiah',
+
+    'wishes.label':   'Kata-Kata Indah',
+    'wishes.title':   'Pesan & Doa',
+    'wishes.loading': 'Memuat pesan…',
+    'wishes.empty':   'Jadilah yang pertama meninggalkan pesan!',
+    'wishes.soon':    'Pesan akan segera hadir…',
+
+    'footer.quote':  '"Bagi Allah Segala Kemuliaan Selamanya"',
+    'footer.credit': 'Dibuat dengan cinta ♥ oleh jeimandei',
+
+    'gift.modal.title': 'Terima kasih atas kemurahan hati Anda',
+    'gift.modal.scan':  'Scan QRIS',
+    'gift.modal.sub':   'dengan m-banking atau e-wallet apapun',
+
+    'nav.meet': 'Kenali Pasangan', 'nav.details': 'Detail', 'nav.gallery': 'Galeri', 'nav.rsvp': 'RSVP',
+
+    'success.already.title':    'Anda sudah RSVP, {name}!',
+    'success.already.yes':      'Kami sudah mencatat kehadiran Anda. Sampai jumpa di pernikahan!',
+    'success.already.no':       'Kami sudah mencatat ketidakhadiran Anda. Terima kasih telah memberi tahu kami.',
+    'success.unlisted.title':   'Terima kasih atas doa Anda, {name}! 🌸',
+    'success.unlisted.sub':     'Kata-kata baik Anda sangat berarti bagi kami.',
+    'success.listed.yes.title': 'Anda ada dalam daftar, {name}!',
+    'success.listed.yes.sub':   'Kami tidak sabar merayakannya bersama Anda.',
+    'success.listed.no.title':  'Sayang sekali Anda tidak bisa hadir 😢',
+    'success.listed.no.sub':    'Kami sangat berharap Anda bisa hadir. Namun terima kasih telah memberi tahu kami.',
+  },
+};
+
+let _lang = localStorage.getItem('wb_lang') || 'en';
+
+function t(key) { return _I18N[_lang][key] || _I18N.en[key] || key; }
+
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('wb_lang', lang);
+
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+
+  const toParam = new URLSearchParams(window.location.search).get('to');
+  if (!toParam) {
+    const label = document.getElementById('rsvpLabel');
+    const title = document.getElementById('rsvpTitle');
+    const intro = document.getElementById('rsvpIntro');
+    const submitBtn = document.querySelector('#rsvpForm button[type="submit"]');
+    if (label) label.textContent = t('rsvp.label.nowish');
+    if (title) title.textContent = t('rsvp.title.nowish');
+    if (intro) intro.textContent = t('rsvp.intro.nowish');
+    if (submitBtn) submitBtn.textContent = t('form.submit.nowish');
+  }
+
+  const btn = document.getElementById('langToggle');
+  if (btn) btn.textContent = lang === 'en' ? 'ID' : 'EN';
+}
+
+// Apply on load
+setLang(_lang);
+
+// Toggle handler
+document.getElementById('langToggle').addEventListener('click', function () {
+  setLang(_lang === 'en' ? 'id' : 'en');
+});
+
 /* ─── BACKGROUND MUSIC ─── */
 (function initMusic() {
   var audio       = document.getElementById('bgAudio');
@@ -436,20 +658,13 @@ function setupLightbox(carousel, images) {
   const attendance = document.getElementById('attendance');
   const guestField = document.getElementById('guestField');
 
-  // If no personalized invite link, hide attendance + persons fields and
-  // reframe the section as a message/wishes board rather than an RSVP.
+  // If no personalized invite link, hide attendance + persons fields.
+  // Header copy is handled by setLang() which already ran.
   const toParam = new URLSearchParams(window.location.search).get('to');
   if (!toParam) {
     const attendanceRow = form.querySelector('.form__row');
     if (attendanceRow) attendanceRow.style.display = 'none';
     attendance.removeAttribute('required');
-
-    const label = document.getElementById('rsvpLabel');
-    const title = document.getElementById('rsvpTitle');
-    const intro = document.getElementById('rsvpIntro');
-    if (label) label.textContent = 'Share the Joy';
-    if (title) title.textContent = 'Send Message and Wishes';
-    if (intro) intro.textContent = "We'd be so grateful to hear from you. Leave your heartfelt message and warm wishes for Jei & Angie below — they mean the world to us.";
   }
 
   // Show/hide guest count based on attendance
@@ -497,10 +712,10 @@ function setupLightbox(carousel, images) {
     });
     const isAttending = String(prevAttendance).toLowerCase() === 'yes';
     document.getElementById('rsvpSuccessTitle').textContent =
-      `You've already RSVP'd, ${name}!`;
+      t('success.already.title').replace('{name}', name);
     document.getElementById('rsvpSuccessSub').textContent = isAttending
-      ? "We already have you down as attending. See you at the wedding!"
-      : "We already have your regrets on record. Thank you for letting us know.";
+      ? t('success.already.yes')
+      : t('success.already.no');
     success.hidden = false;
   }
 
@@ -523,7 +738,7 @@ function setupLightbox(carousel, images) {
 
     const data = Object.fromEntries(new FormData(form));
     const btn  = form.querySelector('button[type="submit"]');
-    btn.textContent = 'Checking…';
+    btn.textContent = t('form.checking');
     btn.disabled = true;
 
     let isListed = false;
@@ -551,7 +766,7 @@ function setupLightbox(carousel, images) {
       }
     } catch (_) {} // On error: proceed with submission, treat as unlisted
 
-    btn.textContent = 'Sending…';
+    btn.textContent = t('form.sending');
 
     if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
       try {
@@ -571,15 +786,15 @@ function setupLightbox(carousel, images) {
     const isAttending = data.attendance === 'yes';
     const guestName   = data.guestName || '';
     if (!isListed) {
-      document.getElementById('rsvpSuccessTitle').textContent = `Thank you for your wishes, ${guestName}! 🌸`;
-      document.getElementById('rsvpSuccessSub').textContent = 'Your kind words mean the world to us.';
+      document.getElementById('rsvpSuccessTitle').textContent = t('success.unlisted.title').replace('{name}', guestName);
+      document.getElementById('rsvpSuccessSub').textContent   = t('success.unlisted.sub');
     } else {
       document.getElementById('rsvpSuccessTitle').textContent = isAttending
-        ? `You're on the list, ${guestName}!`
-        : `So sad you can't make it 😢`;
+        ? t('success.listed.yes.title').replace('{name}', guestName)
+        : t('success.listed.no.title');
       document.getElementById('rsvpSuccessSub').textContent = isAttending
-        ? "We can't wait to celebrate with you."
-        : 'We really wished you could be there with us. But thank you for letting us know.';
+        ? t('success.listed.yes.sub')
+        : t('success.listed.no.sub');
     }
 
     success.hidden = false;
@@ -674,7 +889,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
           .filter(w => w.name && w.message);
 
         if (!wishes.length) {
-          track.innerHTML = '<p class="wishes__empty">Be the first to leave a message!</p>';
+          track.innerHTML = `<p class="wishes__empty">${t('wishes.empty')}</p>`;
           return;
         }
 
@@ -693,7 +908,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         });
       })
       .catch(() => {
-        track.innerHTML = '<p class="wishes__empty">Messages coming soon…</p>';
+        track.innerHTML = `<p class="wishes__empty">${t('wishes.soon')}</p>`;
       });
   }
 
