@@ -22,12 +22,12 @@
     <div class="splash__bg" style="background-image: url('images/assets/hero-bg.jpg')"></div>
     <div class="splash__overlay"></div>
     <div class="splash__content">
-      <p class="splash__label">The Wedding of</p>
+      <p class="splash__label" data-i18n="splash.label">The Wedding of</p>
       <h1 class="splash__names">Jei <span>&amp;</span> Angie</h1>
       <div class="splash__line"></div>
-      <p class="splash__dear">Dear</p>
+      <p class="splash__dear" data-i18n="splash.dear">Dear</p>
       <p class="splash__guest" id="splashGuest">Beloved Guest</p>
-      <button class="splash__btn" id="splashBtn">Open Invitation</button>
+      <button class="splash__btn" id="splashBtn" data-i18n="splash.btn">Open Invitation</button>
     </div>
   </div>
 
@@ -79,11 +79,12 @@
   <nav class="nav" id="nav">
     <div class="nav__logo">J <span>&amp;</span> A</div>
     <ul class="nav__links">
-      <li><a href="#portraits">Meet the Couple</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#gallery">Gallery</a></li>
-      <li><a href="#rsvp" class="nav__cta">RSVP</a></li>
+      <li><a href="#portraits" data-i18n="nav.meet">Meet the Couple</a></li>
+      <li><a href="#details" data-i18n="nav.details">Details</a></li>
+      <li><a href="#gallery" data-i18n="nav.gallery">Gallery</a></li>
+      <li><a href="#rsvp" class="nav__cta" data-i18n="nav.rsvp">RSVP</a></li>
     </ul>
+    <button class="nav__lang" id="langToggle" aria-label="Switch language">ID</button>
     <button class="nav__hamburger" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
@@ -93,10 +94,10 @@
   <div class="mobile-menu" id="mobileMenu">
     <button class="mobile-menu__close" aria-label="Close menu">&times;</button>
     <ul>
-      <li><a href="#portraits">Meet the Couple</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#gallery">Gallery</a></li>
-      <li><a href="#rsvp">RSVP</a></li>
+      <li><a href="#portraits" data-i18n="nav.meet">Meet the Couple</a></li>
+      <li><a href="#details" data-i18n="nav.details">Details</a></li>
+      <li><a href="#gallery" data-i18n="nav.gallery">Gallery</a></li>
+      <li><a href="#rsvp" data-i18n="nav.rsvp">RSVP</a></li>
     </ul>
   </div>
 
@@ -108,29 +109,29 @@
     <div class="hero__overlay"></div>
 
     <div class="hero__content">
-      <p class="hero__subtitle fade-in">By the grace of God, We're tying the knot.</p>
+      <p class="hero__subtitle fade-in" data-i18n="hero.subtitle">By the grace of God, We're tying the knot.</p>
       <h1 class="hero__names fade-in">Jei <span>&amp;</span> Angie</h1>
-      <p class="hero__invite fade-in">joyfully invite you to celebrate their wedding</p>
+      <p class="hero__invite fade-in" data-i18n="hero.invite">joyfully invite you to celebrate their wedding</p>
 
       <div class="hero__countdown fade-in" id="heroCountdown">
         <div class="hero__countdown-unit">
           <span class="hero__countdown-num" id="cdDays">00</span>
-          <span class="hero__countdown-label">Days</span>
+          <span class="hero__countdown-label" data-i18n="cd.days">Days</span>
         </div>
         <div class="hero__countdown-sep">:</div>
         <div class="hero__countdown-unit">
           <span class="hero__countdown-num" id="cdHours">00</span>
-          <span class="hero__countdown-label">Hours</span>
+          <span class="hero__countdown-label" data-i18n="cd.hours">Hours</span>
         </div>
         <div class="hero__countdown-sep">:</div>
         <div class="hero__countdown-unit">
           <span class="hero__countdown-num" id="cdMinutes">00</span>
-          <span class="hero__countdown-label">Minutes</span>
+          <span class="hero__countdown-label" data-i18n="cd.minutes">Minutes</span>
         </div>
         <div class="hero__countdown-sep">:</div>
         <div class="hero__countdown-unit">
           <span class="hero__countdown-num" id="cdSeconds">00</span>
-          <span class="hero__countdown-label">Seconds</span>
+          <span class="hero__countdown-label" data-i18n="cd.seconds">Seconds</span>
         </div>
       </div>
 
@@ -155,7 +156,7 @@
     <div class="save-date__bg" style="background-image: url('images/assets/save-date-bg.jpg')"></div>
     <div class="save-date__overlay"></div>
     <div class="save-date__content fade-in">
-      <p class="save-date__label">Save the Date</p>
+      <p class="save-date__label" data-i18n="std.label">Save the Date</p>
       <h2 class="save-date__heading">26 July 2026</h2>
       <p class="save-date__location">Manado, North Sulawesi</p>
     </div>
@@ -169,8 +170,8 @@
 
     <div class="container">
       <div class="section-header fade-in">
-        <p class="section-label">Meet the Couple</p>
-        <h2 class="section-title">The Bride &amp; Groom</h2>
+        <p class="section-label" data-i18n="portraits.label">Meet the Couple</p>
+        <h2 class="section-title" data-i18n="portraits.title">The Bride &amp; Groom</h2>
       </div>
 
       <div class="portraits__grid">
@@ -183,10 +184,10 @@
             </div>
           </div>
           <div class="portrait-feature__text">
-            <span class="portrait-feature__role">The Groom</span>
+            <span class="portrait-feature__role" data-i18n="groom.role">The Groom</span>
             <h3 class="portrait-feature__name">Jei</h3>
             <p class="portrait-feature__degree">Jeremy Matthew Mandei, S.Kom., S.Stat.</p>
-            <p>Son of dr. Jose M. Mandei, Sp.A, Subsp.ETIA(K).<br />&amp; dr. Linda A. Matali, Sp.KKLP., M.Kes.</p>
+            <p data-i18n-html="groom.parents">Son of dr. Jose M. Mandei, Sp.A, Subsp.ETIA(K).<br />&amp; dr. Linda A. Matali, Sp.KKLP., M.Kes.</p>
           </div>
         </div>
 
@@ -202,10 +203,10 @@
             </div>
           </div>
           <div class="portrait-feature__text">
-            <span class="portrait-feature__role">The Bride</span>
+            <span class="portrait-feature__role" data-i18n="bride.role">The Bride</span>
             <h3 class="portrait-feature__name">Angie</h3>
             <p class="portrait-feature__degree">Angelica Kumendong, S.T.</p>
-            <p>Daughter of Noldy R. Kumendong, S.Hut.<br />&amp; Ir. Shirly S. Lengkong</p>
+            <p data-i18n-html="bride.parents">Daughter of Noldy R. Kumendong, S.Hut.<br />&amp; Ir. Shirly S. Lengkong</p>
           </div>
         </div>
 
@@ -219,8 +220,8 @@
   <section class="quote-section">
     <img class="quote-section__photo" src="images/groombride/RESULT_LOMO0395.jpg" alt="Jei &amp; Angie" />
     <blockquote class="quote-section__text fade-in">
-      <p>I have found the one whom my soul loves.</p>
-      <cite>Song of Solomon 3:4</cite>
+      <p data-i18n="quote.text">I have found the one whom my soul loves.</p>
+      <cite data-i18n="quote.cite">Song of Solomon 3:4</cite>
     </blockquote>
   </section>
 
@@ -230,8 +231,8 @@
   <section class="details" id="details">
     <div class="container">
       <div class="section-header fade-in">
-        <p class="section-label">Join Us</p>
-        <h2 class="section-title">Wedding Details</h2>
+        <p class="section-label" data-i18n="details.label">Join Us</p>
+        <h2 class="section-title" data-i18n="details.title">Wedding Details</h2>
       </div>
 
       <div class="details__grid">
@@ -248,11 +249,11 @@
                 <path d="M12 2L12 6M9 4h6M5 22V10a7 7 0 0114 0v12M5 22h14M9 22v-4a3 3 0 016 0v4"/>
               </svg>
             </div>
-            <h3 class="detail-card__label">Holy Matrimony</h3>
+            <h3 class="detail-card__label" data-i18n="ceremony.label">Holy Matrimony</h3>
             <p class="detail-card__time">12:00 WITA</p>
             <p class="detail-card__venue">GMIM Zaitun Mahakeret</p>
             <p class="detail-card__address">Jl. Diponegoro No.104-88, Mahakeret, Manado</p>
-            <a href="https://www.google.com/maps/search/GMIM+Zaitun+Mahakeret+Manado" target="_blank" rel="noopener" class="btn btn--ghost">View Map</a>
+            <a href="https://www.google.com/maps/search/GMIM+Zaitun+Mahakeret+Manado" target="_blank" rel="noopener" class="btn btn--ghost" data-i18n="map.btn">View Map</a>
           </div>
         </div>
 
@@ -279,11 +280,11 @@
                 <path d="M3 10h18M7 3v18M17 3v18M3 7a4 4 0 014-4h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7z"/>
               </svg>
             </div>
-            <h3 class="detail-card__label">The Reception</h3>
+            <h3 class="detail-card__label" data-i18n="reception.label">The Reception</h3>
             <p class="detail-card__time">18:00 WITA</p>
             <p class="detail-card__venue">Courtyard by Marriott</p>
             <p class="detail-card__address">Grand Kawanua Ballroom, Jl. A.A. Maramis, Manado</p>
-            <a href="https://www.google.com/maps/search/Grand+Kawanua+Ballroom+Marriott+Manado" target="_blank" rel="noopener" class="btn btn--ghost">View Map</a>
+            <a href="https://www.google.com/maps/search/Grand+Kawanua+Ballroom+Marriott+Manado" target="_blank" rel="noopener" class="btn btn--ghost" data-i18n="map.btn">View Map</a>
           </div>
         </div>
 
@@ -302,8 +303,8 @@
 
     <div class="container">
       <div class="section-header fade-in">
-        <p class="section-label section-label--light">Captured Moments</p>
-        <h2 class="section-title section-title--light">Our Gallery</h2>
+        <p class="section-label section-label--light" data-i18n="gallery.label">Captured Moments</p>
+        <h2 class="section-title section-title--light" data-i18n="gallery.title">Our Gallery</h2>
       </div>
     </div>
 
@@ -320,45 +321,45 @@
   <section class="rsvp" id="rsvp">
     <div class="container">
       <div class="section-header fade-in">
-        <p class="section-label" id="rsvpLabel">Kindly Reply By 23 July 2026</p>
-        <h2 class="section-title" id="rsvpTitle">RSVP</h2>
-        <p class="rsvp__intro" id="rsvpIntro">It would be a great happiness for us if you would be willing to attend this joyful day. Thank you for all the kind words, prayers, and attention you have given. See you on our wedding day!</p>
+        <p class="section-label" id="rsvpLabel" data-i18n="rsvp.label">Kindly Reply By 23 July 2026</p>
+        <h2 class="section-title" id="rsvpTitle" data-i18n="rsvp.title">RSVP</h2>
+        <p class="rsvp__intro" id="rsvpIntro" data-i18n="rsvp.intro">It would be a great happiness for us if you would be willing to attend this joyful day. Thank you for all the kind words, prayers, and attention you have given. See you on our wedding day!</p>
       </div>
 
       <form class="rsvp__form fade-in" id="rsvpForm" novalidate>
 
         <div class="form__field">
-          <label for="guestName">Guest Name <span aria-hidden="true">*</span></label>
-          <input type="text" id="guestName" name="guestName" placeholder="Your full name" required autocomplete="name" />
+          <label for="guestName"><span data-i18n="form.name">Guest Name</span> <span aria-hidden="true">*</span></label>
+          <input type="text" id="guestName" name="guestName" data-i18n-placeholder="form.name.ph" placeholder="Your full name" required autocomplete="name" />
           <span class="form__error" role="alert"></span>
         </div>
 
         <div class="form__row">
           <div class="form__field">
-            <label for="attendance">Will you be attending? <span aria-hidden="true">*</span></label>
+            <label for="attendance"><span data-i18n="form.attendance">Will you be attending?</span> <span aria-hidden="true">*</span></label>
             <select id="attendance" name="attendance" required>
-              <option value="" disabled selected>Please select</option>
-              <option value="yes">Joyfully Accepts</option>
-              <option value="no">Congrats on your wedding day! (Cannot attend)</option>
+              <option value="" disabled selected data-i18n="form.attendance.ph">Please select</option>
+              <option value="yes" data-i18n="form.attendance.yes">Joyfully Accepts</option>
+              <option value="no" data-i18n="form.attendance.no">Congrats on your wedding day! (Cannot attend)</option>
             </select>
             <span class="form__error" role="alert"></span>
           </div>
           <div class="form__field" id="guestField">
-            <label for="guests">Number of Guests (Including Yourself)</label>
+            <label for="guests" data-i18n="form.guests">Number of Guests (Including Yourself)</label>
             <select id="guests" name="guests">
-              <option value="1">1 person</option>
-              <option value="2">2 persons</option>
+              <option value="1" data-i18n="form.guests.1">1 person</option>
+              <option value="2" data-i18n="form.guests.2">2 persons</option>
             </select>
           </div>
         </div>
 
         <div class="form__field">
-          <label for="message">Leave a Message &amp; Wishes for Jei &amp; Angie</label>
-          <textarea id="message" name="message" rows="4" placeholder="Share your wishes with the couple…"></textarea>
+          <label for="message" data-i18n="form.message">Leave a Message &amp; Wishes for Jei &amp; Angie</label>
+          <textarea id="message" name="message" rows="4" data-i18n-placeholder="form.message.ph" placeholder="Share your wishes with the couple…"></textarea>
         </div>
 
         <div class="form__submit">
-          <button type="submit" class="btn btn--primary">Send My RSVP</button>
+          <button type="submit" class="btn btn--primary" data-i18n="form.submit">Send My RSVP</button>
         </div>
 
         <div class="rsvp__success" id="rsvpSuccess" role="status" aria-live="polite" hidden>
@@ -367,7 +368,7 @@
             <h3 id="rsvpSuccessTitle">Thank You!</h3>
             <p id="rsvpSuccessSub">Your RSVP has been received.</p>
             <p class="rsvp__success-names">— Jei &amp; Angie</p>
-            <button class="gift-btn js-gift-open">&#128157; Send them a gift</button>
+            <button class="gift-btn js-gift-open" data-i18n="gift.btn">&#128157; Send them a gift</button>
           </div>
         </div>
 
@@ -382,9 +383,9 @@
   <section class="qr-section" id="qr" hidden>
     <div class="container">
       <div class="section-header fade-in">
-        <p class="section-label">Your Invitation</p>
-        <h2 class="section-title">Your Entrance Pass</h2>
-        <p class="qr-section__sub fade-in">Present this at the entrance on your wedding day</p>
+        <p class="section-label fade-in" data-i18n="qr.label">Your Invitation</p>
+        <h2 class="section-title" data-i18n="qr.title">Your Entrance Pass</h2>
+        <p class="qr-section__sub fade-in" data-i18n="qr.sub">Present this at the entrance on your wedding day</p>
       </div>
       <div class="qr-card fade-in">
         <div class="qr-card__inner">
@@ -395,11 +396,11 @@
           <p class="qr-card__name" id="qrGuestName"></p>
           <div class="qr-card__sep"></div>
           <p class="qr-card__date">26 &middot; 07 &middot; 2026</p>
-          <button class="qr-card__save" id="qrSave">Save to Phone</button>
+          <button class="qr-card__save" id="qrSave" data-i18n="qr.save">Save to Phone</button>
         </div>
       </div>
       <div class="qr-section__gift fade-in">
-        <button class="gift-btn js-gift-open" id="giftBtn">&#128157; Send them a gift</button>
+        <button class="gift-btn js-gift-open" id="giftBtn" data-i18n="gift.btn">&#128157; Send them a gift</button>
       </div>
     </div>
   </section>
@@ -410,13 +411,13 @@
   <section class="wishes" id="wishes">
     <div class="container">
       <div class="section-header fade-in">
-        <p class="section-label">Kind Words</p>
-        <h2 class="section-title">Messages &amp; Wishes</h2>
+        <p class="section-label" data-i18n="wishes.label">Kind Words</p>
+        <h2 class="section-title" data-i18n="wishes.title">Messages &amp; Wishes</h2>
       </div>
     </div>
     <div class="wishes__track-wrap">
       <div class="wishes__track" id="wishesTrack">
-        <p class="wishes__loading">Loading messages…</p>
+        <p class="wishes__loading" data-i18n="wishes.loading">Loading messages…</p>
       </div>
     </div>
   </section>
@@ -441,8 +442,8 @@
     <div class="footer__content">
       <p class="footer__names">Jei <span>&amp;</span> Angie</p>
       <p class="footer__date">26 July 2026</p>
-      <p class="footer__quote"><em>"To God Be The Glory Forever"</em></p>
-      <p class="footer__credit">Made with love &hearts; by jeimandei</p>
+      <p class="footer__quote"><em data-i18n="footer.quote">"To God Be The Glory Forever"</em></p>
+      <p class="footer__credit" data-i18n="footer.credit">Made with love &hearts; by jeimandei</p>
     </div>
   </footer>
 
@@ -453,9 +454,9 @@
     <div class="gift-modal__backdrop"></div>
     <div class="gift-modal__card">
       <button class="gift-modal__close" id="giftModalClose" aria-label="Close">&times;</button>
-      <h3 class="gift-modal__title" id="giftModalTitle">Thank you for your generosity</h3>
-      <p class="gift-modal__scan-label">Scan QRIS</p>
-      <p class="gift-modal__sub">with any m-banking or e-wallet app</p>
+      <h3 class="gift-modal__title" id="giftModalTitle" data-i18n="gift.modal.title">Thank you for your generosity</h3>
+      <p class="gift-modal__scan-label" data-i18n="gift.modal.scan">Scan QRIS</p>
+      <p class="gift-modal__sub" data-i18n="gift.modal.sub">with any m-banking or e-wallet app</p>
       <img class="gift-modal__qris" src="images/assets/qris.png" alt="QRIS Payment Code" />
       <p class="gift-modal__name">Jei &amp; Angie</p>
       <p class="gift-modal__apps">GoPay &middot; OVO &middot; Dana &middot; ShopeePay<br>BCA &middot; BRI &middot; BNI &middot; Mandiri</p>
