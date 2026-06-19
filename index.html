@@ -228,9 +228,14 @@
         <h2 class="section-title" data-i18n="video.title">Before The Day</h2>
       </div>
       <div class="video-section__frame fade-in">
+        <span class="vc vc--tl"></span>
+        <span class="vc vc--tr"></span>
+        <span class="vc vc--bl"></span>
+        <span class="vc vc--br"></span>
         <div class="video-section__wrap">
           <iframe
-            src="https://www.youtube.com/embed/rDcn4hXJCwY?rel=0&modestbranding=1"
+            id="ytPlayer"
+            src="https://www.youtube.com/embed/rDcn4hXJCwY?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&showinfo=0&color=white"
             title="Jei &amp; Angie Pre-Wedding Video"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
@@ -499,6 +504,7 @@
     <button class="lightbox__next" aria-label="Next photo">&#8250;</button>
   </div>
 
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="js/script.js"></script>
 </body>
 </html>

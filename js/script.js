@@ -923,6 +923,37 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 })();
 
 
+/* ─── YOUTUBE PLAYER — music pause/resume ─── */
+(function initVideoPlayer() {
+  if (!document.getElementById('ytPlayer')) return;
+
+  let _musicWasPlaying = false;
+
+  window.onYouTubeIframeAPIReady = function () {
+    new YT.Player('ytPlayer', {
+      events: {
+        onStateChange: function (e) {
+          const audio = document.getElementById('bgAudio');
+          if (!audio) return;
+
+          if (e.data === YT.PlayerState.PLAYING) {
+            _musicWasPlaying = !audio.paused;
+            if (_musicWasPlaying) audio.pause();
+          } else if (
+            e.data === YT.PlayerState.PAUSED ||
+            e.data === YT.PlayerState.ENDED
+          ) {
+            if (_musicWasPlaying) {
+              audio.play().catch(function () {});
+            }
+          }
+        }
+      }
+    });
+  };
+})();
+
+
 /* ─── PARALLAX: subtle hero bg movement ─── */
 (function initParallax() {
   const heroBg = document.querySelector('.hero__bg');
