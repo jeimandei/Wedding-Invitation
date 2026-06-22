@@ -215,6 +215,48 @@
     .config-input:focus { border-color: var(--gold); }
     .config-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
 
+    /* ── PHOTO PANEL ── */
+    .photo-toolbar { display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:.75rem; }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: .6rem;
+      margin-top: .5rem;
+    }
+    .photo-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--gold-l);
+      background: var(--ivory);
+      aspect-ratio: 4/3;
+    }
+    .photo-item img { width:100%; height:100%; object-fit:cover; display:block; }
+    .photo-item__name {
+      position:absolute; bottom:0; left:0; right:0;
+      background:rgba(58,46,42,.72); color:#fff;
+      font-size:.58rem; padding:.22rem .4rem;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .photo-item__del {
+      position:absolute; top:.3rem; right:.3rem;
+      background:rgba(122,32,32,.85); color:#fff;
+      border:none; border-radius:50%; width:22px; height:22px;
+      font-size:1rem; line-height:1; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity .2s;
+    }
+    .photo-item:hover .photo-item__del { opacity:1; }
+    .photo-upload-label {
+      display:inline-flex; align-items:center; gap:.35rem;
+      padding:.55rem 1.1rem; border-radius:99px;
+      font-family:'Montserrat',sans-serif; font-size:.72rem;
+      font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+      cursor:pointer; background:transparent; color:var(--gold);
+      border:1px solid var(--gold); transition:background .2s,color .2s;
+    }
+    .photo-upload-label:hover { background:var(--gold); color:#fff; }
+
     /* ── PRINT STYLES ── */
     @media print {
       header, .status-bar { display: none; }
@@ -276,12 +318,30 @@
             Apps Script URL
             <input type="text" id="cfgScriptUrl" class="config-input" placeholder="https://script.google.com/…" />
           </label>
+          <label class="config-label">
+            GitHub Token <span style="font-size:.65rem;color:var(--light)">(repo write — for photo management)</span>
+            <input type="password" id="cfgGhToken" class="config-input" placeholder="ghp_xxxxxxxxxxxx" />
+          </label>
         </div>
         <div class="config-actions">
           <button class="btn btn-primary" id="cfgSaveBtn">Save &amp; Reload</button>
           <button class="btn btn-outline" id="cfgResetBtn">Reset to Defaults</button>
         </div>
         <p class="import-status" id="cfgStatus"></p>
+      </div>
+
+      <!-- Photo Management -->
+      <div class="import-panel">
+        <h3>Photo Management — Gallery (images/groombride)</h3>
+        <div class="photo-toolbar">
+          <button class="btn btn-outline" id="loadPhotosBtn">↻ Load Photos</button>
+          <label class="photo-upload-label">
+            ⊕ Upload
+            <input type="file" id="photoUpload" accept="image/jpeg,image/png,image/webp" multiple hidden />
+          </label>
+        </div>
+        <p class="import-status" id="photoStatus">Enter a GitHub token in Configuration to manage photos.</p>
+        <div class="photo-grid" id="photoGrid"></div>
       </div>
 
       <!-- Import Guest List -->
@@ -483,23 +543,164 @@
     /* ── CONFIGURATION ── */
     document.getElementById('cfgSheetId').value   = SHEET_ID;
     document.getElementById('cfgScriptUrl').value = APPS_SCRIPT_URL;
+    document.getElementById('cfgGhToken').value   = localStorage.getItem('wb_gh_token') || '';
 
     document.getElementById('cfgSaveBtn').addEventListener('click', () => {
-      const sid = document.getElementById('cfgSheetId').value.trim();
-      const url = document.getElementById('cfgScriptUrl').value.trim();
-      const st  = document.getElementById('cfgStatus');
+      const sid   = document.getElementById('cfgSheetId').value.trim();
+      const url   = document.getElementById('cfgScriptUrl').value.trim();
+      const token = document.getElementById('cfgGhToken').value.trim();
+      const st    = document.getElementById('cfgStatus');
       if (!sid || !url) {
-        st.textContent = 'Both fields are required.'; st.className = 'import-status err'; return;
+        st.textContent = 'Sheet ID and Script URL are required.'; st.className = 'import-status err'; return;
       }
       localStorage.setItem('wb_sheet_id', sid);
       localStorage.setItem('wb_script_url', url);
+      if (token) localStorage.setItem('wb_gh_token', token);
+      else localStorage.removeItem('wb_gh_token');
       location.reload();
     });
 
     document.getElementById('cfgResetBtn').addEventListener('click', () => {
       localStorage.removeItem('wb_sheet_id');
       localStorage.removeItem('wb_script_url');
+      localStorage.removeItem('wb_gh_token');
       location.reload();
+    });
+
+    /* ── GITHUB PHOTO MANAGEMENT ── */
+    const GH_REPO = 'jeimandei/Wedding-Invitation';
+    const GH_PATH = 'images/groombride';
+
+    function ghToken() { return localStorage.getItem('wb_gh_token') || ''; }
+    function ghHeaders() {
+      return {
+        'Authorization': `Bearer ${ghToken()}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      };
+    }
+
+    async function ghList() {
+      const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`, { headers: ghHeaders() });
+      if (!r.ok) throw new Error(`GitHub ${r.status} — check token`);
+      const files = await r.json();
+      return files.filter(f => f.type === 'file' && /\.(jpe?g|png|webp)$/i.test(f.name));
+    }
+
+    async function ghDelete(file) {
+      const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}/${encodeURIComponent(file.name)}`, {
+        method: 'DELETE',
+        headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Remove photo: ${file.name}`, sha: file.sha }),
+      });
+      if (!r.ok) throw new Error(`Delete failed: ${r.status}`);
+    }
+
+    async function ghUpload(name, base64) {
+      let sha;
+      try {
+        const check = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}/${encodeURIComponent(name)}`, { headers: ghHeaders() });
+        if (check.ok) sha = (await check.json()).sha;
+      } catch(_) {}
+      const body = { message: sha ? `Update photo: ${name}` : `Add photo: ${name}`, content: base64 };
+      if (sha) body.sha = sha;
+      const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}/${encodeURIComponent(name)}`, {
+        method: 'PUT',
+        headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
+    }
+
+    async function loadPhotos() {
+      const status = document.getElementById('photoStatus');
+      const grid   = document.getElementById('photoGrid');
+      if (!ghToken()) {
+        status.textContent = 'Enter a GitHub token in Configuration to manage photos.';
+        status.className = 'import-status err'; return;
+      }
+      status.textContent = 'Loading…'; status.className = 'import-status';
+      grid.innerHTML = '';
+      try {
+        const photos = await ghList();
+        renderPhotoGrid(photos);
+        status.textContent = `${photos.length} photo(s) in gallery.`;
+        status.className = 'import-status ok';
+      } catch(e) {
+        status.textContent = `Error: ${e.message}`;
+        status.className = 'import-status err';
+      }
+    }
+
+    function renderPhotoGrid(photos) {
+      const grid = document.getElementById('photoGrid');
+      grid.innerHTML = '';
+      if (!photos.length) {
+        grid.innerHTML = '<p style="font-size:.75rem;color:var(--light);grid-column:1/-1">No photos found.</p>';
+        return;
+      }
+      photos.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+        item.innerHTML = `
+          <img src="/images/groombride/${esc(file.name)}" alt="${esc(file.name)}" loading="lazy" />
+          <span class="photo-item__name">${esc(file.name)}</span>
+          <button class="photo-item__del" title="Delete" data-name="${esc(file.name)}" data-sha="${esc(file.sha)}">×</button>
+        `;
+        grid.appendChild(item);
+      });
+      grid.querySelectorAll('.photo-item__del').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const name = btn.dataset.name;
+          if (!confirm(`Delete "${name}"?\n\nThis will remove it from the site after the automatic redeploy (~1 minute).`)) return;
+          const status = document.getElementById('photoStatus');
+          status.textContent = `Deleting ${name}…`; status.className = 'import-status';
+          try {
+            await ghDelete({ name, sha: btn.dataset.sha });
+            status.textContent = `✓ "${name}" deleted — site will update in ~1 minute.`;
+            status.className = 'import-status ok';
+            loadPhotos();
+          } catch(e) {
+            status.textContent = `Error: ${e.message}`; status.className = 'import-status err';
+          }
+        });
+      });
+    }
+
+    document.getElementById('loadPhotosBtn').addEventListener('click', loadPhotos);
+
+    document.getElementById('photoUpload').addEventListener('change', async function () {
+      const files  = Array.from(this.files);
+      const status = document.getElementById('photoStatus');
+      if (!files.length) return;
+      if (!ghToken()) {
+        status.textContent = 'Enter a GitHub token in Configuration first.';
+        status.className = 'import-status err'; return;
+      }
+      let done = 0, errors = 0;
+      status.textContent = `Uploading 0 / ${files.length}…`; status.className = 'import-status';
+      for (const file of files) {
+        try {
+          const base64 = await new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = e => res(e.target.result.split(',')[1]);
+            r.onerror = rej;
+            r.readAsDataURL(file);
+          });
+          await ghUpload(file.name, base64);
+          done++;
+          status.textContent = `Uploading ${done} / ${files.length}…`;
+        } catch(e) { errors++; console.error(file.name, e); }
+      }
+      if (errors) {
+        status.textContent = `${done} uploaded, ${errors} failed — check console.`;
+        status.className = 'import-status err';
+      } else {
+        status.textContent = `✓ ${done} photo(s) uploaded — site will update in ~1 minute.`;
+        status.className = 'import-status ok';
+      }
+      this.value = '';
+      loadPhotos();
     });
 
     /* ── TEMPLATE DOWNLOAD ── */
