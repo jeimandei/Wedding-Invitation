@@ -38,7 +38,7 @@ const _I18N = {
     'map.btn':        'View Map',
 
     'video.label': 'Our Story',
-    'video.title': 'Before The Day',
+    'video.title': 'Before The Vow',
 
     'gallery.label': 'Captured Moments',
     'gallery.title': 'Our Gallery',
@@ -222,17 +222,10 @@ function setLang(lang) {
     if (submitBtn) submitBtn.textContent = t('form.submit.nowish');
   }
 
-  const btn = document.getElementById('langToggle');
-  if (btn) btn.textContent = lang === 'en' ? 'ID' : 'EN';
 }
 
 // Apply on load
 setLang(_lang);
-
-// Toggle handler
-document.getElementById('langToggle').addEventListener('click', function () {
-  setLang(_lang === 'en' ? 'id' : 'en');
-});
 
 /* ─── BACKGROUND MUSIC ─── */
 (function initMusic() {
