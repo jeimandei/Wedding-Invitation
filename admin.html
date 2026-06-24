@@ -299,6 +299,8 @@
       <div class="hdr-actions">
         <button class="btn btn-outline" id="generateBtn">⚙ Generate IDs</button>
         <button class="btn btn-primary" onclick="window.print()">🖨 Print All Cards</button>
+        <button class="btn btn-danger" id="resetScansBtn">↺ Reset Check-ins</button>
+        <button class="btn btn-danger" id="resetRsvpBtn">↺ Reset Reservations</button>
         <button class="btn btn-danger" id="resetAllBtn">↺ Reset All</button>
         <button class="btn btn-outline" id="lockBtn">⏏ Lock</button>
       </div>
@@ -537,6 +539,36 @@
           btn.textContent = '↺ Reset All'; btn.disabled = false;
           loadGuests();
         }, 2500);
+      });
+    });
+
+    /* ── RESET CHECK-INS ── */
+    document.getElementById('resetScansBtn').addEventListener('click', () => {
+      if (!confirm('Clear ALL check-in data? This resets gift tag numbering and cannot be undone.')) return;
+      const btn = document.getElementById('resetScansBtn');
+      btn.textContent = '↺ Clearing…'; btn.disabled = true;
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'resetScans' })
+      }).catch(() => {}).finally(() => {
+        setTimeout(() => { btn.textContent = '↺ Reset Check-ins'; btn.disabled = false; }, 2500);
+        alert('Check-in data cleared. Verify in the Scans sheet.');
+      });
+    });
+
+    /* ── RESET RESERVATIONS ── */
+    document.getElementById('resetRsvpBtn').addEventListener('click', () => {
+      if (!confirm('Clear ALL RSVP reservation data? This cannot be undone.')) return;
+      const btn = document.getElementById('resetRsvpBtn');
+      btn.textContent = '↺ Clearing…'; btn.disabled = true;
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'resetRsvp' })
+      }).catch(() => {}).finally(() => {
+        setTimeout(() => { btn.textContent = '↺ Reset Reservations'; btn.disabled = false; }, 2500);
+        alert('Reservation data cleared. Verify in the RSVP sheet.');
       });
     });
 
