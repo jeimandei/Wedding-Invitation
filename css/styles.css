@@ -2095,13 +2095,43 @@ textarea { resize: vertical; min-height: 90px; }
   margin-bottom: 1.25rem;
 }
 
+.gift-modal__qris-link {
+  display: block;
+  width: 100%;
+  max-width: 291px;
+  margin: 0 auto 1rem;
+  cursor: zoom-in;
+}
+
 .gift-modal__qris {
   width: 100%;
-  max-width: 253px;
   border-radius: 8px;
   display: block;
-  margin: 0 auto 1rem;
+  transition: transform 0.2s ease;
 }
+
+.gift-modal__qris-link:hover .gift-modal__qris { transform: scale(1.02); }
+
+.gift-modal__download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.25rem auto 1rem;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid var(--gold);
+  border-radius: 99px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.gift-modal__download:hover { background: var(--gold); color: #fff; }
 
 .gift-modal__name {
   font-family: var(--font-script);
