@@ -1937,8 +1937,78 @@ textarea { resize: vertical; min-height: 90px; }
   color: #fff;
 }
 
-.qr-section__gift {
+/* ─── GIFT SECTION ─── */
+.gift-section {
+  padding: 6rem 0;
+  background: var(--ivory);
+}
+
+.gift-section__inner {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
   text-align: center;
+  background: var(--warm-white);
+  border: 1px solid var(--gold-light);
+  border-radius: var(--radius-lg);
+  padding: 3.75rem 2.5rem 3.25rem;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.gift-section__corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--gold);
+  opacity: 0.85;
+}
+.gift-section__corner--tl { top: 16px; left: 16px;  border-right: none; border-bottom: none; }
+.gift-section__corner--tr { top: 16px; right: 16px; border-left: none;  border-bottom: none; }
+.gift-section__corner--bl { bottom: 16px; left: 16px;  border-right: none; border-top: none; }
+.gift-section__corner--br { bottom: 16px; right: 16px; border-left: none;  border-top: none; }
+
+.gift-section__icon {
+  width: 2.6rem;
+  height: 2.6rem;
+  color: var(--gold);
+  margin: 0 auto 1.25rem;
+}
+
+.gift-section__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  margin: 1.1rem auto 1.5rem;
+  max-width: 220px;
+}
+.gift-section__divider span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.gift-section__divider svg {
+  width: 16px;
+  height: 16px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.gift-section__text {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--text-mid);
+  line-height: 1.8;
+  max-width: 470px;
+  margin: 0 auto 0.5rem;
+}
+
+@media (max-width: 540px) {
+  .gift-section { padding: 4rem 0; }
+  .gift-section__inner { padding: 3rem 1.5rem 2.75rem; }
+  .gift-section__text { font-size: 1rem; }
 }
 
 /* ─── RSVP SUCCESS QR CARD ─── */
