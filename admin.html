@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -257,6 +258,24 @@
     }
     .photo-upload-label:hover { background:var(--gold); color:#fff; }
 
+    /* ── QR CARD SAVE BUTTON ── */
+    .qr-card__save {
+      display: block;
+      margin: .6rem auto 0;
+      padding: .3rem .9rem;
+      background: transparent;
+      border: 1px solid var(--gold);
+      border-radius: 99px;
+      color: var(--gold);
+      font-family: 'Montserrat', sans-serif;
+      font-size: .6rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .qr-card__save:hover { background: var(--gold); color: #fff; }
+    @media print { .qr-card__save { display: none; } }
+
     /* ── PRINT STYLES ── */
     @media print {
       header, .status-bar { display: none; }
@@ -477,6 +496,7 @@
           <p class="qr-card__table">${esc(g.table) || '&nbsp;'}</p>
           <div class="qr-card__sep"></div>
           <p class="qr-card__date">26 · 07 · 2026</p>
+          <button class="qr-card__save">⤓ Save Card</button>
         `;
         grid.appendChild(card);
 
@@ -493,6 +513,20 @@
           card.querySelector('.qr-card__code').innerHTML =
             '<p style="font-size:.7rem;color:#c0504a;padding:.5rem">No ID — run Generate IDs</p>';
         }
+
+        card.querySelector('.qr-card__save').addEventListener('click', () => {
+          const saveBtn = card.querySelector('.qr-card__save');
+          saveBtn.style.visibility = 'hidden';
+          html2canvas(card, { scale: 2, backgroundColor: '#FDF6EE', useCORS: true, logging: false })
+            .then(canvas => {
+              saveBtn.style.visibility = '';
+              const a = document.createElement('a');
+              a.href = canvas.toDataURL('image/png');
+              a.download = `JeiAngie-${slugify(g.name)}.png`;
+              a.click();
+            })
+            .catch(() => { saveBtn.style.visibility = ''; });
+        });
       });
     }
 
