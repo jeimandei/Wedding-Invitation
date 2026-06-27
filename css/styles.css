@@ -2033,6 +2033,51 @@ textarea { resize: vertical; min-height: 90px; }
   .gift-section__text { font-size: 1rem; }
 }
 
+/* ─── QR PASS POPUP MODAL ─── */
+.qr-pass-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-pass-modal[hidden] { display: none; }
+.qr-pass-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 8, 4, 0.72);
+  cursor: pointer;
+}
+.qr-pass-modal__card {
+  position: relative;
+  background: #FDF6EE;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 2rem 2.5rem 1.75rem;
+  text-align: center;
+  max-width: 320px;
+  width: 88vw;
+  box-shadow: var(--shadow-lg);
+}
+.qr-pass-modal__close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.18s;
+}
+.qr-pass-modal__close:hover { color: var(--text-dark); }
+
+/* clickable hint on the card */
+.qr-card__inner { cursor: pointer; }
+
 /* ─── RSVP SUCCESS QR CARD ─── */
 .rsvp-qr-card {
   margin: 1.75rem auto 0;
