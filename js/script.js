@@ -626,6 +626,8 @@ function setupLightbox(carousel, images) {
       document.getElementById('qrGuestName').textContent = name;
       qrCanvas.innerHTML = '';
       buildQR(qrCanvas, qrUrl, 200);
+
+      // Save to phone — captures full styled card
       document.getElementById('qrSave').addEventListener('click', () => {
         const card    = qrCanvas.closest('.qr-card');
         const saveBtn = document.getElementById('qrSave');
@@ -645,6 +647,24 @@ function setupLightbox(carousel, images) {
           saveQR(qrCanvas, filename);
         }
       });
+
+      // Tap card → open popup with larger QR
+      const cardInner = qrCanvas.closest('.qr-card__inner');
+      const modal     = document.getElementById('qrPassModal');
+      if (cardInner && modal) {
+        cardInner.addEventListener('click', e => {
+          if (e.target.closest('.qr-card__save')) return;
+          document.getElementById('qrModalGuestName').textContent = name;
+          const modalCanvas = document.getElementById('qrModalCanvas');
+          modalCanvas.innerHTML = '';
+          buildQR(modalCanvas, qrUrl, 260);
+          modal.hidden = false;
+        });
+        const closeModal = () => { modal.hidden = true; };
+        document.getElementById('qrPassModalClose').addEventListener('click', closeModal);
+        document.getElementById('qrPassModalBackdrop').addEventListener('click', closeModal);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+      }
     }
     window.__guestQR = { name, url: qrUrl, saveQR, buildQR };
   }
