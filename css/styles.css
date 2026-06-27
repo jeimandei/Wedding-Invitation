@@ -1751,7 +1751,7 @@ textarea { resize: vertical; min-height: 90px; }
   position: fixed;
   inset: 0;
   background: rgba(20, 12, 10, 0.94);
-  z-index: 300;
+  z-index: 500;
   display: flex;
   align-items: center;
   justify-content: center;
