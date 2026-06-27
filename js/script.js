@@ -629,7 +629,7 @@ function setupLightbox(carousel, images) {
 
       // Save to phone — captures full styled card
       document.getElementById('qrSave').addEventListener('click', () => {
-        const card    = qrCanvas.closest('.qr-card');
+        const card    = qrCanvas.closest('.qr-card__inner');
         const saveBtn = document.getElementById('qrSave');
         const filename = `entrance-pass-${name.replace(/\s+/g, '-')}.png`;
         if (card && typeof html2canvas !== 'undefined') {
