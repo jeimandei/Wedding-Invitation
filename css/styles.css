@@ -1974,7 +1974,27 @@ textarea { resize: vertical; min-height: 90px; }
   height: 2.6rem;
   flex-shrink: 0;
   color: var(--gold);
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 1.5rem;
+}
+
+.gift-section__label {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 0.6rem;
+}
+
+.gift-section__title {
+  font-family: var(--font-head);
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-weight: 400;
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 0;
 }
 
 .gift-section__divider {
@@ -1991,8 +2011,8 @@ textarea { resize: vertical; min-height: 90px; }
   background: linear-gradient(to right, transparent, var(--gold), transparent);
 }
 .gift-section__divider svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   color: var(--gold);
   flex-shrink: 0;
 }
