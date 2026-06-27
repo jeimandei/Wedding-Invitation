@@ -2304,7 +2304,7 @@ textarea { resize: vertical; min-height: 90px; }
   color: var(--text-dark);
   letter-spacing: 0.04em;
   flex: 1;
-  text-align: left;
+  text-align: left !important;
   display: none;
 }
 .gift-modal__account.is-revealed .gift-modal__acct-num { display: block; }
