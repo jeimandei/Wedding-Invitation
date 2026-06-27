@@ -2302,10 +2302,14 @@ textarea { resize: vertical; min-height: 90px; }
 /* hidden by default — revealed when parent has .is-revealed */
 .gift-modal__acct-num {
   font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-dark);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-align: left !important;
   display: none;
 }
