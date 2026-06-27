@@ -450,6 +450,40 @@ setLang(_lang);
 })();
 
 
+/* ─── QRIS ZOOM LIGHTBOX ─── */
+(function initQrisZoom() {
+  const btn     = document.getElementById('qrisZoomBtn');
+  if (!btn) return;
+  const lightbox = document.getElementById('lightbox');
+  const lbImg    = document.getElementById('lightboxImg');
+  const btnClose = lightbox.querySelector('.lightbox__close');
+  const btnPrev  = lightbox.querySelector('.lightbox__prev');
+  const btnNext  = lightbox.querySelector('.lightbox__next');
+
+  function openQris() {
+    lbImg.src = 'images/assets/qris.png';
+    lbImg.alt = 'QRIS Payment Code';
+    lightbox.hidden = false;
+    lightbox.dataset.mode = 'qris';
+    btnPrev.hidden = true;
+    btnNext.hidden = true;
+  }
+
+  function closeQris() {
+    lightbox.hidden = true;
+    delete lightbox.dataset.mode;
+    btnPrev.hidden = false;
+    btnNext.hidden = false;
+  }
+
+  btn.addEventListener('click', openQris);
+  btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openQris(); } });
+  btnClose.addEventListener('click', () => { if (lightbox.dataset.mode === 'qris') closeQris(); });
+  lightbox.addEventListener('click', e => { if (e.target === lightbox && lightbox.dataset.mode === 'qris') closeQris(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && lightbox.dataset.mode === 'qris') closeQris(); });
+})();
+
+
 /* ─── GALLERY LIGHTBOX ─── */
 function setupLightbox(carousel, images) {
   const lightbox = document.getElementById('lightbox');
