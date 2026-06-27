@@ -682,9 +682,23 @@ function setupLightbox(carousel, images) {
 
   window.__closeGiftModal = close;
 
+  /* ── Account rows: tap to reveal/hide ── */
+  document.querySelectorAll('.gift-modal__account').forEach(function(row) {
+    row.addEventListener('click', function(e) {
+      if (e.target.closest('.gift-modal__copy')) return; // let copy handle itself
+      var revealed = row.classList.toggle('is-revealed');
+      row.setAttribute('aria-expanded', revealed ? 'true' : 'false');
+    });
+    row.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
+    });
+  });
+
+  /* ── Copy icon buttons ── */
   document.querySelectorAll('.gift-modal__copy').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var text = btn.dataset.copy;
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var text = btn.closest('.gift-modal__account').dataset.copy;
       (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
         .catch(function() {
           var ta = document.createElement('textarea');
@@ -693,10 +707,8 @@ function setupLightbox(carousel, images) {
           document.body.removeChild(ta);
         })
         .finally(function() {
-          var prev = btn.textContent;
-          btn.textContent = 'Copied!';
           btn.classList.add('copied');
-          setTimeout(function() { btn.textContent = prev; btn.classList.remove('copied'); }, 1800);
+          setTimeout(function() { btn.classList.remove('copied'); }, 1800);
         });
     });
   });

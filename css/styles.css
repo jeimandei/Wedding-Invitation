@@ -2280,7 +2280,11 @@ textarea { resize: vertical; min-height: 90px; }
   border: 1px solid var(--gold-light);
   border-radius: var(--radius-sm);
   padding: 0.55rem 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+  user-select: none;
 }
+.gift-modal__account:hover { border-color: var(--gold); }
 
 .gift-modal__bank {
   font-family: var(--font-body);
@@ -2293,6 +2297,7 @@ textarea { resize: vertical; min-height: 90px; }
   flex-shrink: 0;
 }
 
+/* hidden by default — revealed when parent has .is-revealed */
 .gift-modal__acct-num {
   font-family: 'Courier New', monospace;
   font-size: 0.85rem;
@@ -2300,25 +2305,44 @@ textarea { resize: vertical; min-height: 90px; }
   letter-spacing: 0.04em;
   flex: 1;
   text-align: left;
+  display: none;
 }
+.gift-modal__account.is-revealed .gift-modal__acct-num { display: block; }
 
+.gift-modal__acct-hint {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  color: var(--text-light);
+  font-style: italic;
+  flex: 1;
+  text-align: left;
+}
+.gift-modal__account.is-revealed .gift-modal__acct-hint { display: none; }
+
+/* copy icon button — hidden until row is revealed */
 .gift-modal__copy {
   flex-shrink: 0;
-  font-family: var(--font-body);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   color: var(--gold);
   background: transparent;
   border: 1px solid var(--gold-light);
-  border-radius: var(--radius-full);
-  padding: 0.25rem 0.65rem;
+  border-radius: 50%;
   cursor: pointer;
   transition: background 0.18s, color 0.18s, border-color 0.18s;
+  padding: 0;
 }
+.gift-modal__account.is-revealed .gift-modal__copy { display: flex; }
 .gift-modal__copy:hover  { background: var(--gold); color: #fff; border-color: var(--gold); }
 .gift-modal__copy.copied { background: #5c8a5c; color: #fff; border-color: #5c8a5c; }
+
+/* checkmark icon hidden by default, shown when copied */
+.gift-modal__copy-ok { display: none; }
+.gift-modal__copy.copied svg:not(.gift-modal__copy-ok) { display: none; }
+.gift-modal__copy.copied .gift-modal__copy-ok { display: block; }
 
 .gift-modal__acct-name {
   font-family: var(--font-body);
