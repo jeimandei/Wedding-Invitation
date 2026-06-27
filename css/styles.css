@@ -1969,8 +1969,10 @@ textarea { resize: vertical; min-height: 90px; }
 .gift-section__corner--br { bottom: 16px; right: 16px; border-left: none;  border-top: none; }
 
 .gift-section__icon {
+  display: block;
   width: 2.6rem;
   height: 2.6rem;
+  flex-shrink: 0;
   color: var(--gold);
   margin: 0 auto 1.25rem;
 }
