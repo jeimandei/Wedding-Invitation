@@ -682,6 +682,14 @@ function setupLightbox(carousel, images) {
 
   window.__closeGiftModal = close;
 
+  /* ── Transfer panel toggle ── */
+  document.getElementById('transferToggle').addEventListener('click', function() {
+    var panel = document.getElementById('transferPanel');
+    var expanded = this.getAttribute('aria-expanded') === 'true';
+    panel.hidden = expanded;
+    this.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  });
+
   /* ── Account rows: tap to reveal/hide ── */
   document.querySelectorAll('.gift-modal__account').forEach(function(row) {
     row.addEventListener('click', function(e) {

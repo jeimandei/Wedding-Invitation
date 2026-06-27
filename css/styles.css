@@ -2242,18 +2242,23 @@ textarea { resize: vertical; min-height: 90px; }
 }
 
 /* ─── GIFT MODAL ACCOUNTS ─── */
-.gift-modal__accounts-divider {
+.gift-modal__transfer-toggle {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin: 1.25rem 0 1rem;
+  gap: 0.5rem;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin: 1rem 0 0;
 }
-.gift-modal__accounts-divider span:not(.gift-modal__accounts-or) {
+.gift-modal__transfer-toggle span:not(.gift-modal__transfer-label) {
   flex: 1;
   height: 1px;
   background: var(--gold-light);
 }
-.gift-modal__accounts-or {
+.gift-modal__transfer-label {
   font-family: var(--font-body);
   font-size: 0.62rem;
   font-weight: 600;
@@ -2261,7 +2266,19 @@ textarea { resize: vertical; min-height: 90px; }
   text-transform: uppercase;
   color: var(--text-light);
   white-space: nowrap;
+  transition: color 0.18s;
 }
+.gift-modal__transfer-chevron {
+  color: var(--text-light);
+  flex-shrink: 0;
+  transition: transform 0.2s, color 0.18s;
+}
+.gift-modal__transfer-toggle:hover .gift-modal__transfer-label,
+.gift-modal__transfer-toggle:hover .gift-modal__transfer-chevron { color: var(--gold); }
+.gift-modal__transfer-toggle[aria-expanded="true"] .gift-modal__transfer-chevron { transform: rotate(180deg); }
+
+#transferPanel[hidden] { display: none; }
+#transferPanel { margin-top: 0.75rem; }
 
 .gift-modal__accounts {
   list-style: none;
@@ -2302,10 +2319,14 @@ textarea { resize: vertical; min-height: 90px; }
 /* hidden by default — revealed when parent has .is-revealed */
 .gift-modal__acct-num {
   font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-dark);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-align: left !important;
   display: none;
 }
