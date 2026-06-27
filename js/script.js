@@ -681,6 +681,25 @@ function setupLightbox(carousel, images) {
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
 
   window.__closeGiftModal = close;
+
+  document.querySelectorAll('.gift-modal__copy').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var text = btn.dataset.copy;
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+        .catch(function() {
+          var ta = document.createElement('textarea');
+          ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+          document.body.removeChild(ta);
+        })
+        .finally(function() {
+          var prev = btn.textContent;
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(function() { btn.textContent = prev; btn.classList.remove('copied'); }, 1800);
+        });
+    });
+  });
 })();
 
 
