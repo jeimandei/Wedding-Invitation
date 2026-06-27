@@ -407,6 +407,34 @@
   </section>
 
   <!-- ════════════════════════════════
+       MESSAGES & WISHES
+  ════════════════════════════════ -->
+  <section class="wishes" id="wishes">
+    <div class="container">
+      <div class="section-header fade-in">
+        <p class="section-label" data-i18n="wishes.label">Kind Words</p>
+        <h2 class="section-title" data-i18n="wishes.title">Messages &amp; Wishes</h2>
+      </div>
+    </div>
+    <div class="wishes__track-wrap">
+      <div class="wishes__track" id="wishesTrack">
+        <p class="wishes__loading" data-i18n="wishes.loading">Loading messages…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wish modal -->
+  <div class="wish-modal" id="wishModal" hidden role="dialog" aria-modal="true" aria-labelledby="wishModalName">
+    <div class="wish-modal__backdrop"></div>
+    <div class="wish-modal__card">
+      <button class="wish-modal__close" id="wishModalClose" aria-label="Close">&times;</button>
+      <p class="wish-modal__name" id="wishModalName"></p>
+      <div class="wish-modal__divider"></div>
+      <p class="wish-modal__message" id="wishModalMessage"></p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
        QR ENTRANCE PASS
   ════════════════════════════════ -->
   <section class="qr-section" id="qr" hidden>
@@ -476,34 +504,6 @@
       </div>
     </div>
   </section>
-
-  <!-- ════════════════════════════════
-       MESSAGES & WISHES
-  ════════════════════════════════ -->
-  <section class="wishes" id="wishes">
-    <div class="container">
-      <div class="section-header fade-in">
-        <p class="section-label" data-i18n="wishes.label">Kind Words</p>
-        <h2 class="section-title" data-i18n="wishes.title">Messages &amp; Wishes</h2>
-      </div>
-    </div>
-    <div class="wishes__track-wrap">
-      <div class="wishes__track" id="wishesTrack">
-        <p class="wishes__loading" data-i18n="wishes.loading">Loading messages…</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Wish modal -->
-  <div class="wish-modal" id="wishModal" hidden role="dialog" aria-modal="true" aria-labelledby="wishModalName">
-    <div class="wish-modal__backdrop"></div>
-    <div class="wish-modal__card">
-      <button class="wish-modal__close" id="wishModalClose" aria-label="Close">&times;</button>
-      <p class="wish-modal__name" id="wishModalName"></p>
-      <div class="wish-modal__divider"></div>
-      <p class="wish-modal__message" id="wishModalMessage"></p>
-    </div>
-  </div>
 
   <!-- ════════════════════════════════
        FOOTER
