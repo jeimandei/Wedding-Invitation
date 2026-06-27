@@ -520,58 +520,63 @@
       <a class="gift-modal__download" href="images/assets/qris.png" download="Jei-Angie-QRIS.png">⤓ Save QRIS</a>
       <p class="gift-modal__apps">GoPay &middot; OVO &middot; Dana &middot; ShopeePay<br>BCA &middot; BRI &middot; BNI &middot; Mandiri</p>
 
-      <div class="gift-modal__accounts-divider">
-        <span></span><span class="gift-modal__accounts-or">or transfer directly</span><span></span>
-      </div>
+      <button class="gift-modal__transfer-toggle" id="transferToggle" aria-expanded="false" aria-controls="transferPanel">
+        <span></span>
+        <span class="gift-modal__transfer-label">or transfer directly</span>
+        <svg class="gift-modal__transfer-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        <span></span>
+      </button>
 
-      <ul class="gift-modal__accounts">
-        <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="5271531886">
-          <span class="gift-modal__bank">BCA</span>
-          <span class="gift-modal__acct-num">5271531886</span>
-          <span class="gift-modal__acct-hint">tap to reveal</span>
-          <button class="gift-modal__copy" aria-label="Copy BCA account number" tabindex="-1">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-        </li>
-        <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="001111113099">
-          <span class="gift-modal__bank">blu by BCA</span>
-          <span class="gift-modal__acct-num">001111113099</span>
-          <span class="gift-modal__acct-hint">tap to reveal</span>
-          <button class="gift-modal__copy" aria-label="Copy blu by BCA account number" tabindex="-1">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-        </li>
-        <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="052201025671501">
-          <span class="gift-modal__bank">BRI</span>
-          <span class="gift-modal__acct-num">052201025671501</span>
-          <span class="gift-modal__acct-hint">tap to reveal</span>
-          <button class="gift-modal__copy" aria-label="Copy BRI account number" tabindex="-1">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-        </li>
-        <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="90010293683">
-          <span class="gift-modal__bank">SMBC</span>
-          <span class="gift-modal__acct-num">90010293683</span>
-          <span class="gift-modal__acct-hint">tap to reveal</span>
-          <button class="gift-modal__copy" aria-label="Copy SMBC account number" tabindex="-1">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-        </li>
-        <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="8596902760">
-          <span class="gift-modal__bank">Maybank</span>
-          <span class="gift-modal__acct-num">8596902760</span>
-          <span class="gift-modal__acct-hint">tap to reveal</span>
-          <button class="gift-modal__copy" aria-label="Copy Maybank account number" tabindex="-1">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-        </li>
-      </ul>
-      <p class="gift-modal__acct-name">a.n. Jeremy Matthew Mandei</p>
+      <div id="transferPanel" hidden>
+        <ul class="gift-modal__accounts">
+          <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="5271531886">
+            <span class="gift-modal__bank">BCA</span>
+            <span class="gift-modal__acct-num">5271531886</span>
+            <span class="gift-modal__acct-hint">tap to reveal</span>
+            <button class="gift-modal__copy" aria-label="Copy BCA account number" tabindex="-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+          <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="001111113099">
+            <span class="gift-modal__bank">blu by BCA</span>
+            <span class="gift-modal__acct-num">001111113099</span>
+            <span class="gift-modal__acct-hint">tap to reveal</span>
+            <button class="gift-modal__copy" aria-label="Copy blu by BCA account number" tabindex="-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+          <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="052201025671501">
+            <span class="gift-modal__bank">BRI</span>
+            <span class="gift-modal__acct-num">052201025671501</span>
+            <span class="gift-modal__acct-hint">tap to reveal</span>
+            <button class="gift-modal__copy" aria-label="Copy BRI account number" tabindex="-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+          <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="90010293683">
+            <span class="gift-modal__bank">SMBC</span>
+            <span class="gift-modal__acct-num">90010293683</span>
+            <span class="gift-modal__acct-hint">tap to reveal</span>
+            <button class="gift-modal__copy" aria-label="Copy SMBC account number" tabindex="-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+          <li class="gift-modal__account" role="button" tabindex="0" aria-expanded="false" data-copy="8596902760">
+            <span class="gift-modal__bank">Maybank</span>
+            <span class="gift-modal__acct-num">8596902760</span>
+            <span class="gift-modal__acct-hint">tap to reveal</span>
+            <button class="gift-modal__copy" aria-label="Copy Maybank account number" tabindex="-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <svg class="gift-modal__copy-ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+        </ul>
+        <p class="gift-modal__acct-name">a.n. Jeremy Matthew Mandei</p>
+      </div>
     </div>
   </div>
 
