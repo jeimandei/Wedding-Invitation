@@ -626,9 +626,25 @@ function setupLightbox(carousel, images) {
       document.getElementById('qrGuestName').textContent = name;
       qrCanvas.innerHTML = '';
       buildQR(qrCanvas, qrUrl, 200);
-      document.getElementById('qrSave').addEventListener('click', () =>
-        saveQR(qrCanvas, `entrance-pass-${name.replace(/\s+/g, '-')}.png`)
-      );
+      document.getElementById('qrSave').addEventListener('click', () => {
+        const card    = qrCanvas.closest('.qr-card');
+        const saveBtn = document.getElementById('qrSave');
+        const filename = `entrance-pass-${name.replace(/\s+/g, '-')}.png`;
+        if (card && typeof html2canvas !== 'undefined') {
+          saveBtn.style.visibility = 'hidden';
+          html2canvas(card, { scale: 2, backgroundColor: '#FDF6EE', useCORS: true, logging: false })
+            .then(canvas => {
+              saveBtn.style.visibility = '';
+              const a = document.createElement('a');
+              a.download = filename;
+              a.href = canvas.toDataURL('image/png');
+              a.click();
+            })
+            .catch(() => { saveBtn.style.visibility = ''; saveQR(qrCanvas, filename); });
+        } else {
+          saveQR(qrCanvas, filename);
+        }
+      });
     }
     window.__guestQR = { name, url: qrUrl, saveQR, buildQR };
   }
