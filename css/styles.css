@@ -1737,6 +1737,15 @@ textarea { resize: vertical; min-height: 90px; }
   margin-bottom: 2rem;
 }
 
+.footer__hashtag {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
 .footer__credit {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
