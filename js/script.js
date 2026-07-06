@@ -461,7 +461,8 @@ setLang(_lang);
   const btnNext  = lightbox.querySelector('.lightbox__next');
 
   function openQris() {
-    lbImg.src = 'images/assets/qris.png';
+    const currentImg = btn.querySelector('.gift-modal__qris');
+    lbImg.src = currentImg ? currentImg.src : 'images/assets/qris.png';
     lbImg.alt = 'QRIS Payment Code';
     lightbox.hidden = false;
     lightbox.dataset.mode = 'qris';
@@ -754,6 +755,175 @@ function setupLightbox(carousel, images) {
           btn.classList.add('copied');
           setTimeout(function() { btn.classList.remove('copied'); }, 1800);
         });
+    });
+  });
+})();
+
+
+/* ─── DYNAMIC QRIS (guest-entered amount) ───
+   Converts the static open-amount QRIS into an amount-embedded EMV QR by
+   decoding the existing qris.png (via jsQR), rewriting tag 54 (amount) and
+   tag 01 (point-of-initiation: 11 static / 12 dynamic), then recomputing
+   the tag 63 CRC — same merchant account, no bank API involved. */
+(function initDynamicQris() {
+  const input        = document.getElementById('giftAmountInput');
+  const clearBtn     = document.getElementById('giftAmountClear');
+  const hint         = document.getElementById('giftAmountHint');
+  const qrImg        = document.querySelector('.gift-modal__qris');
+  const downloadLink = document.querySelector('.gift-modal__download');
+  const renderTarget = document.getElementById('qrisDynamicRender');
+  const chips        = document.querySelectorAll('.gift-modal__chip');
+  if (!input || !qrImg || !renderTarget) return;
+
+  const STATIC_SRC  = qrImg.getAttribute('src');
+  const STATIC_NAME = downloadLink ? downloadLink.getAttribute('download') : 'Jei-Angie-QRIS.png';
+
+  let baseQris       = null;
+  let baseLoadFailed = false;
+  let debounceTimer  = null;
+
+  function crc16ccitt(str) {
+    let crc = 0xFFFF;
+    for (let i = 0; i < str.length; i++) {
+      crc ^= str.charCodeAt(i) << 8;
+      for (let j = 0; j < 8; j++) {
+        crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+        crc &= 0xFFFF;
+      }
+    }
+    return crc.toString(16).toUpperCase().padStart(4, '0');
+  }
+
+  function parseEmvTlv(str) {
+    const fields = [];
+    let i = 0;
+    while (i + 4 <= str.length) {
+      const tag = str.substr(i, 2);
+      const len = parseInt(str.substr(i + 2, 2), 10);
+      if (isNaN(len)) break;
+      fields.push({ tag, value: str.substr(i + 4, len) });
+      i += 4 + len;
+    }
+    return fields;
+  }
+
+  function tlv(tag, value) {
+    return tag + String(value.length).padStart(2, '0') + value;
+  }
+
+  function buildDynamicQris(baseStr, amount) {
+    const fields = parseEmvTlv(baseStr.trim());
+    if (!fields.length) throw new Error('QRIS parse failed');
+
+    let out = '';
+    let amountInserted = false;
+    fields.forEach(f => {
+      if (f.tag === '63' || f.tag === '54') return; // drop old CRC / amount, rebuilt below
+      if (f.tag === '01') { out += tlv('01', amount ? '12' : '11'); return; }
+      out += tlv(f.tag, f.value);
+      if (f.tag === '53' && amount) { out += tlv('54', String(amount)); amountInserted = true; }
+    });
+    if (amount && !amountInserted) out += tlv('54', String(amount));
+
+    out += '6304';
+    return out + crc16ccitt(out);
+  }
+
+  function loadQrisBaseString() {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width  = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = (typeof jsQR !== 'undefined') ? jsQR(data.data, data.width, data.height) : null;
+          if (code && code.data) resolve(code.data); else reject(new Error('decode failed'));
+        } catch (e) { reject(e); }
+      };
+      img.onerror = reject;
+      img.src = STATIC_SRC;
+    });
+  }
+
+  function ensureBaseLoaded() {
+    if (baseQris || baseLoadFailed) return Promise.resolve(baseQris);
+    return loadQrisBaseString()
+      .then(str => { baseQris = str; return str; })
+      .catch(() => {
+        baseLoadFailed = true;
+        input.disabled = true;
+        chips.forEach(c => c.disabled = true);
+        hint.textContent = '';
+        return null;
+      });
+  }
+
+  function fmtRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
+
+  function resetStatic() {
+    qrImg.src = STATIC_SRC;
+    if (downloadLink) {
+      downloadLink.href = STATIC_SRC;
+      downloadLink.setAttribute('download', STATIC_NAME);
+    }
+  }
+
+  function renderDynamic(amount) {
+    renderTarget.innerHTML = '';
+    new QRCode(renderTarget, {
+      text: buildDynamicQris(baseQris, amount),
+      width: 253, height: 253,
+      colorDark: '#3D2B1F', colorLight: '#FDF6EE',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    const canvas = renderTarget.querySelector('canvas');
+    if (!canvas) throw new Error('render failed');
+    const dataUrl = canvas.toDataURL('image/png');
+    qrImg.src = dataUrl;
+    if (downloadLink) {
+      downloadLink.href = dataUrl;
+      downloadLink.setAttribute('download', `Jei-Angie-QRIS-Rp${amount}.png`);
+    }
+  }
+
+  function applyAmount(amount) {
+    if (!amount) {
+      resetStatic();
+      clearBtn.hidden = true;
+      hint.textContent = 'Enter an amount to pre-fill it in your banking app (optional)';
+      return;
+    }
+    ensureBaseLoaded().then(str => {
+      if (!str) return; // decode failed — stay on static QRIS
+      try {
+        renderDynamic(amount);
+        clearBtn.hidden = false;
+        hint.textContent = `Amount set to ${fmtRupiah(amount)} — tap ✕ to clear`;
+      } catch (e) {
+        resetStatic();
+      }
+    });
+  }
+
+  input.addEventListener('input', () => {
+    const digits = input.value.replace(/\D/g, '');
+    const amount = digits ? parseInt(digits, 10) : 0;
+    input.value = digits ? Number(digits).toLocaleString('id-ID') : '';
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => applyAmount(amount), 350);
+  });
+
+  clearBtn.addEventListener('click', () => { input.value = ''; applyAmount(0); });
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const amount = parseInt(chip.dataset.amount, 10);
+      input.value = amount.toLocaleString('id-ID');
+      applyAmount(amount);
     });
   });
 })();

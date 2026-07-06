@@ -2241,6 +2241,90 @@ textarea { resize: vertical; min-height: 90px; }
   margin-bottom: 1.25rem;
 }
 
+/* ─── GIFT MODAL — AMOUNT INPUT ─── */
+.gift-modal__amount {
+  margin: 0 auto 1.1rem;
+  max-width: 291px;
+}
+
+.gift-modal__amount-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--ivory);
+  border: 1px solid var(--gold-light);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  transition: border-color 0.18s;
+}
+.gift-modal__amount-input-wrap:focus-within { border-color: var(--gold); }
+
+.gift-modal__amount-prefix {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.gift-modal__amount-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--text-dark);
+  text-align: left;
+}
+.gift-modal__amount-input::placeholder { color: var(--text-light); font-family: var(--font-body); }
+
+.gift-modal__amount-clear {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  transition: color 0.18s;
+}
+.gift-modal__amount-clear:hover { color: var(--gold); }
+
+.gift-modal__amount-chips {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.gift-modal__chip {
+  border: 1px solid var(--gold-light);
+  background: transparent;
+  color: var(--text-mid);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: 99px;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.gift-modal__chip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+.gift-modal__amount-hint {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  color: var(--text-light);
+  font-style: italic;
+  text-align: center;
+  margin-top: 0.55rem;
+  line-height: 1.4;
+}
+
 .gift-modal__qris-link {
   display: block;
   width: 100%;
