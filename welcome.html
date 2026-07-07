@@ -258,6 +258,68 @@
       from { opacity: 0; }
       to   { opacity: 1; }
     }
+
+    /* ── FLOATING NUMERIC KEYPAD ── */
+    .numeric-keypad {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 600;
+      background: var(--mid, #1E1009);
+      border-top: 1px solid rgba(201,169,110,0.4);
+      padding: 0.75rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
+      animation: keypadUp 0.18s ease;
+    }
+    .numeric-keypad[hidden] { display: none; }
+    @keyframes keypadUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    .numeric-keypad__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    .numeric-keypad__grid button {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--cream);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(201,169,110,0.25);
+      border-radius: 10px;
+      padding: 0.85rem 0;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .numeric-keypad__grid button:active,
+    .numeric-keypad__grid button:hover {
+      background: rgba(201,169,110,0.22);
+    }
+    .numeric-keypad__clear,
+    .numeric-keypad__back {
+      font-size: 0.85rem !important;
+      color: var(--gold-l) !important;
+    }
+    .numeric-keypad__done {
+      display: block;
+      width: 100%;
+      max-width: 360px;
+      margin: 0.6rem auto 0;
+      padding: 0.7rem;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -494,13 +556,8 @@
       <div class="gift-modal__amount">
         <div class="gift-modal__amount-input-wrap">
           <span class="gift-modal__amount-prefix">Rp</span>
-          <input type="text" inputmode="numeric" id="giftAmountInput" class="gift-modal__amount-input" placeholder="Any amount" autocomplete="off" />
+          <input type="text" inputmode="numeric" id="giftAmountInput" class="gift-modal__amount-input" placeholder="Any amount" autocomplete="off" readonly />
           <button type="button" class="gift-modal__amount-clear" id="giftAmountClear" aria-label="Clear amount" hidden>&times;</button>
-        </div>
-        <div class="gift-modal__amount-chips">
-          <button type="button" class="gift-modal__chip" data-amount="300000">300rb</button>
-          <button type="button" class="gift-modal__chip" data-amount="500000">500rb</button>
-          <button type="button" class="gift-modal__chip" data-amount="1000000">1jt</button>
         </div>
         <p class="gift-modal__amount-hint" id="giftAmountHint">Enter an amount to pre-fill it in your banking app (optional)</p>
       </div>
@@ -582,7 +639,7 @@
           </label>
           <label class="gift-modal__confirm-label">
             Amount Sent
-            <input type="text" inputmode="numeric" id="giftConfirmAmount" class="gift-modal__confirm-input" placeholder="Rp" required />
+            <input type="text" inputmode="numeric" id="giftConfirmAmount" class="gift-modal__confirm-input" placeholder="Rp" required readonly />
           </label>
           <label class="gift-modal__confirm-label">
             Method
@@ -617,6 +674,27 @@
       <img src="" alt="" id="lightboxImg" />
     </div>
     <button class="lightbox__next" aria-label="Next" hidden>&#8250;</button>
+  </div>
+
+  <!-- ════════════════════════════════
+       FLOATING NUMERIC KEYPAD (touchscreen amount entry)
+  ════════════════════════════════ -->
+  <div class="numeric-keypad" id="numericKeypad" hidden>
+    <div class="numeric-keypad__grid">
+      <button type="button" data-key="1">1</button>
+      <button type="button" data-key="2">2</button>
+      <button type="button" data-key="3">3</button>
+      <button type="button" data-key="4">4</button>
+      <button type="button" data-key="5">5</button>
+      <button type="button" data-key="6">6</button>
+      <button type="button" data-key="7">7</button>
+      <button type="button" data-key="8">8</button>
+      <button type="button" data-key="9">9</button>
+      <button type="button" class="numeric-keypad__clear" data-key="clear">Clear</button>
+      <button type="button" data-key="0">0</button>
+      <button type="button" class="numeric-keypad__back" data-key="back" aria-label="Backspace">⌫</button>
+    </div>
+    <button type="button" class="numeric-keypad__done" id="keypadDone">Done</button>
   </div>
 
   <script src="js/gift-modal.js"></script>

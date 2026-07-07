@@ -386,3 +386,61 @@ window.__resetGiftModal = () => {
   if (typeof window.__resetGiftAmount === 'function') window.__resetGiftAmount();
   if (typeof window.__resetGiftConfirm === 'function') window.__resetGiftConfirm();
 };
+
+
+/* ─── FLOATING NUMERIC KEYPAD (touchscreen amount entry) ───
+   Only activates on pages that include #numericKeypad markup — currently
+   welcome.html, whose amount inputs are set readonly so the OS keyboard
+   never competes with this. No-ops elsewhere (e.g. index.html). */
+(function initNumericKeypad() {
+  const keypad = document.getElementById('numericKeypad');
+  if (!keypad) return;
+
+  const doneBtn = document.getElementById('keypadDone');
+  const targets = [
+    document.getElementById('giftAmountInput'),
+    document.getElementById('giftConfirmAmount')
+  ].filter(Boolean);
+  if (!targets.length) return;
+
+  let activeInput = null;
+
+  function open(input) {
+    activeInput = input;
+    keypad.hidden = false;
+  }
+
+  function close() {
+    keypad.hidden = true;
+    activeInput = null;
+  }
+
+  targets.forEach(input => {
+    input.addEventListener('focus', () => open(input));
+    input.addEventListener('click', () => open(input));
+  });
+
+  keypad.querySelectorAll('button[data-key]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!activeInput) return;
+      const digits = activeInput.value.replace(/\D/g, '');
+      const key = btn.dataset.key;
+      let next = digits;
+      if (key === 'clear') next = '';
+      else if (key === 'back') next = digits.slice(0, -1);
+      else next = digits + key;
+      activeInput.value = next;
+      activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  });
+
+  doneBtn.addEventListener('click', close);
+
+  document.addEventListener('click', e => {
+    if (keypad.hidden) return;
+    if (keypad.contains(e.target) || targets.includes(e.target)) return;
+    close();
+  });
+
+  window.__closeNumericKeypad = close;
+})();
