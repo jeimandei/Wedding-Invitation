@@ -443,6 +443,7 @@
 
     function dismissWelcome() {
       if (welcomeTimer) { clearTimeout(welcomeTimer); welcomeTimer = null; }
+      if (typeof window.__closeGiftModal === 'function') window.__closeGiftModal();
       welcomeOverlay.hidden = true;
       scanner.resume();
       scanning = true;
@@ -455,6 +456,9 @@
       document.getElementById('welcomeTable').textContent = table ? table : '';
       document.getElementById('welcomeGift').textContent  = giftNum ? `Gift Tag  #${giftNum}` : '';
       window.__checkedInGuestName = name;
+      // This is a shared usher device, not a guest's own browser — wipe the
+      // previous guest's gift amount/confirmation state before this guest sees it.
+      if (typeof window.__resetGiftModal === 'function') window.__resetGiftModal();
       welcomeOverlay.hidden = false;
       welcomeTimer = setTimeout(dismissWelcome, 10000);
     }

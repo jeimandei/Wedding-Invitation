@@ -271,6 +271,10 @@
       applyAmount(amount);
     });
   });
+
+  // Exposed so a shared device (e.g. the entrance check-in screen) can wipe
+  // one guest's entered amount before the next guest's welcome screen shows.
+  window.__resetGiftAmount = () => { input.value = ''; applyAmount(0); };
 })();
 
 
@@ -358,4 +362,27 @@
       new Promise(resolve => setTimeout(resolve, 7000))
     ]).then(finish);
   });
+
+  // Exposed so a shared device (e.g. the entrance check-in screen) can wipe
+  // one guest's confirmation before the next guest's welcome screen shows —
+  // localStorage is device-scoped, not guest-scoped, so without this every
+  // guest after the first would see "already confirmed" on that device.
+  window.__resetGiftConfirm = () => {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+    window.__giftLastMethod = null;
+    openBtn.hidden = false;
+    form.hidden = true;
+    form.reset();
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit';
+    thanks.hidden = true;
+  };
 })();
+
+
+/* ─── Combined reset hook for pages that show a fresh guest per view
+   (currently welcome.html's entrance check-in screen) ─── */
+window.__resetGiftModal = () => {
+  if (typeof window.__resetGiftAmount === 'function') window.__resetGiftAmount();
+  if (typeof window.__resetGiftConfirm === 'function') window.__resetGiftConfirm();
+};
