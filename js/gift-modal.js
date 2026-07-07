@@ -116,7 +116,6 @@
   const qrImg        = document.querySelector('.gift-modal__qris');
   const downloadLink = document.querySelector('.gift-modal__download');
   const renderTarget = document.getElementById('qrisDynamicRender');
-  const chips        = document.querySelectorAll('.gift-modal__chip');
   if (!input || !qrImg || !renderTarget) return;
 
   const STATIC_SRC  = qrImg.getAttribute('src');
@@ -200,7 +199,6 @@
       .catch(() => {
         baseLoadFailed = true;
         input.disabled = true;
-        chips.forEach(c => c.disabled = true);
         hint.textContent = '';
         return null;
       });
@@ -263,14 +261,6 @@
   });
 
   clearBtn.addEventListener('click', () => { input.value = ''; applyAmount(0); });
-
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      const amount = parseInt(chip.dataset.amount, 10);
-      input.value = amount.toLocaleString('id-ID');
-      applyAmount(amount);
-    });
-  });
 
   // Exposed so a shared device (e.g. the entrance check-in screen) can wipe
   // one guest's entered amount before the next guest's welcome screen shows.
