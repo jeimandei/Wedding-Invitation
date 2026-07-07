@@ -165,6 +165,22 @@
     .qr-card__code canvas,
     .qr-card__code img { border-radius:4px; }
 
+    .qr-card__scanme {
+      display:inline-flex; align-items:center; gap:.35rem;
+      margin:.65rem 0 .1rem;
+      padding:.3rem .7rem;
+      background:var(--gold); color:#fff;
+      border-radius:99px;
+      font-size:.6rem; font-weight:600;
+      letter-spacing:.08em; text-transform:uppercase;
+    }
+    .qr-card__scanme svg { width:11px; height:11px; flex-shrink:0; }
+    .qr-card__hint {
+      font-size:.62rem; color:var(--mid);
+      letter-spacing:.02em; line-height:1.5;
+      max-width:165px; margin:.3rem auto 0;
+    }
+
     .qr-card__name {
       font-family:'Cormorant Garamond',serif;
       font-style:italic;
@@ -493,6 +509,11 @@
           <p class="qr-card__couple">Jei &amp; Angie</p>
           <div class="qr-card__sep"></div>
           <div class="qr-card__code" id="qr-${slugify(g.name)}"></div>
+          <span class="qr-card__scanme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+            Scan Me
+          </span>
+          <p class="qr-card__hint">Opens your invitation, RSVP &amp; entrance pass</p>
           <p class="qr-card__name">${esc(g.name)}</p>
           <p class="qr-card__table">${esc(g.table) || '&nbsp;'}</p>
           <div class="qr-card__sep"></div>
