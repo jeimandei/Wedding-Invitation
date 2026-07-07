@@ -11,6 +11,8 @@
  *      Fill B–E (name, table, phone, pax). Leave column A blank.
  *    • "Scans"   → columns: scanned_at | guest_id | guest_name | table | pax
  *      Leave completely empty.
+ *    • "Gifts"   is created automatically the first time a guest confirms
+ *      a gift on the site — no manual setup needed.
  *
  * 4. Share the spreadsheet: "Anyone with the link → Viewer"
  *    (required so the Guests / Scans tabs can be read via the gviz API).
@@ -34,6 +36,7 @@
  *   RSVP:   Timestamp | Guest Name | Attendance | Guests | Message
  *   Guests: id (auto) | name       | table      | phone  | pax
  *   Scans:  scanned_at | guest_id  | guest_name | table  | pax
+ *   Gifts:  Timestamp | Guest Name | Amount | Method | Note | Listed
  */
 
 const SPREADSHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
@@ -84,6 +87,8 @@ function doPost(e) {
   if (data.action === 'resetRsvp')     return handleResetRsvp();
   if (data.action === 'resetAll')      return handleResetAll();
   if (data.action === 'importGuests')  return handleImportGuests(data);
+  if (data.action === 'gift')          return handleGift(data);
+  if (data.action === 'resetGifts')    return handleResetGifts();
 
   return handleRsvp(data);
 }
@@ -172,15 +177,62 @@ function handleResetRsvp() {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* ─── Reset both Scans and RSVP sheets in one call ─── */
+/* ─── Reset Scans, RSVP, Guests and Gifts sheets in one call ─── */
 function handleResetAll() {
   var ss     = SpreadsheetApp.openById(SPREADSHEET_ID);
   var scans  = ss.getSheetByName('Scans');
   var rsvp   = ss.getSheetByName('RSVP') || ss.getActiveSheet();
   var guests = ss.getSheetByName('Guests');
+  var gifts  = ss.getSheetByName('Gifts');
   if (scans  && scans.getLastRow()  > 1) scans.deleteRows(2,  scans.getLastRow()  - 1);
   if (rsvp   && rsvp.getLastRow()   > 1) rsvp.deleteRows(2,   rsvp.getLastRow()   - 1);
   if (guests && guests.getLastRow() > 1) guests.deleteRows(2, guests.getLastRow() - 1);
+  if (gifts  && gifts.getLastRow()  > 1) gifts.deleteRows(2,  gifts.getLastRow()  - 1);
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Gift confirmation write (guest self-reports amount sent) ─── */
+function handleGift(data) {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('Gifts');
+  if (!sheet) sheet = ss.insertSheet('Gifts');
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['Timestamp', 'Guest Name', 'Amount', 'Method', 'Note', 'Listed']);
+  }
+
+  var guestsSheet = ss.getSheetByName('Guests');
+  var listed = 'NO';
+  if (guestsSheet && guestsSheet.getLastRow() > 1) {
+    var guestNames = guestsSheet.getRange(2, 2, guestsSheet.getLastRow() - 1, 1).getValues();
+    var normalized = String(data.guestName || '').trim().toLowerCase();
+    listed = guestNames.some(function(row) {
+      return String(row[0]).trim().toLowerCase() === normalized;
+    }) ? 'YES' : 'NO';
+  }
+
+  sheet.appendRow([
+    new Date().toLocaleString('id-ID', { timeZone: TZ }),
+    data.guestName || '',
+    data.amount    || '',
+    data.method    || '',
+    data.note      || '',
+    listed
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Reset Gifts sheet (keeps header row) ─── */
+function handleResetGifts() {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('Gifts');
+  if (sheet && sheet.getLastRow() > 1)
+    sheet.deleteRows(2, sheet.getLastRow() - 1);
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);

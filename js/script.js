@@ -733,6 +733,10 @@ function setupLightbox(carousel, images) {
       if (e.target.closest('.gift-modal__copy')) return; // let copy handle itself
       var revealed = row.classList.toggle('is-revealed');
       row.setAttribute('aria-expanded', revealed ? 'true' : 'false');
+      if (revealed) {
+        var bankEl = row.querySelector('.gift-modal__bank');
+        if (bankEl) window.__giftLastMethod = bankEl.textContent.trim();
+      }
     });
     row.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
@@ -903,6 +907,7 @@ function setupLightbox(carousel, images) {
         renderDynamic(amount);
         clearBtn.hidden = false;
         hint.textContent = `Amount set to ${fmtRupiah(amount)} — tap ✕ to clear`;
+        window.__giftLastMethod = 'QRIS';
       } catch (e) {
         resetStatic();
       }
@@ -925,6 +930,92 @@ function setupLightbox(carousel, images) {
       input.value = amount.toLocaleString('id-ID');
       applyAmount(amount);
     });
+  });
+})();
+
+
+/* ─── GIFT CONFIRMATION (guest self-reports amount sent) ─── */
+(function initGiftConfirm() {
+  const openBtn   = document.getElementById('giftConfirmBtn');
+  const form      = document.getElementById('giftConfirmForm');
+  const nameInput = document.getElementById('giftConfirmName');
+  const amtInput  = document.getElementById('giftConfirmAmount');
+  const methodSel = document.getElementById('giftConfirmMethod');
+  const noteInput = document.getElementById('giftConfirmNote');
+  const submitBtn = document.getElementById('giftConfirmSubmit');
+  const thanks    = document.getElementById('giftConfirmThanks');
+  if (!openBtn || !form) return;
+
+  const STORAGE_KEY = 'wb_gift_confirmed';
+
+  function storedConfirmation() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) { return null; }
+  }
+
+  function showThanks(record) {
+    openBtn.hidden = true;
+    form.hidden = true;
+    thanks.hidden = false;
+    thanks.textContent = `You told us about a gift of Rp ${Number(record.amount).toLocaleString('id-ID')} — thank you! 💛`;
+  }
+
+  const existing = storedConfirmation();
+  if (existing) showThanks(existing);
+
+  openBtn.addEventListener('click', () => {
+    const guestNameField = document.getElementById('guestName');
+    nameInput.value = (guestNameField && guestNameField.value.trim()) ||
+                      (window.__guestQR && window.__guestQR.name) || '';
+
+    const amountInput = document.getElementById('giftAmountInput');
+    amtInput.value = (amountInput && amountInput.value) || '';
+
+    const lastMethod = window.__giftLastMethod;
+    methodSel.value = (lastMethod && Array.from(methodSel.options).some(o => o.value === lastMethod))
+      ? lastMethod : 'QRIS';
+
+    openBtn.hidden = true;
+    form.hidden = false;
+    nameInput.focus();
+  });
+
+  amtInput.addEventListener('input', () => {
+    const digits = amtInput.value.replace(/\D/g, '');
+    amtInput.value = digits ? Number(digits).toLocaleString('id-ID') : '';
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const name   = nameInput.value.trim();
+    const amount = amtInput.value.replace(/\D/g, '');
+    if (!name || !amount) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    const finish = () => {
+      const record = { name, amount, method: methodSel.value, note: noteInput.value.trim() };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(record)); } catch (_) {}
+      showThanks(record);
+    };
+
+    // Race against a timeout so a stalled connection never leaves the guest
+    // stuck on "Sending…" — this is a self-reported record either way.
+    Promise.race([
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'gift',
+          guestName: name,
+          amount: amount,
+          method: methodSel.value,
+          note: noteInput.value.trim()
+        })
+      }).catch(() => {}),
+      new Promise(resolve => setTimeout(resolve, 7000))
+    ]).then(finish);
   });
 })();
 

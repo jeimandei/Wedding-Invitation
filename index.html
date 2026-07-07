@@ -610,6 +610,40 @@
         </ul>
         <p class="gift-modal__acct-name">a.n. Jeremy Matthew Mandei</p>
       </div>
+
+      <div class="gift-modal__confirm">
+        <p class="gift-modal__confirm-prompt">Already sent it?</p>
+        <button type="button" class="gift-modal__confirm-btn" id="giftConfirmBtn">✓ I've Sent This Gift</button>
+
+        <form class="gift-modal__confirm-form" id="giftConfirmForm" hidden>
+          <label class="gift-modal__confirm-label">
+            Your Name
+            <input type="text" id="giftConfirmName" class="gift-modal__confirm-input" placeholder="Full name" required />
+          </label>
+          <label class="gift-modal__confirm-label">
+            Amount Sent
+            <input type="text" inputmode="numeric" id="giftConfirmAmount" class="gift-modal__confirm-input" placeholder="Rp" required />
+          </label>
+          <label class="gift-modal__confirm-label">
+            Method
+            <select id="giftConfirmMethod" class="gift-modal__confirm-input">
+              <option value="QRIS">QRIS</option>
+              <option value="BCA">BCA</option>
+              <option value="blu by BCA">blu by BCA</option>
+              <option value="BRI">BRI</option>
+              <option value="SMBC">SMBC</option>
+              <option value="Maybank">Maybank</option>
+            </select>
+          </label>
+          <label class="gift-modal__confirm-label">
+            Note <span class="gift-modal__confirm-optional">(optional)</span>
+            <input type="text" id="giftConfirmNote" class="gift-modal__confirm-input" placeholder="e.g. sent via GoPay" />
+          </label>
+          <button type="submit" class="gift-modal__confirm-submit" id="giftConfirmSubmit">Submit</button>
+        </form>
+
+        <p class="gift-modal__confirm-thanks" id="giftConfirmThanks" hidden></p>
+      </div>
     </div>
   </div>
 

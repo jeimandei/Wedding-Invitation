@@ -2167,6 +2167,7 @@ textarea { resize: vertical; min-height: 90px; }
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 2rem 0;
 }
 
 .gift-modal[hidden] { display: none; }
@@ -2187,6 +2188,9 @@ textarea { resize: vertical; min-height: 90px; }
   padding: 2rem 2rem 1.75rem;
   max-width: 320px;
   width: 90%;
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   text-align: center;
   animation: wishModalIn 0.3s ease;
 }
@@ -2510,6 +2514,111 @@ textarea { resize: vertical; min-height: 90px; }
   letter-spacing: 0.06em;
   margin-bottom: 0.25rem;
 }
+
+/* ─── GIFT MODAL — SELF-REPORT CONFIRMATION ─── */
+.gift-modal__confirm {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--gold-light);
+}
+
+.gift-modal__confirm-prompt {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--text-light);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+}
+
+.gift-modal__confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  border-radius: 99px;
+  padding: 0.55rem 1.4rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.gift-modal__confirm-btn:hover { background: #b8945d; }
+.gift-modal__confirm-btn[hidden] { display: none; }
+
+.gift-modal__confirm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: 291px;
+  margin: 0 auto;
+  text-align: left;
+}
+.gift-modal__confirm-form[hidden] { display: none; }
+
+.gift-modal__confirm-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-mid);
+}
+
+.gift-modal__confirm-optional {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text-light);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.gift-modal__confirm-input {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-dark);
+  background: var(--ivory);
+  border: 1px solid var(--gold-light);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.7rem;
+  outline: none;
+  transition: border-color 0.18s;
+}
+.gift-modal__confirm-input:focus { border-color: var(--gold); }
+
+.gift-modal__confirm-submit {
+  margin-top: 0.3rem;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  border-radius: 99px;
+  padding: 0.6rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.18s, opacity 0.18s;
+}
+.gift-modal__confirm-submit:hover { background: #b8945d; }
+.gift-modal__confirm-submit:disabled { opacity: 0.6; cursor: default; }
+
+.gift-modal__confirm-thanks {
+  font-family: var(--font-head);
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--gold);
+  line-height: 1.5;
+  max-width: 260px;
+  margin: 0 auto;
+}
+.gift-modal__confirm-thanks[hidden] { display: none; }
 
 /* ════════════════════════════════════════════
    RESPONSIVE — TABLET (≤ 900px)
