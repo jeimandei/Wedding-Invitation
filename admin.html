@@ -320,6 +320,7 @@
         <button class="btn btn-primary" onclick="window.print()">🖨 Print All Cards</button>
         <button class="btn btn-danger" id="resetScansBtn">↺ Reset Check-ins</button>
         <button class="btn btn-danger" id="resetRsvpBtn">↺ Reset Reservations</button>
+        <button class="btn btn-danger" id="resetGiftsBtn">↺ Reset Gifts</button>
         <button class="btn btn-danger" id="resetAllBtn">↺ Reset All</button>
         <button class="btn btn-outline" id="lockBtn">⏏ Lock</button>
       </div>
@@ -386,7 +387,7 @@
   <div id="resetModal" hidden style="position:fixed;inset:0;background:rgba(58,46,42,0.55);display:flex;align-items:center;justify-content:center;z-index:200;">
     <div class="reset-modal-box">
       <p class="reset-modal-title">Reset All Data?</p>
-      <p class="reset-modal-body">This will permanently delete all <strong>check-in records</strong>, <strong>RSVP reservations</strong>, and the entire <strong>guest list</strong>. This cannot be undone.</p>
+      <p class="reset-modal-body">This will permanently delete all <strong>check-in records</strong>, <strong>RSVP reservations</strong>, <strong>gift confirmations</strong>, and the entire <strong>guest list</strong>. This cannot be undone.</p>
       <div class="reset-modal-actions">
         <button class="btn btn-outline" id="resetCancelBtn">Cancel</button>
         <button class="btn btn-danger" id="resetConfirmBtn">Yes, Reset Everything</button>
@@ -603,6 +604,21 @@
       }).catch(() => {}).finally(() => {
         setTimeout(() => { btn.textContent = '↺ Reset Reservations'; btn.disabled = false; }, 2500);
         alert('Reservation data cleared. Verify in the RSVP sheet.');
+      });
+    });
+
+    /* ── RESET GIFTS ── */
+    document.getElementById('resetGiftsBtn').addEventListener('click', () => {
+      if (!confirm('Clear ALL gift confirmation records? This cannot be undone.')) return;
+      const btn = document.getElementById('resetGiftsBtn');
+      btn.textContent = '↺ Clearing…'; btn.disabled = true;
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'resetGifts' })
+      }).catch(() => {}).finally(() => {
+        setTimeout(() => { btn.textContent = '↺ Reset Gifts'; btn.disabled = false; }, 2500);
+        alert('Gift records cleared. Verify in the Gifts sheet.');
       });
     });
 
