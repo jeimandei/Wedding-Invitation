@@ -2297,28 +2297,6 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .gift-modal__amount-clear:hover { color: var(--gold); }
 
-.gift-modal__amount-chips {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.6rem;
-}
-
-.gift-modal__chip {
-  border: 1px solid var(--gold-light);
-  background: transparent;
-  color: var(--text-mid);
-  font-family: var(--font-body);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  border-radius: 99px;
-  padding: 0.3rem 0.75rem;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s, border-color 0.18s;
-}
-.gift-modal__chip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
-
 .gift-modal__amount-hint {
   font-family: var(--font-body);
   font-size: 0.62rem;
