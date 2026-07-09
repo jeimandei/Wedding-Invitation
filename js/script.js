@@ -394,13 +394,14 @@ setLang(_lang);
 
 /* ─── FADE-IN ON SCROLL ─── */
 (function initFadeIn() {
-  const els = document.querySelectorAll('.fade-in');
+  const SELECTOR = '.fade-in, .fade-zoom, .fade-left, .fade-right';
+  const els = document.querySelectorAll(SELECTOR);
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry, i) => {
         if (entry.isIntersecting) {
           // Stagger siblings
-          const siblings = Array.from(entry.target.parentElement.querySelectorAll('.fade-in'));
+          const siblings = Array.from(entry.target.parentElement.querySelectorAll(SELECTOR));
           const idx = siblings.indexOf(entry.target);
           setTimeout(() => entry.target.classList.add('visible'), idx * 80);
           observer.unobserve(entry.target);
@@ -816,6 +817,8 @@ function setupLightbox(carousel, images) {
 
     success.hidden = false;
 
+    if (isAttending && typeof window.__celebrateRsvp === 'function') window.__celebrateRsvp();
+
     if (typeof window.__loadWishes === 'function') window.__loadWishes();
 
     // Attending + QR visible → scroll to entrance pass
@@ -919,7 +922,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
           </div>
         `).join('');
 
-        track.querySelectorAll('.wish-card').forEach(card => {
+        track.querySelectorAll('.wish-card').forEach((card, i) => {
+          card.style.setProperty('--i', Math.min(i, 14));
           card.addEventListener('click', () => openWish(card.dataset.name, card.dataset.message));
           card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWish(card.dataset.name, card.dataset.message); } });
         });

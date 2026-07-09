@@ -360,6 +360,184 @@ ul  { list-style: none; }
   transform: translateY(0);
 }
 
+/* Variants — same .visible toggle, different entrance direction */
+.fade-zoom {
+  opacity: 0;
+  transform: scale(0.86);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.fade-zoom.visible { opacity: 1; transform: none; }
+
+.fade-left {
+  opacity: 0;
+  transform: translateX(-52px) rotate(-2deg);
+  transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.22,1,0.36,1);
+}
+.fade-left.visible { opacity: 1; transform: none; }
+
+.fade-right {
+  opacity: 0;
+  transform: translateX(52px) rotate(2deg);
+  transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.22,1,0.36,1);
+}
+.fade-right.visible { opacity: 1; transform: none; }
+
+
+/* ════════════════════════════════════════════
+   MOTION & INTERACTION LAYER
+   Ambient effects + scroll-triggered detail on
+   top of the .fade-in system above. Everything
+   here is inert under prefers-reduced-motion.
+════════════════════════════════════════════ */
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold-light), var(--gold));
+  z-index: 9990;
+  transition: width 0.1s linear;
+}
+
+/* Ambient petal canvas */
+#petalCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Butterfly ornament */
+.butterfly {
+  position: fixed;
+  top: 24vh;
+  left: -60px;
+  z-index: 3;
+  pointer-events: none;
+  animation: butterfly-fly 17s linear infinite;
+  animation-delay: 4s;
+  opacity: 0;
+}
+.butterfly svg { animation: butterfly-flutter 0.45s ease-in-out infinite alternate; }
+@keyframes butterfly-fly {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(8deg); }
+  4%   { opacity: 0.9; }
+  92%  { opacity: 0.9; }
+  25%  { transform: translate(30vw, -7vh) rotate(-6deg); }
+  50%  { transform: translate(58vw, 4vh) rotate(10deg); }
+  75%  { transform: translate(84vw, -6vh) rotate(-4deg); }
+  100% { opacity: 0; transform: translate(112vw, 3vh) rotate(8deg); }
+}
+@keyframes butterfly-flutter {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0.55); }
+}
+
+/* Tap-to-bloom hearts */
+.tap-heart {
+  position: fixed;
+  z-index: 9991;
+  pointer-events: none;
+  font-size: 1.15rem;
+  animation: tap-heart-rise 1.1s ease-out forwards;
+}
+@keyframes tap-heart-rise {
+  0%   { transform: translate(-50%, 0) scale(0.4); opacity: 0.9; }
+  100% { transform: translate(-50%, -90px) scale(1.15); opacity: 0; }
+}
+
+/* RSVP celebration burst piece */
+.celebrate-bit {
+  position: fixed;
+  z-index: 9992;
+  pointer-events: none;
+  width: 9px; height: 13px;
+  border-radius: 60% 40% 60% 40%;
+}
+
+/* Ken Burns drift on hero / splash backgrounds */
+.hero__bg,
+.splash__bg {
+  animation: ken-burns 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes ken-burns {
+  from { transform: scale(1) translate3d(0,0,0); }
+  to   { transform: scale(1.08) translate3d(0,-1.5%,0); }
+}
+
+/* Portrait photo 3D tilt (JS-driven rotateX/rotateY via CSS var) */
+.portrait-feature__main {
+  perspective: 900px;
+}
+.portrait-feature__main img {
+  transition: transform 0.25s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Detail card: photo zoom-out + one-shot shimmer as the card reveals */
+.detail-card__photo img {
+  transform: scale(1.14);
+  transition: transform 1.3s cubic-bezier(0.22,1,0.36,1);
+}
+.detail-card.visible .detail-card__photo img { transform: scale(1); }
+
+.detail-card { position: relative; overflow: hidden; }
+.detail-card::after {
+  content: '';
+  position: absolute; top: 0; left: -80%;
+  width: 45%; height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(232,213,176,0.45), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+  z-index: 5;
+}
+.detail-card.visible::after { animation: card-shimmer 1.5s ease 0.55s 1; }
+@keyframes card-shimmer { to { left: 130%; } }
+
+/* Gift icon: wiggle once as the section reveals */
+.gift-section__icon { transform-origin: 50% 20%; }
+.gift-section__inner.visible .gift-section__icon { animation: gift-wiggle 0.9s ease 0.5s 2; }
+@keyframes gift-wiggle {
+  0%, 100% { transform: rotate(0); }
+  25%      { transform: rotate(-8deg); }
+  75%      { transform: rotate(8deg); }
+}
+
+/* Video frame corners: draw in as the frame reveals */
+.video-section__frame .vc {
+  transition: width 0.5s ease 0.3s, height 0.5s ease 0.3s;
+}
+.video-section__frame:not(.visible) .vc { width: 0 !important; height: 0 !important; }
+
+/* Wishes cards: stagger in on insertion (index-driven via --i) */
+.wish-card {
+  animation: wish-card-in 0.6s cubic-bezier(0.22,1,0.36,1) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes wish-card-in {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-zoom, .fade-left, .fade-right,
+  .hero__bg, .splash__bg,
+  .butterfly, .tap-heart, .celebrate-bit,
+  .detail-card::after, .gift-section__inner.visible .gift-section__icon,
+  .wish-card {
+    animation: none !important;
+    transition: none !important;
+  }
+  .fade-zoom, .fade-left, .fade-right { opacity: 1 !important; transform: none !important; }
+  .wish-card { opacity: 1 !important; transform: none !important; }
+  #petalCanvas, .butterfly, .scroll-progress { display: none !important; }
+  .portrait-feature__main img { transition: none !important; }
+}
+
 
 /* ─── SECTION HEADERS ─── */
 .section-header {
