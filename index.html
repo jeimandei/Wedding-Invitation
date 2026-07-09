@@ -156,7 +156,7 @@
   <section class="save-date" id="save-date">
     <div class="save-date__bg" style="background-image: url('images/assets/save-date-bg.jpg')"></div>
     <div class="save-date__overlay"></div>
-    <div class="save-date__content fade-in">
+    <div class="save-date__content fade-zoom">
       <p class="save-date__label" data-i18n="std.label">Save the Date</p>
       <h2 class="save-date__heading">26 July 2026</h2>
       <p class="save-date__location">Manado, North Sulawesi</p>
@@ -178,7 +178,7 @@
       <div class="portraits__grid">
 
         <!-- Groom side -->
-        <div class="portrait-feature fade-in">
+        <div class="portrait-feature fade-left">
           <div class="portrait-feature__photos portrait-feature__photos--solo">
             <div class="portrait-feature__main">
               <img src="images/solo/0B0A9542.jpg" alt="Jeremy — the groom" />
@@ -192,12 +192,12 @@
           </div>
         </div>
 
-        <div class="portraits__divider fade-in">
+        <div class="portraits__divider fade-zoom">
           <span>&amp;</span>
         </div>
 
         <!-- Bride side -->
-        <div class="portrait-feature portrait-feature--bride fade-in">
+        <div class="portrait-feature portrait-feature--bride fade-right">
           <div class="portrait-feature__photos portrait-feature__photos--solo">
             <div class="portrait-feature__main">
               <img src="images/solo/RESULT_0B0A9331.jpg" alt="Angelica — the bride" />
@@ -356,15 +356,15 @@
         <p class="rsvp__intro" id="rsvpIntro" data-i18n="rsvp.intro">It would be a great happiness for us if you would be willing to attend this joyful day. Thank you for all the kind words, prayers, and attention you have given. See you on our wedding day!</p>
       </div>
 
-      <form class="rsvp__form fade-in" id="rsvpForm" novalidate>
+      <form class="rsvp__form" id="rsvpForm" novalidate>
 
-        <div class="form__field">
+        <div class="form__field fade-in">
           <label for="guestName"><span data-i18n="form.name">Guest Name</span> <span aria-hidden="true">*</span></label>
           <input type="text" id="guestName" name="guestName" data-i18n-placeholder="form.name.ph" placeholder="Your full name" required autocomplete="name" />
           <span class="form__error" role="alert"></span>
         </div>
 
-        <div class="form__row">
+        <div class="form__row fade-in">
           <div class="form__field">
             <label for="attendance"><span data-i18n="form.attendance">Will you be attending?</span> <span aria-hidden="true">*</span></label>
             <select id="attendance" name="attendance" required>
@@ -383,12 +383,12 @@
           </div>
         </div>
 
-        <div class="form__field">
+        <div class="form__field fade-in">
           <label for="message" data-i18n="form.message">Leave a Message &amp; Wishes for Jei &amp; Angie</label>
           <textarea id="message" name="message" rows="4" data-i18n-placeholder="form.message.ph" placeholder="Share your wishes with the couple…"></textarea>
         </div>
 
-        <div class="form__submit">
+        <div class="form__submit fade-in">
           <button type="submit" class="btn btn--primary" data-i18n="form.submit">Send My RSVP</button>
         </div>
 
@@ -657,5 +657,6 @@
   <script src="https://www.youtube.com/iframe_api"></script>
   <script src="js/script.js"></script>
   <script src="js/gift-modal.js"></script>
+  <script src="js/motion.js"></script>
 </body>
 </html>
