@@ -11,8 +11,12 @@
  *      Fill B–E (name, table, phone, pax). Leave column A blank.
  *    • "Scans"   → columns: scanned_at | guest_id | guest_name | table | pax
  *      Leave completely empty.
- *    • "Gifts"   is created automatically the first time a guest confirms
- *      a gift on the site — no manual setup needed.
+ *    • "Gifts"   is created automatically the first time you run
+ *      "Generate Unique Codes" from the admin panel — no manual setup
+ *      needed. Holds a stable, append-only guest_id → unique_code
+ *      mapping (0–850) the couple uses to reconcile incoming
+ *      QRIS/transfer payments against the trailing digits of the
+ *      amount a guest was asked to send.
  *
  * 4. Share the spreadsheet: "Anyone with the link → Viewer"
  *    (required so the Guests / Scans tabs can be read via the gviz API).
@@ -36,7 +40,7 @@
  *   RSVP:   Timestamp | Guest Name | Attendance | Guests | Message
  *   Guests: id (auto) | name       | table      | phone  | pax
  *   Scans:  scanned_at | guest_id  | guest_name | table  | pax
- *   Gifts:  Timestamp | Guest Name | Amount | Method | Note | Listed
+ *   Gifts:  guest_id (auto) | guest_name | unique_code
  */
 
 const SPREADSHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
@@ -87,7 +91,7 @@ function doPost(e) {
   if (data.action === 'resetRsvp')     return handleResetRsvp();
   if (data.action === 'resetAll')      return handleResetAll();
   if (data.action === 'importGuests')  return handleImportGuests(data);
-  if (data.action === 'gift')          return handleGift(data);
+  if (data.action === 'generateCodes') return runGenerateCodes();
   if (data.action === 'resetGifts')    return handleResetGifts();
 
   return handleRsvp(data);
@@ -193,37 +197,64 @@ function handleResetAll() {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* ─── Gift confirmation write (guest self-reports amount sent) ─── */
-function handleGift(data) {
-  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var sheet = ss.getSheetByName('Gifts');
-  if (!sheet) sheet = ss.insertSheet('Gifts');
+/* ─── Assign unique gift-tracking codes (0–850) to guests ───
+   Append-only and stable: a guest who already has a code keeps it
+   forever, regardless of how the Guests sheet is later reordered or
+   added to. Only guests without a code yet get the next unused
+   number. Run from admin.html's "Generate Unique Codes" button
+   whenever the guest list changes. */
+function generateUniqueCodes() {
+  var ss           = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var guestsSheet  = ss.getSheetByName('Guests');
+  var giftsSheet   = ss.getSheetByName('Gifts') || ss.insertSheet('Gifts');
+  var MAX_CODE     = 850;
 
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['Timestamp', 'Guest Name', 'Amount', 'Method', 'Note', 'Listed']);
+  if (giftsSheet.getLastRow() === 0) {
+    giftsSheet.appendRow(['guest_id', 'guest_name', 'unique_code']);
   }
 
-  var guestsSheet = ss.getSheetByName('Guests');
-  var listed = 'NO';
-  if (guestsSheet && guestsSheet.getLastRow() > 1) {
-    var guestNames = guestsSheet.getRange(2, 2, guestsSheet.getLastRow() - 1, 1).getValues();
-    var normalized = String(data.guestName || '').trim().toLowerCase();
-    listed = guestNames.some(function(row) {
-      return String(row[0]).trim().toLowerCase() === normalized;
-    }) ? 'YES' : 'NO';
+  var existing = giftsSheet.getLastRow() > 1
+    ? giftsSheet.getRange(2, 1, giftsSheet.getLastRow() - 1, 3).getValues()
+    : [];
+  var assignedIds = {};
+  var usedCodes   = {};
+  existing.forEach(function(row) {
+    var gid  = String(row[0]).trim();
+    var code = row[2];
+    if (gid) assignedIds[gid] = true;
+    if (code !== '' && code != null) usedCodes[Math.round(Number(code))] = true;
+  });
+
+  var nextCode = 0;
+  function takeNextCode() {
+    while (usedCodes[nextCode] && nextCode <= MAX_CODE) nextCode++;
+    if (nextCode > MAX_CODE) throw new Error('Unique code pool exhausted (' + MAX_CODE + ' max)');
+    usedCodes[nextCode] = true;
+    return nextCode;
   }
 
-  sheet.appendRow([
-    new Date().toLocaleString('id-ID', { timeZone: TZ }),
-    data.guestName || '',
-    data.amount    || '',
-    data.method    || '',
-    data.note      || '',
-    listed
-  ]);
+  if (!guestsSheet || guestsSheet.getLastRow() < 2) return 0;
+  var guestRows = guestsSheet.getRange(2, 1, guestsSheet.getLastRow() - 1, 2).getValues(); // id, name
+  var newRows = [];
+  guestRows.forEach(function(row) {
+    var gid  = String(row[0]).trim();
+    var name = String(row[1]).trim();
+    if (!gid || !name || assignedIds[gid]) return; // skip blank/ungenerated-id rows and already-assigned guests
+    newRows.push([gid, name, takeNextCode()]);
+    assignedIds[gid] = true;
+  });
 
+  if (newRows.length) {
+    giftsSheet.getRange(giftsSheet.getLastRow() + 1, 1, newRows.length, 3).setValues(newRows);
+  }
+  return newRows.length;
+}
+
+/* ─── Trigger generateUniqueCodes via HTTP (called from admin.html) ─── */
+function runGenerateCodes() {
+  var count = generateUniqueCodes();
   return ContentService
-    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .createTextOutput(JSON.stringify({ result: 'success', assigned: count }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 

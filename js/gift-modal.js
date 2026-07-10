@@ -49,6 +49,7 @@
     document.body.style.overflow = 'hidden';
     closeBtn.focus();
     if (typeof window.__onGiftModalOpen === 'function') window.__onGiftModalOpen();
+    if (typeof window.__renderUniqueCode === 'function') window.__renderUniqueCode();
   }
   function close() { modal.hidden = true;  document.body.style.overflow = ''; }
 
@@ -79,9 +80,6 @@
       if (e.target.closest('.gift-modal__copy')) return; // let copy handle itself
       var revealed = row.classList.toggle('is-revealed');
       row.setAttribute('aria-expanded', revealed ? 'true' : 'false');
-      if (revealed) {
-        window.__giftLastMethod = 'Transfer';
-      }
     });
     row.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
@@ -250,7 +248,6 @@
         renderDynamic(amount);
         clearBtn.hidden = false;
         hint.textContent = `Amount set to ${fmtRupiah(amount)} — tap ✕ to clear`;
-        window.__giftLastMethod = 'QRIS';
       } catch (e) {
         resetStatic();
       }
@@ -273,112 +270,59 @@
 })();
 
 
-/* ─── GIFT CONFIRMATION (guest self-reports amount sent) ─── */
-(function initGiftConfirm() {
-  const openBtn   = document.getElementById('giftConfirmBtn');
-  const form      = document.getElementById('giftConfirmForm');
-  const nameInput = document.getElementById('giftConfirmName');
-  const amtInput  = document.getElementById('giftConfirmAmount');
-  const methodSel = document.getElementById('giftConfirmMethod');
-  const noteInput = document.getElementById('giftConfirmNote');
-  const submitBtn = document.getElementById('giftConfirmSubmit');
-  const thanks    = document.getElementById('giftConfirmThanks');
-  if (!openBtn || !form) return;
+/* ─── PER-GUEST UNIQUE CODE (informational — never auto-fills the amount) ───
+   Looked up from the reused "Gifts" sheet (guest_id | guest_name |
+   unique_code), assigned once via the admin panel's "Generate Unique
+   Codes" action. Only shown when the guest's identity is known from a
+   personalized invite link and the couple has assigned them a code. */
+(function initUniqueCode() {
+  const box       = document.getElementById('uniqueCodeBox');
+  const numEl     = document.getElementById('uniqueCodeNum');
+  const exampleEl = document.getElementById('uniqueCodeExample');
+  if (!box || !numEl || !exampleEl) return;
 
-  const STORAGE_KEY = 'wb_gift_confirmed';
+  let fetchPromise = null;
 
-  function storedConfirmation() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) { return null; }
+  function resolveGuestId() {
+    return (window.__guestQR && window.__guestQR.id) || window.__checkedInGuestId || null;
   }
 
-  function showThanks(record) {
-    openBtn.hidden = true;
-    form.hidden = true;
-    thanks.hidden = false;
-    thanks.textContent = `You told us about a gift of Rp ${Number(record.amount).toLocaleString('id-ID')} — thank you! 💛`;
+  function fetchCodeMap() {
+    if (fetchPromise) return fetchPromise;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Gifts&_=${Date.now()}`;
+    fetchPromise = fetch(url)
+      .then(r => r.text())
+      .then(text => {
+        const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+        if (!m) throw new Error('parse failed');
+        const rows = JSON.parse(m[1]).table?.rows || [];
+        const map = {};
+        rows.forEach(row => {
+          const gid  = row.c?.[0]?.v;
+          const code = row.c?.[2]?.v;
+          if (gid && code != null && code !== '') map[String(gid).trim()] = Math.round(Number(code));
+        });
+        return map;
+      })
+      .catch(() => ({}));
+    return fetchPromise;
   }
 
-  const existing = storedConfirmation();
-  if (existing) showThanks(existing);
+  function render() {
+    const gid = resolveGuestId();
+    if (!gid) { box.hidden = true; return; }
+    fetchCodeMap().then(map => {
+      const code = map[gid];
+      if (code == null) { box.hidden = true; return; }
+      const padded = String(code).padStart(3, '0');
+      numEl.textContent = padded;
+      exampleEl.innerHTML = `Rp 500.000 &rarr; Rp 500.<b>${padded}</b>`;
+      box.hidden = false;
+    });
+  }
 
-  openBtn.addEventListener('click', () => {
-    // A "confirmed" name comes from a personalized invite link — the RSVP
-    // name field being readonly (?to= resolved a guest), the entrance-pass
-    // QR, or a welcome.html check-in scan. In that case lock the field so
-    // it can't be edited to someone else's name; otherwise just prefill
-    // whatever the guest already typed in the RSVP form (still editable).
-    const guestNameField = document.getElementById('guestName');
-    const confirmedName = (guestNameField && guestNameField.readOnly && guestNameField.value.trim()) ||
-                           (window.__guestQR && window.__guestQR.name) ||
-                           window.__checkedInGuestName || '';
-    nameInput.value = confirmedName || (guestNameField && guestNameField.value.trim()) || '';
-    nameInput.readOnly = !!confirmedName;
-
-    const amountInput = document.getElementById('giftAmountInput');
-    amtInput.value = (amountInput && amountInput.value) || '';
-
-    const lastMethod = window.__giftLastMethod;
-    methodSel.value = (lastMethod && Array.from(methodSel.options).some(o => o.value === lastMethod))
-      ? lastMethod : 'QRIS';
-
-    openBtn.hidden = true;
-    form.hidden = false;
-    nameInput.focus();
-  });
-
-  amtInput.addEventListener('input', () => {
-    const digits = amtInput.value.replace(/\D/g, '');
-    amtInput.value = digits ? Number(digits).toLocaleString('id-ID') : '';
-  });
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const name   = nameInput.value.trim();
-    const amount = amtInput.value.replace(/\D/g, '');
-    if (!name || !amount) return;
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
-
-    const finish = () => {
-      const record = { name, amount, method: methodSel.value, note: noteInput.value.trim() };
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(record)); } catch (_) {}
-      showThanks(record);
-    };
-
-    // Race against a timeout so a stalled connection never leaves the guest
-    // stuck on "Sending…" — this is a self-reported record either way.
-    Promise.race([
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          action: 'gift',
-          guestName: name,
-          amount: amount,
-          method: methodSel.value,
-          note: noteInput.value.trim()
-        })
-      }).catch(() => {}),
-      new Promise(resolve => setTimeout(resolve, 7000))
-    ]).then(finish);
-  });
-
-  // Exposed so a shared device (e.g. the entrance check-in screen) can wipe
-  // one guest's confirmation before the next guest's welcome screen shows —
-  // localStorage is device-scoped, not guest-scoped, so without this every
-  // guest after the first would see "already confirmed" on that device.
-  window.__resetGiftConfirm = () => {
-    try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
-    window.__giftLastMethod = null;
-    openBtn.hidden = false;
-    form.hidden = true;
-    form.reset();
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit';
-    thanks.hidden = true;
-  };
+  window.__renderUniqueCode = render;
+  render();
 })();
 
 
@@ -386,7 +330,6 @@
    (currently welcome.html's entrance check-in screen) ─── */
 window.__resetGiftModal = () => {
   if (typeof window.__resetGiftAmount === 'function') window.__resetGiftAmount();
-  if (typeof window.__resetGiftConfirm === 'function') window.__resetGiftConfirm();
 };
 
 
@@ -399,10 +342,7 @@ window.__resetGiftModal = () => {
   if (!keypad) return;
 
   const doneBtn = document.getElementById('keypadDone');
-  const targets = [
-    document.getElementById('giftAmountInput'),
-    document.getElementById('giftConfirmAmount')
-  ].filter(Boolean);
+  const targets = [document.getElementById('giftAmountInput')].filter(Boolean);
   if (!targets.length) return;
 
   let activeInput = null;
