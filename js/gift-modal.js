@@ -302,10 +302,17 @@
   if (existing) showThanks(existing);
 
   openBtn.addEventListener('click', () => {
+    // A "confirmed" name comes from a personalized invite link — the RSVP
+    // name field being readonly (?to= resolved a guest), the entrance-pass
+    // QR, or a welcome.html check-in scan. In that case lock the field so
+    // it can't be edited to someone else's name; otherwise just prefill
+    // whatever the guest already typed in the RSVP form (still editable).
     const guestNameField = document.getElementById('guestName');
-    nameInput.value = (guestNameField && guestNameField.value.trim()) ||
-                      (window.__guestQR && window.__guestQR.name) ||
-                      window.__checkedInGuestName || '';
+    const confirmedName = (guestNameField && guestNameField.readOnly && guestNameField.value.trim()) ||
+                           (window.__guestQR && window.__guestQR.name) ||
+                           window.__checkedInGuestName || '';
+    nameInput.value = confirmedName || (guestNameField && guestNameField.value.trim()) || '';
+    nameInput.readOnly = !!confirmedName;
 
     const amountInput = document.getElementById('giftAmountInput');
     amtInput.value = (amountInput && amountInput.value) || '';

@@ -551,15 +551,6 @@
       <button class="gift-modal__close" id="giftModalClose" aria-label="Close">&times;</button>
       <h3 class="gift-modal__title" id="giftModalTitle">Thank you for your generosity</h3>
 
-      <div class="gift-modal__amount">
-        <div class="gift-modal__amount-input-wrap">
-          <span class="gift-modal__amount-prefix">Rp</span>
-          <input type="text" inputmode="numeric" id="giftAmountInput" class="gift-modal__amount-input" placeholder="Any amount" autocomplete="off" readonly />
-          <button type="button" class="gift-modal__amount-clear" id="giftAmountClear" aria-label="Clear amount" hidden>&times;</button>
-        </div>
-        <p class="gift-modal__amount-hint" id="giftAmountHint">Enter an amount to pre-fill it in your banking app (optional)</p>
-      </div>
-
       <button class="gift-modal__transfer-toggle" id="transferToggle" aria-expanded="false" aria-controls="transferPanel">
         <span></span>
         <span class="gift-modal__transfer-label">Transfer directly</span>
@@ -590,6 +581,15 @@
       </button>
 
       <div id="qrisPanel">
+        <div class="gift-modal__amount">
+          <div class="gift-modal__amount-input-wrap">
+            <span class="gift-modal__amount-prefix">Rp</span>
+            <input type="text" inputmode="numeric" id="giftAmountInput" class="gift-modal__amount-input" placeholder="Any amount" autocomplete="off" readonly />
+            <button type="button" class="gift-modal__amount-clear" id="giftAmountClear" aria-label="Clear amount" hidden>&times;</button>
+          </div>
+          <p class="gift-modal__amount-hint" id="giftAmountHint">Enter an amount to pre-fill it in your banking app (optional)</p>
+        </div>
+
         <p class="gift-modal__sub">with any m-banking or e-wallet app</p>
 
         <div class="gift-modal__qris-link" id="qrisZoomBtn" role="button" tabindex="0" title="Tap to enlarge" aria-label="View full size QRIS">
