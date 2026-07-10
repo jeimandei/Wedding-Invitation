@@ -153,28 +153,39 @@
     }
 
     .qr-card__title {
-      font-size: .58rem; font-weight: 700;
-      letter-spacing: .16em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: .4rem;
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: .35rem;
     }
     .qr-card__code {
       display: flex; justify-content: center; align-items: center;
-      width: 66%; aspect-ratio: 1 / 1;
+      width: 58%; aspect-ratio: 1 / 1;
     }
     .qr-card__code canvas,
     .qr-card__code img { width: 100%; height: 100%; border-radius: 4px; display: block; }
 
+    .qr-card__scan {
+      display: inline-flex; align-items: center; gap: .25rem;
+      margin-top: .4rem;
+      padding: .18rem .5rem;
+      background: var(--gold); color: #fff;
+      border-radius: 99px;
+      font-size: .5rem; font-weight: 600;
+      letter-spacing: .07em; text-transform: uppercase;
+    }
+    .qr-card__scan svg { width: 8px; height: 8px; flex-shrink: 0; }
+
     .qr-card__name {
       font-family:'Cormorant Garamond',serif;
       font-style:italic;
-      font-size: 1rem; color: var(--dark);
-      margin-top: .55rem;
+      font-size: .9rem; color: var(--dark);
+      margin-top: .4rem;
       max-width: 100%;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .qr-card__date {
-      font-size: .6rem; letter-spacing: .14em; text-transform: uppercase;
-      color: var(--light); margin-top: .3rem;
+      font-size: .55rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--light); margin-top: .25rem;
     }
 
     /* ── IMPORT PANEL ── */
@@ -272,13 +283,15 @@
         border: 0.3mm solid #C9A96E;
         border-radius: 2mm;
         box-shadow: none;
-        padding: 2.2mm;
+        padding: 1.8mm;
         page-break-inside: avoid;
       }
-      .qr-card__title { font-size: 2.3pt; margin-bottom: 1mm; }
-      .qr-card__code { width: 33mm; }
-      .qr-card__name { font-size: 5.5pt; margin-top: 1.2mm; }
-      .qr-card__date { font-size: 2.1pt; margin-top: 0.6mm; }
+      .qr-card__title { font-size: 4.2pt; margin-bottom: 0.8mm; }
+      .qr-card__code { width: 29mm; }
+      .qr-card__scan { font-size: 2.4pt; padding: 0.5mm 1.4mm; margin-top: 0.8mm; }
+      .qr-card__scan svg { width: 1.6mm; height: 1.6mm; }
+      .qr-card__name { font-size: 4.6pt; margin-top: 0.8mm; }
+      .qr-card__date { font-size: 1.9pt; margin-top: 0.4mm; }
     }
   </style>
 </head>
@@ -493,6 +506,10 @@
         card.innerHTML = `
           <p class="qr-card__title">Entrance Pass</p>
           <div class="qr-card__code" id="qr-${slugify(g.name)}"></div>
+          <span class="qr-card__scan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+            Scan Me
+          </span>
           <p class="qr-card__name">${esc(g.name)}</p>
           <p class="qr-card__date">26 · 07 · 2026</p>
         `;
