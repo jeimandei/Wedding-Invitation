@@ -529,6 +529,7 @@
       // This is a shared usher device, not a guest's own browser — wipe the
       // previous guest's gift amount/confirmation state before this guest sees it.
       if (typeof window.__resetGiftModal === 'function') window.__resetGiftModal();
+      if (typeof window.__renderUniqueCode === 'function') window.__renderUniqueCode();
       welcomeOverlay.hidden = false;
       welcomeTimer = setTimeout(dismissWelcome, 10000);
     }
