@@ -45,7 +45,7 @@ const _I18N = {
 
     'rsvp.label': 'Kindly Reply By 23 July 2026',
     'rsvp.title': 'RSVP',
-    'rsvp.intro': 'It would be a great happiness for us if you would be willing to attend this joyful day. Thank you for all the kind words, prayers, and attention you have given. See you on our wedding day!',
+    'rsvp.intro': 'It would bring us so much joy to celebrate with you! As our wedding will be a seated reception, every seat has been thoughtfully arranged in advance. We kindly ask that attendance be limited to the guest(s) named on this invitation. See you on our wedding day!',
     'rsvp.label.nowish': 'Share the Joy',
     'rsvp.title.nowish': 'Send Message and Wishes',
     'rsvp.intro.nowish': "We'd be so grateful to hear from you. Leave your heartfelt message and warm wishes for Jei & Angie below — they mean the world to us.",
