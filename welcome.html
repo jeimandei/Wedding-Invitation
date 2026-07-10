@@ -463,10 +463,10 @@
     /* ── GUEST LOOKUP via public gviz API ── */
     function lookupGuest(id) {
       const guestsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`;
-      const scansUrl  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Scans&headers=1&_=${Date.now()}`;
+      const giftsUrl  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Gifts&_=${Date.now()}`;
 
-      Promise.all([fetch(guestsUrl).then(r => r.text()), fetch(scansUrl).then(r => r.text())])
-        .then(([guestsText, scansText]) => {
+      Promise.all([fetch(guestsUrl).then(r => r.text()), fetch(giftsUrl).then(r => r.text())])
+        .then(([guestsText, giftsText]) => {
           const gm = guestsText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
           if (!gm) throw new Error('parse');
           const rows = JSON.parse(gm[1]).table?.rows || [];
@@ -477,11 +477,18 @@
           const table = row.c?.[2]?.v || '';
           const pax   = row.c?.[4]?.v || '';
 
-          // Gift tag = current scan count + 1
-          let giftNum = 1;
+          // Gift tag = this guest's stable unique code (from admin's
+          // "Generate Unique Codes"), same number shown in the gift modal —
+          // no longer tied to check-in/scan order.
+          let giftNum = null;
           try {
-            const sm = scansText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
-            if (sm) giftNum = (JSON.parse(sm[1]).table?.rows || []).length + 1;
+            const gim = giftsText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+            if (gim) {
+              const giftRows = JSON.parse(gim[1]).table?.rows || [];
+              const giftRow  = giftRows.find(r => r.c?.[0]?.v === id);
+              const code     = giftRow?.c?.[2]?.v;
+              if (code != null && code !== '') giftNum = Math.round(Number(code));
+            }
           } catch (_) {}
 
           logScan(id, name, table, pax, giftNum);
@@ -516,12 +523,13 @@
     function showWelcome(name, table, giftNum, id) {
       document.getElementById('welcomeName').textContent  = name;
       document.getElementById('welcomeTable').textContent = table ? table : '';
-      document.getElementById('welcomeGift').textContent  = giftNum ? `Gift Tag  #${giftNum}` : '';
+      document.getElementById('welcomeGift').textContent  = (giftNum || giftNum === 0) ? `Gift Tag  #${String(giftNum).padStart(3, '0')}` : '';
       window.__checkedInGuestName = name;
       window.__checkedInGuestId = id;
       // This is a shared usher device, not a guest's own browser — wipe the
       // previous guest's gift amount/confirmation state before this guest sees it.
       if (typeof window.__resetGiftModal === 'function') window.__resetGiftModal();
+      if (typeof window.__renderUniqueCode === 'function') window.__renderUniqueCode();
       welcomeOverlay.hidden = false;
       welcomeTimer = setTimeout(dismissWelcome, 10000);
     }
@@ -572,6 +580,15 @@
           </li>
         </ul>
         <p class="gift-modal__acct-name">a.n. Jeremy Matthew Mandei</p>
+
+        <div class="gift-modal__unique-code" id="uniqueCodeBoxTransfer" hidden>
+          <div class="gift-modal__unique-code-row">
+            <span class="gift-modal__unique-code-label">Your Code</span>
+            <span class="gift-modal__unique-code-num" id="uniqueCodeNumTransfer"></span>
+          </div>
+          <p class="gift-modal__unique-code-hint">Add this to your gift amount so we know it's from you.</p>
+          <span class="gift-modal__unique-code-example" id="uniqueCodeExampleTransfer"></span>
+        </div>
       </div>
 
       <button class="gift-modal__transfer-toggle" id="qrisToggle" aria-expanded="true" aria-controls="qrisPanel">
@@ -591,6 +608,15 @@
           <p class="gift-modal__amount-hint" id="giftAmountHint">Enter an amount to pre-fill it in your banking app (optional)</p>
         </div>
 
+        <div class="gift-modal__unique-code" id="uniqueCodeBoxQris" hidden>
+          <div class="gift-modal__unique-code-row">
+            <span class="gift-modal__unique-code-label">Your Code</span>
+            <span class="gift-modal__unique-code-num" id="uniqueCodeNumQris"></span>
+          </div>
+          <p class="gift-modal__unique-code-hint">Add this to your gift amount so we know it's from you.</p>
+          <span class="gift-modal__unique-code-example" id="uniqueCodeExampleQris"></span>
+        </div>
+
         <p class="gift-modal__sub">with any m-banking or e-wallet app</p>
 
         <div class="gift-modal__qris-link" id="qrisZoomBtn" role="button" tabindex="0" title="Tap to enlarge" aria-label="View full size QRIS">
@@ -600,15 +626,6 @@
         <p class="gift-modal__name">Jei &amp; Angie</p>
         <a class="gift-modal__download" href="images/assets/qris.png" download="Jei-Angie-QRIS.png">⤓ Save QRIS</a>
         <p class="gift-modal__apps">GoPay &middot; OVO &middot; Dana &middot; ShopeePay<br>BCA &middot; BRI &middot; BNI &middot; Mandiri</p>
-      </div>
-
-      <div class="gift-modal__unique-code" id="uniqueCodeBox" hidden>
-        <div class="gift-modal__unique-code-row">
-          <span class="gift-modal__unique-code-label">Your Code</span>
-          <span class="gift-modal__unique-code-num" id="uniqueCodeNum"></span>
-        </div>
-        <p class="gift-modal__unique-code-hint">Add this to your gift amount so we know it's from you.</p>
-        <span class="gift-modal__unique-code-example" id="uniqueCodeExample"></span>
       </div>
     </div>
   </div>

@@ -69,6 +69,7 @@
       var expanded = this.getAttribute('aria-expanded') === 'true';
       panel.hidden = expanded;
       this.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      if (typeof window.__renderUniqueCode === 'function') window.__renderUniqueCode();
     });
   }
   wireToggle('transferToggle', 'transferPanel');
@@ -80,6 +81,7 @@
       if (e.target.closest('.gift-modal__copy')) return; // let copy handle itself
       var revealed = row.classList.toggle('is-revealed');
       row.setAttribute('aria-expanded', revealed ? 'true' : 'false');
+      if (typeof window.__renderUniqueCode === 'function') window.__renderUniqueCode();
     });
     row.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
@@ -274,12 +276,27 @@
    Looked up from the reused "Gifts" sheet (guest_id | guest_name |
    unique_code), assigned once via the admin panel's "Generate Unique
    Codes" action. Only shown when the guest's identity is known from a
-   personalized invite link and the couple has assigned them a code. */
+   personalized invite link and the couple has assigned them a code.
+   Shown in two places: inside the Transfer panel (only once the guest
+   taps the account row to reveal the account number — that's the moment
+   they're actually about to pay) and inside the QRIS panel (as soon as
+   it's open, since there's no separate reveal step there). */
 (function initUniqueCode() {
-  const box       = document.getElementById('uniqueCodeBox');
-  const numEl     = document.getElementById('uniqueCodeNum');
-  const exampleEl = document.getElementById('uniqueCodeExample');
-  if (!box || !numEl || !exampleEl) return;
+  const BOXES = [
+    {
+      box:       document.getElementById('uniqueCodeBoxTransfer'),
+      numEl:     document.getElementById('uniqueCodeNumTransfer'),
+      exampleEl: document.getElementById('uniqueCodeExampleTransfer'),
+      isReady:   () => !!document.querySelector('.gift-modal__account.is-revealed')
+    },
+    {
+      box:       document.getElementById('uniqueCodeBoxQris'),
+      numEl:     document.getElementById('uniqueCodeNumQris'),
+      exampleEl: document.getElementById('uniqueCodeExampleQris'),
+      isReady:   () => { var p = document.getElementById('qrisPanel'); return !p || !p.hidden; }
+    }
+  ].filter(cfg => cfg.box && cfg.numEl && cfg.exampleEl);
+  if (!BOXES.length) return;
 
   let fetchPromise = null;
 
@@ -310,14 +327,16 @@
 
   function render() {
     const gid = resolveGuestId();
-    if (!gid) { box.hidden = true; return; }
+    if (!gid) { BOXES.forEach(cfg => { cfg.box.hidden = true; }); return; }
     fetchCodeMap().then(map => {
       const code = map[gid];
-      if (code == null) { box.hidden = true; return; }
-      const padded = String(code).padStart(3, '0');
-      numEl.textContent = padded;
-      exampleEl.innerHTML = `Rp 500.000 &rarr; Rp 500.<b>${padded}</b>`;
-      box.hidden = false;
+      BOXES.forEach(cfg => {
+        if (code == null || !cfg.isReady()) { cfg.box.hidden = true; return; }
+        const padded = String(code).padStart(3, '0');
+        cfg.numEl.textContent = padded;
+        cfg.exampleEl.innerHTML = `Rp 500.000 &rarr; Rp 500.<b>${padded}</b>`;
+        cfg.box.hidden = false;
+      });
     });
   }
 

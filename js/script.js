@@ -633,6 +633,11 @@ function setupLightbox(carousel, images) {
       }
     }
     window.__guestQR = { name, url: qrUrl, id, saveQR, buildQR };
+    // Guest identity resolves asynchronously (Guests-sheet fetch) — if the
+    // gift modal was already opened before this finished, the unique-code
+    // box would have found no guest ID and stayed hidden with no way to
+    // recheck. Re-render now that we actually have it.
+    if (typeof window.__renderUniqueCode === 'function') window.__renderUniqueCode();
   }
 
   if (isId) {
