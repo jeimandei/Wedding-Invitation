@@ -74,8 +74,7 @@
       var revealed = row.classList.toggle('is-revealed');
       row.setAttribute('aria-expanded', revealed ? 'true' : 'false');
       if (revealed) {
-        var bankEl = row.querySelector('.gift-modal__bank');
-        if (bankEl) window.__giftLastMethod = bankEl.textContent.trim();
+        window.__giftLastMethod = 'Transfer';
       }
     });
     row.addEventListener('keydown', function(e) {
