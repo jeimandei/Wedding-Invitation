@@ -1227,6 +1227,23 @@ em { font-style: italic; color: var(--lilac-dark); }
   text-align: center;
 }
 
+/* Once a link is saved in admin.html, either fills the thumbnail with a
+   YouTube embed (iframe, added via JS) or overlays a clickable link
+   over the placeholder art (any other stream URL). */
+.livestream-thumb iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+.livestream-thumb__link {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+
 
 
 

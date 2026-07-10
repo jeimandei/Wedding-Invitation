@@ -350,6 +350,18 @@
         <p class="import-status" id="cfgStatus"></p>
       </div>
 
+      <!-- Live Streaming -->
+      <div class="import-panel">
+        <h3>Live Streaming</h3>
+        <div class="import-row">
+          <input type="text" id="livestreamUrlInput" class="config-input" style="flex:1;min-width:260px"
+                 placeholder="Paste the live stream link (YouTube, Facebook, etc.)" />
+          <button class="btn btn-primary" id="livestreamSaveBtn">Save</button>
+          <button class="btn btn-outline" id="livestreamClearBtn">Clear (show placeholder)</button>
+        </div>
+        <p class="import-status" id="livestreamStatus">Loading current setting…</p>
+      </div>
+
       <!-- Photo Management -->
       <div class="import-panel">
         <h3>Photo Management — Gallery (images/groombride)</h3>
@@ -416,6 +428,7 @@
       pinGate.hidden    = true;
       adminPanel.hidden = false;
       loadGuests();
+      loadLivestreamConfig();
     }
 
     async function checkPin(val) {
@@ -539,6 +552,60 @@
     });
 
     /* ── GENERATE UNIQUE CODES (gift tracking) ── */
+    /* ── LIVE STREAMING CONFIG ── */
+    function loadLivestreamConfig() {
+      const status = document.getElementById('livestreamStatus');
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Config&_=${Date.now()}`;
+      fetch(url)
+        .then(r => r.text())
+        .then(text => {
+          const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+          if (!match) throw new Error();
+          const rows = JSON.parse(match[1]).table?.rows || [];
+          const row  = rows.find(r => r.c?.[0]?.v === 'livestream_url');
+          const current = row?.c?.[1]?.v || '';
+          document.getElementById('livestreamUrlInput').value = current;
+          status.textContent = current
+            ? `Currently live for guests: ${current}`
+            : 'Not set — guests see the "Available on 26 July 2026" placeholder.';
+          status.className = 'import-status';
+        })
+        .catch(() => {
+          status.textContent = 'Not set yet — guests see the "Available on 26 July 2026" placeholder.';
+          status.className = 'import-status';
+        });
+    }
+
+    function saveLivestreamConfig(url) {
+      const status = document.getElementById('livestreamStatus');
+      const saveBtn = document.getElementById('livestreamSaveBtn');
+      saveBtn.textContent = 'Saving…';
+      saveBtn.disabled = true;
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'setLivestream', url })
+      }).catch(() => {}).finally(() => {
+        saveBtn.textContent = 'Save';
+        saveBtn.disabled = false;
+        status.textContent = url
+          ? `Currently live for guests: ${url}`
+          : 'Cleared — guests see the "Available on 26 July 2026" placeholder.';
+        status.className = 'import-status ok';
+      });
+    }
+
+    document.getElementById('livestreamSaveBtn').addEventListener('click', () => {
+      const url = document.getElementById('livestreamUrlInput').value.trim();
+      if (!url) { alert('Paste a link first, or use Clear to remove the current one.'); return; }
+      saveLivestreamConfig(url);
+    });
+
+    document.getElementById('livestreamClearBtn').addEventListener('click', () => {
+      document.getElementById('livestreamUrlInput').value = '';
+      saveLivestreamConfig('');
+    });
+
     document.getElementById('generateCodesBtn').addEventListener('click', () => {
       const btn = document.getElementById('generateCodesBtn');
       btn.textContent = '🔢 Assigning…';

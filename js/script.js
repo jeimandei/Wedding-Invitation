@@ -41,6 +41,7 @@ const _I18N = {
     'livestream.title':     'Live Streaming',
     'livestream.note':      "Can't make it in person? The ceremony will be streamed live right here — check back on the day.",
     'livestream.available': 'Available on 26 July 2026',
+    'livestream.watchnow':  'Watch Live Now',
 
     'video.label': 'Our Story',
     'video.title': 'Before The Vow',
@@ -136,6 +137,7 @@ const _I18N = {
     'livestream.title':     'Live Streaming',
     'livestream.note':      'Tidak bisa hadir langsung? Acara pemberkatan akan disiarkan secara langsung di sini — silakan kembali lagi pada harinya.',
     'livestream.available': 'Tersedia pada 26 Juli 2026',
+    'livestream.watchnow':  'Tonton Siaran Langsung',
 
     'video.label': 'Kisah Kami',
     'video.title': 'Sebelum Hari Itu',
@@ -977,6 +979,58 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       }
     });
   };
+})();
+
+
+/* ─── LIVE STREAM: swap the placeholder thumbnail once the couple
+   pastes a link in admin.html (stored in the "Config" sheet) ─── */
+(function initLivestream() {
+  const thumb = document.getElementById('livestreamThumb');
+  if (!thumb) return;
+
+  function ytEmbedUrl(url) {
+    const patterns = [
+      /youtu\.be\/([A-Za-z0-9_-]{11})/,
+      /youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})/,
+      /youtube\.com\/embed\/([A-Za-z0-9_-]{11})/,
+      /youtube\.com\/live\/([A-Za-z0-9_-]{11})/,
+    ];
+    for (const re of patterns) {
+      const m = url.match(re);
+      if (m) return `https://www.youtube.com/embed/${m[1]}?autoplay=0&rel=0`;
+    }
+    return null;
+  }
+
+  fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Config&_=${Date.now()}`)
+    .then(r => r.text())
+    .then(text => {
+      const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if (!m) return;
+      const rows = JSON.parse(m[1]).table?.rows || [];
+      const row  = rows.find(r => r.c?.[0]?.v === 'livestream_url');
+      const url  = String(row?.c?.[1]?.v || '').trim();
+      if (!url) return;
+
+      const embed = ytEmbedUrl(url);
+      if (embed) {
+        thumb.innerHTML = `<iframe src="${embed}" title="Live Stream" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+        return;
+      }
+
+      const badge = thumb.querySelector('.available-badge');
+      if (badge) badge.textContent = t('livestream.watchnow');
+      const playBtn = thumb.querySelector('.play-btn');
+      if (playBtn) playBtn.style.opacity = '1';
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.className = 'livestream-thumb__link';
+      link.setAttribute('aria-label', 'Watch live stream');
+      thumb.appendChild(link);
+    })
+    .catch(() => {});
 })();
 
 
