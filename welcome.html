@@ -580,6 +580,15 @@
           </li>
         </ul>
         <p class="gift-modal__acct-name">a.n. Jeremy Matthew Mandei</p>
+
+        <div class="gift-modal__unique-code" id="uniqueCodeBoxTransfer" hidden>
+          <div class="gift-modal__unique-code-row">
+            <span class="gift-modal__unique-code-label">Your Code</span>
+            <span class="gift-modal__unique-code-num" id="uniqueCodeNumTransfer"></span>
+          </div>
+          <p class="gift-modal__unique-code-hint">Add this to your gift amount so we know it's from you.</p>
+          <span class="gift-modal__unique-code-example" id="uniqueCodeExampleTransfer"></span>
+        </div>
       </div>
 
       <button class="gift-modal__transfer-toggle" id="qrisToggle" aria-expanded="true" aria-controls="qrisPanel">
@@ -599,6 +608,15 @@
           <p class="gift-modal__amount-hint" id="giftAmountHint">Enter an amount to pre-fill it in your banking app (optional)</p>
         </div>
 
+        <div class="gift-modal__unique-code" id="uniqueCodeBoxQris" hidden>
+          <div class="gift-modal__unique-code-row">
+            <span class="gift-modal__unique-code-label">Your Code</span>
+            <span class="gift-modal__unique-code-num" id="uniqueCodeNumQris"></span>
+          </div>
+          <p class="gift-modal__unique-code-hint">Add this to your gift amount so we know it's from you.</p>
+          <span class="gift-modal__unique-code-example" id="uniqueCodeExampleQris"></span>
+        </div>
+
         <p class="gift-modal__sub">with any m-banking or e-wallet app</p>
 
         <div class="gift-modal__qris-link" id="qrisZoomBtn" role="button" tabindex="0" title="Tap to enlarge" aria-label="View full size QRIS">
@@ -608,15 +626,6 @@
         <p class="gift-modal__name">Jei &amp; Angie</p>
         <a class="gift-modal__download" href="images/assets/qris.png" download="Jei-Angie-QRIS.png">⤓ Save QRIS</a>
         <p class="gift-modal__apps">GoPay &middot; OVO &middot; Dana &middot; ShopeePay<br>BCA &middot; BRI &middot; BNI &middot; Mandiri</p>
-      </div>
-
-      <div class="gift-modal__unique-code" id="uniqueCodeBox" hidden>
-        <div class="gift-modal__unique-code-row">
-          <span class="gift-modal__unique-code-label">Your Code</span>
-          <span class="gift-modal__unique-code-num" id="uniqueCodeNum"></span>
-        </div>
-        <p class="gift-modal__unique-code-hint">Add this to your gift amount so we know it's from you.</p>
-        <span class="gift-modal__unique-code-example" id="uniqueCodeExample"></span>
       </div>
     </div>
   </div>
