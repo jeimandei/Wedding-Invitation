@@ -20,6 +20,10 @@
  *    • "Config"  is created automatically the first time you save a
  *      setting (e.g. the live stream link) from the admin panel — no
  *      manual setup needed. Simple key/value store read by index.html.
+ *    • "Link"    is created automatically every time you run
+ *      "Generate IDs" from the admin panel — no manual setup needed.
+ *      Lists every guest's personalized invite link next to their
+ *      name, for pasting into WhatsApp/email when sending invites.
  *
  * 4. Share the spreadsheet: "Anyone with the link → Viewer"
  *    (required so the Guests / Scans tabs can be read via the gviz API).
@@ -45,11 +49,13 @@
  *   Scans:  scanned_at | guest_id  | guest_name | table  | pax
  *   Gifts:  guest_id (auto) | guest_name | unique_code
  *   Config: key | value
+ *   Link:   url (auto) | guest name
  */
 
 const SPREADSHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
 const SALT           = 'ShadowRubyAsh120122';
 const TZ             = 'Asia/Makassar';
+const SITE_URL       = 'https://jeiangiewedding.jeimandei.com';
 
 /* ─── Hash name → 16-char hex (identical to client-side SHA-256) ─── */
 function hashName(name) {
@@ -64,7 +70,9 @@ function hashName(name) {
   }).join('').slice(0, 16);
 }
 
-/* ─── Run once from the Apps Script editor to populate Guests.id ─── */
+/* ─── Run once from the Apps Script editor to populate Guests.id ───
+   Also (re)builds the "Link" sheet with each guest's invite URL, since
+   hashName() is deterministic — safe to rebuild from scratch every run. */
 function generateIds() {
   var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName('Guests');
@@ -75,14 +83,27 @@ function generateIds() {
 
   var names = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
   var count = 0;
+  var linkRows = [];
   for (var i = 0; i < names.length; i++) {
     var name = String(names[i][0]).trim();
     if (name) {
-      sheet.getRange(i + 2, 1).setValue(hashName(name));
+      var id = hashName(name);
+      sheet.getRange(i + 2, 1).setValue(id);
+      linkRows.push([SITE_URL + '/?to=' + id, name]);
       count++;
     }
   }
+  writeLinkSheet(linkRows);
   Logger.log('Generated ' + count + ' IDs in Guests sheet.');
+}
+
+/* ─── Rebuild the "Link" sheet (url | guest name) from scratch ─── */
+function writeLinkSheet(rows) {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('Link') || ss.insertSheet('Link');
+  sheet.clearContents();
+  sheet.appendRow(['url', 'guest name']);
+  if (rows.length) sheet.getRange(2, 1, rows.length, 2).setValues(rows);
 }
 
 /* ─── POST router ─── */
@@ -193,10 +214,12 @@ function handleResetAll() {
   var rsvp   = ss.getSheetByName('RSVP') || ss.getActiveSheet();
   var guests = ss.getSheetByName('Guests');
   var gifts  = ss.getSheetByName('Gifts');
+  var link   = ss.getSheetByName('Link');
   if (scans  && scans.getLastRow()  > 1) scans.deleteRows(2,  scans.getLastRow()  - 1);
   if (rsvp   && rsvp.getLastRow()   > 1) rsvp.deleteRows(2,   rsvp.getLastRow()   - 1);
   if (guests && guests.getLastRow() > 1) guests.deleteRows(2, guests.getLastRow() - 1);
   if (gifts  && gifts.getLastRow()  > 1) gifts.deleteRows(2,  gifts.getLastRow()  - 1);
+  if (link   && link.getLastRow()   > 1) link.deleteRows(2,   link.getLastRow()   - 1);
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);
