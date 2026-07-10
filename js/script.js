@@ -22,7 +22,7 @@ const _I18N = {
     'cd.days': 'Days', 'cd.hours': 'Hours', 'cd.minutes': 'Minutes', 'cd.seconds': 'Seconds',
 
     'portraits.label': 'Meet the Couple',
-    'portraits.title': 'The Bride & Groom',
+    'portraits.title': 'The Groom & Bride',
     'groom.role':  'The Groom',
     'bride.role':  'The Bride',
     'groom.parents': 'Son of dr. Jose M. Mandei, Sp.A, Subsp.ETIA(K).<br />&amp; dr. Linda A. Matali, Sp.KKLP., M.Kes.',

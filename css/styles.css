@@ -2026,20 +2026,9 @@ textarea { resize: vertical; min-height: 90px; }
   flex-shrink: 0;
 }
 
-.gift-section__text {
-  font-family: var(--font-head);
-  font-size: 1.1rem;
-  font-style: italic;
-  color: var(--text-mid);
-  line-height: 1.8;
-  max-width: 470px;
-  margin: 0 auto 0.5rem;
-}
-
 @media (max-width: 540px) {
   .gift-section { padding: 4rem 0; }
   .gift-section__inner { padding: 3rem 1.5rem 2.75rem; }
-  .gift-section__text { font-size: 1rem; }
 }
 
 /* ─── QR PASS POPUP MODAL ─── */
