@@ -59,13 +59,19 @@
 
   window.__closeGiftModal = close;
 
-  /* ── Transfer panel toggle ── */
-  document.getElementById('transferToggle').addEventListener('click', function() {
-    var panel = document.getElementById('transferPanel');
-    var expanded = this.getAttribute('aria-expanded') === 'true';
-    panel.hidden = expanded;
-    this.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-  });
+  /* ── Collapsible panel toggles (transfer / QRIS) ── */
+  function wireToggle(toggleId, panelId) {
+    var toggle = document.getElementById(toggleId);
+    var panel  = document.getElementById(panelId);
+    if (!toggle || !panel) return;
+    toggle.addEventListener('click', function() {
+      var expanded = this.getAttribute('aria-expanded') === 'true';
+      panel.hidden = expanded;
+      this.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    });
+  }
+  wireToggle('transferToggle', 'transferPanel');
+  wireToggle('qrisToggle', 'qrisPanel');
 
   /* ── Account rows: tap to reveal/hide ── */
   document.querySelectorAll('.gift-modal__account').forEach(function(row) {
@@ -74,8 +80,7 @@
       var revealed = row.classList.toggle('is-revealed');
       row.setAttribute('aria-expanded', revealed ? 'true' : 'false');
       if (revealed) {
-        var bankEl = row.querySelector('.gift-modal__bank');
-        if (bankEl) window.__giftLastMethod = bankEl.textContent.trim();
+        window.__giftLastMethod = 'Transfer';
       }
     });
     row.addEventListener('keydown', function(e) {
