@@ -37,6 +37,11 @@ const _I18N = {
     'reception.label':'The Reception',
     'map.btn':        'View Map',
 
+    'livestream.label':     'Watch From Anywhere',
+    'livestream.title':     'Live Streaming',
+    'livestream.note':      "Can't make it in person? The ceremony will be streamed live right here — check back on the day.",
+    'livestream.available': 'Available on 26 July 2026',
+
     'video.label': 'Our Story',
     'video.title': 'Before The Vow',
 
@@ -126,6 +131,11 @@ const _I18N = {
     'ceremony.label':  'Pemberkatan',
     'reception.label': 'Resepsi',
     'map.btn':         'Lihat Peta',
+
+    'livestream.label':     'Saksikan Dari Mana Saja',
+    'livestream.title':     'Live Streaming',
+    'livestream.note':      'Tidak bisa hadir langsung? Acara pemberkatan akan disiarkan secara langsung di sini — silakan kembali lagi pada harinya.',
+    'livestream.available': 'Tersedia pada 26 Juli 2026',
 
     'video.label': 'Kisah Kami',
     'video.title': 'Sebelum Hari Itu',
