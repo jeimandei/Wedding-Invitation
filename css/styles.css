@@ -2069,6 +2069,13 @@ textarea { resize: vertical; min-height: 90px; }
   width: 88vw;
   box-shadow: var(--shadow-lg);
 }
+#qrModalCanvas {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+#qrModalCanvas canvas,
+#qrModalCanvas img { border-radius: 6px; }
 .qr-pass-modal__close {
   position: absolute;
   top: 0.6rem;
