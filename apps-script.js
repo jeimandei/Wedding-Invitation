@@ -17,6 +17,9 @@
  *      mapping (0–850) the couple uses to reconcile incoming
  *      QRIS/transfer payments against the trailing digits of the
  *      amount a guest was asked to send.
+ *    • "Config"  is created automatically the first time you save a
+ *      setting (e.g. the live stream link) from the admin panel — no
+ *      manual setup needed. Simple key/value store read by index.html.
  *
  * 4. Share the spreadsheet: "Anyone with the link → Viewer"
  *    (required so the Guests / Scans tabs can be read via the gviz API).
@@ -41,6 +44,7 @@
  *   Guests: id (auto) | name       | table      | phone  | pax
  *   Scans:  scanned_at | guest_id  | guest_name | table  | pax
  *   Gifts:  guest_id (auto) | guest_name | unique_code
+ *   Config: key | value
  */
 
 const SPREADSHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
@@ -93,6 +97,7 @@ function doPost(e) {
   if (data.action === 'importGuests')  return handleImportGuests(data);
   if (data.action === 'generateCodes') return runGenerateCodes();
   if (data.action === 'resetGifts')    return handleResetGifts();
+  if (data.action === 'setLivestream') return runSetLivestream(data);
 
   return handleRsvp(data);
 }
@@ -302,6 +307,38 @@ function handleImportGuests(data) {
 /* ─── Trigger generateIds via HTTP (called from admin.html) ─── */
 function runGenerateIds() {
   generateIds();
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Simple key/value config store, read by index.html via gviz ───
+   Used for site-wide settings (currently just the live stream link)
+   that every guest's page needs, not just the admin's own browser. */
+function setConfigValue(key, value) {
+  var ss     = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet  = ss.getSheetByName('Config') || ss.insertSheet('Config');
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['key', 'value']);
+  }
+
+  var lastRow = sheet.getLastRow();
+  var rowIndex = -1;
+  if (lastRow > 1) {
+    var keys = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < keys.length; i++) {
+      if (String(keys[i][0]).trim() === key) { rowIndex = i + 2; break; }
+    }
+  }
+
+  if (rowIndex > -1) sheet.getRange(rowIndex, 2).setValue(value);
+  else sheet.appendRow([key, value]);
+}
+
+/* ─── Save the live stream link (called from admin.html) ─── */
+function runSetLivestream(data) {
+  setConfigValue('livestream_url', data.url || '');
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);
