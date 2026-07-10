@@ -2349,14 +2349,6 @@ textarea { resize: vertical; min-height: 90px; }
   white-space: nowrap;
 }
 
-.gift-modal__apps {
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  color: var(--text-light);
-  letter-spacing: 0.05em;
-  line-height: 1.9;
-}
-
 /* ─── GIFT MODAL ACCOUNTS ─── */
 .gift-modal__transfer-toggle {
   display: flex;
