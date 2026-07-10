@@ -485,7 +485,7 @@
           } catch (_) {}
 
           logScan(id, name, table, pax, giftNum);
-          showWelcome(name, table, giftNum);
+          showWelcome(name, table, giftNum, id);
         })
         .catch(() => showError());
     }
@@ -513,11 +513,12 @@
 
     document.getElementById('welcomeNext').addEventListener('click', dismissWelcome);
 
-    function showWelcome(name, table, giftNum) {
+    function showWelcome(name, table, giftNum, id) {
       document.getElementById('welcomeName').textContent  = name;
       document.getElementById('welcomeTable').textContent = table ? table : '';
       document.getElementById('welcomeGift').textContent  = giftNum ? `Gift Tag  #${giftNum}` : '';
       window.__checkedInGuestName = name;
+      window.__checkedInGuestId = id;
       // This is a shared usher device, not a guest's own browser — wipe the
       // previous guest's gift amount/confirmation state before this guest sees it.
       if (typeof window.__resetGiftModal === 'function') window.__resetGiftModal();
@@ -601,34 +602,13 @@
         <p class="gift-modal__apps">GoPay &middot; OVO &middot; Dana &middot; ShopeePay<br>BCA &middot; BRI &middot; BNI &middot; Mandiri</p>
       </div>
 
-      <div class="gift-modal__confirm">
-        <p class="gift-modal__confirm-prompt">Already sent it?</p>
-        <button type="button" class="gift-modal__confirm-btn" id="giftConfirmBtn">✓ I've Sent Them Gift</button>
-
-        <form class="gift-modal__confirm-form" id="giftConfirmForm" hidden>
-          <label class="gift-modal__confirm-label">
-            Your Name
-            <input type="text" id="giftConfirmName" class="gift-modal__confirm-input" placeholder="Full name" required />
-          </label>
-          <label class="gift-modal__confirm-label">
-            Amount Sent
-            <input type="text" inputmode="numeric" id="giftConfirmAmount" class="gift-modal__confirm-input" placeholder="Rp" required readonly />
-          </label>
-          <label class="gift-modal__confirm-label">
-            Method
-            <select id="giftConfirmMethod" class="gift-modal__confirm-input">
-              <option value="QRIS">QRIS</option>
-              <option value="Transfer">Transfer</option>
-            </select>
-          </label>
-          <label class="gift-modal__confirm-label">
-            Note <span class="gift-modal__confirm-optional">(optional)</span>
-            <input type="text" id="giftConfirmNote" class="gift-modal__confirm-input" placeholder="e.g. sent via GoPay" />
-          </label>
-          <button type="submit" class="gift-modal__confirm-submit" id="giftConfirmSubmit">Submit</button>
-        </form>
-
-        <p class="gift-modal__confirm-thanks" id="giftConfirmThanks" hidden></p>
+      <div class="gift-modal__unique-code" id="uniqueCodeBox" hidden>
+        <div class="gift-modal__unique-code-row">
+          <span class="gift-modal__unique-code-label">Your Code</span>
+          <span class="gift-modal__unique-code-num" id="uniqueCodeNum"></span>
+        </div>
+        <p class="gift-modal__unique-code-hint">Add this to your gift amount so we know it's from you.</p>
+        <span class="gift-modal__unique-code-example" id="uniqueCodeExample"></span>
       </div>
     </div>
   </div>

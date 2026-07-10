@@ -584,7 +584,7 @@ function setupLightbox(carousel, images) {
     a.click();
   }
 
-  function showQR(name, qrUrl) {
+  function showQR(name, qrUrl, id) {
     const qrSection = document.getElementById('qr');
     const qrCanvas  = document.getElementById('qrCanvas');
     if (qrSection && qrCanvas) {
@@ -632,7 +632,7 @@ function setupLightbox(carousel, images) {
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
       }
     }
-    window.__guestQR = { name, url: qrUrl, saveQR, buildQR };
+    window.__guestQR = { name, url: qrUrl, id, saveQR, buildQR };
   }
 
   if (isId) {
@@ -645,7 +645,7 @@ function setupLightbox(carousel, images) {
         const rows = JSON.parse(m[1]).table?.rows || [];
         const row  = rows.find(r => r.c?.[0]?.v === toParam);
         if (!row) return;
-        showQR(String(row.c?.[1]?.v || '').trim(), location.href);
+        showQR(String(row.c?.[1]?.v || '').trim(), location.href, toParam);
       })
       .catch(() => {});
   } else {
@@ -662,7 +662,7 @@ function setupLightbox(carousel, images) {
         const normalized = toParam.trim().toLowerCase();
         if (!rows.some(r => String(r.c?.[1]?.v || '').trim().toLowerCase() === normalized)) return;
       } catch (_) { return; }
-      showQR(toParam, qrUrl);
+      showQR(toParam, qrUrl, id);
     });
   }
 })();
