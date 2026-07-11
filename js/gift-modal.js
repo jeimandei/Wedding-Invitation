@@ -113,7 +113,10 @@
    Converts the static open-amount QRIS into an amount-embedded EMV QR by
    decoding the existing qris.png (via jsQR), rewriting tag 54 (amount) and
    tag 01 (point-of-initiation: 11 static / 12 dynamic), then recomputing
-   the tag 63 CRC — same merchant account, no bank API involved. */
+   the tag 63 CRC — same merchant account, no bank API involved. When the
+   guest's identity is known, their unique code (see PER-GUEST UNIQUE CODE
+   below) is baked into the trailing 3 digits of whatever amount they type,
+   both in the embedded QR and the confirmation hint. */
 (function initDynamicQris() {
   const input        = document.getElementById('giftAmountInput');
   const clearBtn     = document.getElementById('giftAmountClear');
@@ -237,6 +240,11 @@
     }
   }
 
+  function resolveCodeFor(amount) {
+    if (!amount || typeof window.__resolveGuestCode !== 'function') return Promise.resolve(null);
+    return window.__resolveGuestCode().catch(() => null);
+  }
+
   function applyAmount(amount) {
     if (!amount) {
       resetStatic();
@@ -244,12 +252,18 @@
       hint.textContent = 'Enter an amount to pre-fill it in your banking app (optional)';
       return;
     }
-    ensureBaseLoaded().then(str => {
+    Promise.all([ensureBaseLoaded(), resolveCodeFor(amount)]).then(([str, code]) => {
       if (!str) return; // decode failed — stay on static QRIS
+      // Bake the guest's code into the trailing 3 digits so the amount
+      // that lands in their banking app already identifies them — the
+      // input field itself is left showing what the guest actually typed.
+      const finalAmount = code != null ? Math.floor(amount / 1000) * 1000 + code : amount;
       try {
-        renderDynamic(amount);
+        renderDynamic(finalAmount);
         clearBtn.hidden = false;
-        hint.textContent = `Amount set to ${fmtRupiah(amount)} — tap ✕ to clear`;
+        hint.textContent = code != null
+          ? `Amount set to ${fmtRupiah(finalAmount)} — includes your code so we know it's from you`
+          : `Amount set to ${fmtRupiah(finalAmount)} — tap ✕ to clear`;
       } catch (e) {
         resetStatic();
       }
@@ -272,15 +286,18 @@
 })();
 
 
-/* ─── PER-GUEST UNIQUE CODE (informational — never auto-fills the amount) ───
+/* ─── PER-GUEST UNIQUE CODE ───
    Looked up from the reused "Gifts" sheet (guest_id | guest_name |
    unique_code), assigned once via the admin panel's "Generate Unique
    Codes" action. Only shown when the guest's identity is known from a
    personalized invite link and the couple has assigned them a code.
    Shown in two places: inside the Transfer panel (only once the guest
    taps the account row to reveal the account number — that's the moment
-   they're actually about to pay) and inside the QRIS panel (as soon as
-   it's open, since there's no separate reveal step there). */
+   they're actually about to pay; stays manual since bank transfers happen
+   in the guest's own banking app, outside our control) and inside the
+   QRIS panel (as soon as it's open — there it's also baked automatically
+   into the dynamic QRIS amount by initDynamicQris() via
+   window.__resolveGuestCode below). */
 (function initUniqueCode() {
   const BOXES = [
     {
@@ -339,6 +356,14 @@
       });
     });
   }
+
+  // Exposed so initDynamicQris() can bake this guest's code into the
+  // amount they type, without duplicating the fetch/lookup logic above.
+  window.__resolveGuestCode = () => {
+    const gid = resolveGuestId();
+    if (!gid) return Promise.resolve(null);
+    return fetchCodeMap().then(map => (map[gid] != null ? map[gid] : null));
+  };
 
   window.__renderUniqueCode = render;
   render();
