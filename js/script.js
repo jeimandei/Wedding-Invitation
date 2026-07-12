@@ -74,7 +74,7 @@ const _I18N = {
 
     'qr.label': 'Your Invitation',
     'qr.title': 'Your Entrance Pass',
-    'qr.sub':   'Present this at the entrance on your wedding day',
+    'qr.sub':   'Bring this to the reception on our wedding day',
     'qr.save':  'Save to Phone',
 
     'gift.btn': '💝 Send them a gift',
@@ -170,7 +170,7 @@ const _I18N = {
 
     'qr.label': 'Undangan Anda',
     'qr.title': 'Tiket Masuk Anda',
-    'qr.sub':   'Tunjukkan ini di pintu masuk pada hari pernikahan',
+    'qr.sub':   'Bawa ini ke resepsi pada hari pernikahan kami',
     'qr.save':  'Simpan ke Ponsel',
 
     'gift.btn': '💝 Kirimkan hadiah',
