@@ -1682,7 +1682,7 @@ textarea { resize: vertical; min-height: 90px; }
   background: #fff;
   border-radius: var(--radius-md);
   padding: 1.5rem 1.75rem;
-  min-height: 120px;
+  height: 185px;
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(201,169,110,0.18);
   display: flex;
@@ -1695,6 +1695,7 @@ textarea { resize: vertical; min-height: 90px; }
   font-size: 1.5rem;
   color: var(--lilac-dark);
   line-height: 1.2;
+  flex-shrink: 0;
 }
 
 .wish-card__message {
@@ -1703,6 +1704,10 @@ textarea { resize: vertical; min-height: 90px; }
   font-style: italic;
   color: var(--text-mid);
   line-height: 1.8;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Wish card — clickable */
