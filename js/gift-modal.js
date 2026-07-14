@@ -51,7 +51,11 @@
     if (typeof window.__onGiftModalOpen === 'function') window.__onGiftModalOpen();
     if (typeof window.__renderUniqueCode === 'function') window.__renderUniqueCode();
   }
-  function close() { modal.hidden = true;  document.body.style.overflow = ''; }
+  function close() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    if (typeof window.__onGiftModalClose === 'function') window.__onGiftModalClose();
+  }
 
   document.querySelectorAll('.js-gift-open').forEach(btn => btn.addEventListener('click', open));
   closeBtn.addEventListener('click', close);

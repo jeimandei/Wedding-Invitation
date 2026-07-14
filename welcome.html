@@ -165,6 +165,10 @@
       opacity: 0.6;
       text-align: center;
     }
+    .scanner-gift-btn {
+      display: block;
+      margin: 1.75rem auto 0;
+    }
 
     /* ── WELCOME OVERLAY ── */
     #welcomeOverlay {
@@ -352,6 +356,7 @@
       <span class="corner br"></span>
     </div>
     <p class="scanner-hint">Scan your entrance QR code</p>
+    <button class="gift-btn js-gift-open scanner-gift-btn">💝 Send Them a Gift</button>
   </div>
 
   <!-- ── WELCOME OVERLAY ── -->
@@ -537,8 +542,27 @@
 
     // Opening the gift modal cancels the welcome auto-dismiss so the guest
     // isn't cut off mid check-in while filling in the gift confirmation form.
+    // It also pauses the camera scanner — the gift button is reachable from
+    // the scanner screen itself now, and a scan firing in the background
+    // while the modal is open would pop the welcome overlay up underneath it.
     window.__onGiftModalOpen = () => {
       if (welcomeTimer) { clearTimeout(welcomeTimer); welcomeTimer = null; }
+      if (scanner && scanning) {
+        try { scanner.pause(); } catch (_) {}
+        scanning = false;
+      }
+    };
+
+    // Only resume scanning if the welcome overlay isn't showing — if a real
+    // scan already happened, dismissWelcome() owns the resume instead (the
+    // scanner view stays in the DOM underneath the overlay the whole time,
+    // so checking welcomeOverlay.hidden is what actually distinguishes the
+    // two screens, not scannerView.hidden).
+    window.__onGiftModalClose = () => {
+      if (welcomeOverlay.hidden && scanner && !scanning) {
+        try { scanner.resume(); } catch (_) {}
+        scanning = true;
+      }
     };
 
     /* ── ERROR ── */
