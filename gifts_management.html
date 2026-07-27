@@ -704,7 +704,7 @@
 
       Promise.all([
         fetch(gvizUrl('Guests')).then(r => r.text()),
-        fetch(gvizUrl('gift_code')).then(r => r.text())
+        fetch(gvizUrl('Gifts')).then(r => r.text())
       ]).then(([gText, giftsText]) => {
         let gRows, giftRows;
         try {
@@ -715,7 +715,7 @@
         try {
           giftRows = parseGviz(giftsText);
         } catch (e) {
-          throw new Error('Could not read the "gift_code" sheet — make sure it exists and is shared as "Anyone with the link can view".');
+          throw new Error('Could not read the "Gifts" sheet — make sure it exists and is shared as "Anyone with the link can view".');
         }
 
         allGuests = gRows
