@@ -358,7 +358,8 @@
     .guest-form-row .guest-form-input { flex: 1; }
     .guest-form-note {
       font-size: 0.7rem;
-      color: #c0504a;
+      color: var(--lilac);
+      line-height: 1.5;
       margin: -0.6rem 0 1rem;
     }
     .guest-form-note[hidden] { display: none; }
@@ -597,7 +598,7 @@
 
       <span class="field-label">Name</span>
       <input class="guest-form-input" type="text" id="newGuestName" placeholder="Full name" autocomplete="off" />
-      <p class="guest-form-note" id="newGuestNameWarning" hidden>A guest with this name already exists.</p>
+      <p class="guest-form-note" id="newGuestNameWarning" hidden>A guest with this name already exists — you'll log the gift for them instead of adding a duplicate.</p>
 
       <div class="guest-form-row">
         <div>
@@ -945,16 +946,15 @@
       return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
     }
 
-    function guestNameExists(name) {
+    function findExistingGuest(name) {
       const normalized = name.trim().toLowerCase();
-      return allGuests.some(g => g.name.trim().toLowerCase() === normalized);
+      return allGuests.find(g => g.name.trim().toLowerCase() === normalized) || null;
     }
 
     function refreshAddGuestState() {
       const name = newGuestNameInput.value.trim();
-      const collides = !!name && guestNameExists(name);
-      newGuestNameWarning.hidden = !collides;
-      addGuestModalSave.disabled = !name || collides;
+      newGuestNameWarning.hidden = !(name && findExistingGuest(name));
+      addGuestModalSave.disabled = !name;
     }
 
     document.getElementById('addGuestBtn').addEventListener('click', () => {
@@ -975,7 +975,17 @@
 
     addGuestModalSave.addEventListener('click', async () => {
       const name = newGuestNameInput.value.trim();
-      if (!name || guestNameExists(name)) return;
+      if (!name) return;
+
+      // Name already on the list — log the gift against that existing guest
+      // instead of writing a duplicate line to the sheet.
+      const existing = findExistingGuest(name);
+      if (existing) {
+        closeAddGuestModal();
+        openGiftModalFor(existing);
+        return;
+      }
+
       const table = newGuestTableInput.value.trim() || '—';
       const pax   = parseInt(newGuestPaxInput.value, 10) || 1;
 
