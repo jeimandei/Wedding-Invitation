@@ -12,11 +12,15 @@
  *    • "Scans"   → columns: scanned_at | guest_id | guest_name | table | pax
  *      Leave completely empty.
  *    • "Gifts"   is created automatically the first time you run
- *      "Generate Unique Codes" from the admin panel — no manual setup
- *      needed. Holds a stable, append-only guest_id → unique_code
- *      mapping (0–850) the couple uses to reconcile incoming
- *      QRIS/transfer payments against the trailing digits of the
- *      amount a guest was asked to send.
+ *      "Generate Unique Codes" from the admin panel (or the first gift
+ *      logged from gifts_management.html) — no manual setup needed.
+ *      Holds two kinds of rows sharing the same columns:
+ *        - a stable, append-only guest_id → unique_code mapping
+ *          (0–850) the couple uses to reconcile incoming QRIS/transfer
+ *          payments against the trailing digits of the amount a guest
+ *          was asked to send (unique_code set, method/amount/total blank)
+ *        - a log entry per gift recorded from gifts_management.html
+ *          (method/amount/total set, unique_code blank)
  *    • "Config"  is created automatically the first time you save a
  *      setting (e.g. the live stream link) from the admin panel — no
  *      manual setup needed. Simple key/value store read by index.html.
@@ -40,14 +44,14 @@
  *    → Copy the Web App URL.
  *
  * 8. The URL is already set in js/script.js as APPS_SCRIPT_URL.
- *    welcome.html, guestbook.html, and admin.html read it from there —
- *    no other files need changing.
+ *    welcome.html, guestbook.html, admin.html, and gifts_management.html
+ *    read it from there — no other files need changing.
  *
  * Sheet columns:
  *   RSVP:   Timestamp | Guest Name | Attendance | Guests | Message
  *   Guests: id (auto) | name       | table      | phone  | pax
  *   Scans:  scanned_at | guest_id  | guest_name | table  | pax
- *   Gifts:  guest_id (auto) | guest_name | unique_code
+ *   Gifts:  guest_id | guest_name | unique_code | method | amount | total
  *   Config: key | value
  *   Link:   url (auto) | guest name
  */
@@ -119,6 +123,7 @@ function doPost(e) {
   if (data.action === 'generateCodes') return runGenerateCodes();
   if (data.action === 'resetGifts')    return handleResetGifts();
   if (data.action === 'setLivestream') return runSetLivestream(data);
+  if (data.action === 'addGift')       return handleAddGift(data);
 
   return handleRsvp(data);
 }
@@ -238,19 +243,24 @@ function generateUniqueCodes() {
   var MAX_CODE     = 850;
 
   if (giftsSheet.getLastRow() === 0) {
-    giftsSheet.appendRow(['guest_id', 'guest_name', 'unique_code']);
+    giftsSheet.appendRow(['guest_id', 'guest_name', 'unique_code', 'method', 'amount', 'total']);
   }
 
+  // Gift-log entries (added from gifts_management.html) also live in this
+  // sheet and share the guest_id column, but leave unique_code blank — only
+  // count a guest as already assigned if their row actually has a code, so
+  // a logged gift doesn't accidentally block them from ever getting one.
   var existing = giftsSheet.getLastRow() > 1
     ? giftsSheet.getRange(2, 1, giftsSheet.getLastRow() - 1, 3).getValues()
     : [];
   var assignedIds = {};
   var usedCodes   = {};
   existing.forEach(function(row) {
-    var gid  = String(row[0]).trim();
-    var code = row[2];
-    if (gid) assignedIds[gid] = true;
-    if (code !== '' && code != null) usedCodes[Math.round(Number(code))] = true;
+    var gid     = String(row[0]).trim();
+    var code    = row[2];
+    var hasCode = code !== '' && code != null;
+    if (gid && hasCode) assignedIds[gid] = true;
+    if (hasCode) usedCodes[Math.round(Number(code))] = true;
   });
 
   var nextCode = 0;
@@ -286,12 +296,43 @@ function runGenerateCodes() {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* ─── Reset Gifts sheet (keeps header row) ─── */
+/* ─── Reset Gifts sheet (keeps header row) ───
+   Clears BOTH assigned unique codes and any logged gift entries, since
+   gifts_management.html appends to this same sheet. ─── */
 function handleResetGifts() {
   var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName('Gifts');
   if (sheet && sheet.getLastRow() > 1)
     sheet.deleteRows(2, sheet.getLastRow() - 1);
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Gift log entry write (called from gifts_management.html) ───
+   Appends a new row to the reused "Gifts" sheet for each logged gift —
+   guest_id/guest_name identify who gave it, unique_code is left blank
+   (that column is only ever set by generateUniqueCodes()), and
+   method/amount/total record this specific gift. The 0.7% QRIS tax on
+   amounts over Rp 500,000 is already folded into `total` by the client;
+   this just persists what it was sent. */
+function handleAddGift(data) {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('Gifts') || ss.insertSheet('Gifts');
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['guest_id', 'guest_name', 'unique_code', 'method', 'amount', 'total']);
+  }
+
+  sheet.appendRow([
+    data.guest_id   || '',
+    data.guest_name || '',
+    '',
+    data.method || '',
+    data.amount != null ? Number(data.amount) : '',
+    data.total  != null ? Number(data.total)  : ''
+  ]);
+
   return ContentService
     .createTextOutput(JSON.stringify({ result: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);

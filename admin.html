@@ -400,7 +400,7 @@
   <div id="resetModal" hidden style="position:fixed;inset:0;background:rgba(58,46,42,0.55);display:flex;align-items:center;justify-content:center;z-index:200;">
     <div class="reset-modal-box">
       <p class="reset-modal-title">Reset All Data?</p>
-      <p class="reset-modal-body">This will permanently delete all <strong>check-in records</strong>, <strong>RSVP reservations</strong>, <strong>assigned unique codes</strong>, and the entire <strong>guest list</strong>. This cannot be undone.</p>
+      <p class="reset-modal-body">This will permanently delete all <strong>check-in records</strong>, <strong>RSVP reservations</strong>, <strong>assigned unique codes</strong>, <strong>logged gifts</strong>, and the entire <strong>guest list</strong>. This cannot be undone.</p>
       <div class="reset-modal-actions">
         <button class="btn btn-outline" id="resetCancelBtn">Cancel</button>
         <button class="btn btn-danger" id="resetConfirmBtn">Yes, Reset Everything</button>
@@ -682,7 +682,7 @@
 
     /* ── RESET UNIQUE CODES ── */
     document.getElementById('resetGiftsBtn').addEventListener('click', () => {
-      if (!confirm('Clear ALL assigned unique codes? Guests who already saw their code will get a DIFFERENT one next time you regenerate — only do this before codes have been shared. This cannot be undone.')) return;
+      if (!confirm('Clear ALL assigned unique codes AND logged gifts (from Gifts Management)? Guests who already saw their code will get a DIFFERENT one next time you regenerate — only do this before codes have been shared. This cannot be undone.')) return;
       const btn = document.getElementById('resetGiftsBtn');
       btn.textContent = '↺ Clearing…'; btn.disabled = true;
       fetch(APPS_SCRIPT_URL, {

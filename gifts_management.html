@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gifts Management — Jei &amp; Angie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:    #C9A96E;
+      --gold-l:  #E8D5B0;
+      --cream:   #FDF6EE;
+      --ivory:   #F5EEE6;
+      --dark:    #3A2E2A;
+      --mid:     #6B5B52;
+      --light:   #A0877C;
+      --green:   #5C8A5C;
+      --lilac:   #9B72A3;
+      --radius:  10px;
+      --shadow:  0 4px 20px rgba(58,46,42,0.1);
+    }
+
+    body {
+      background: var(--ivory);
+      color: var(--dark);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── PIN GATE ── */
+    #pinGate {
+      position: fixed; inset: 0;
+      background: var(--ivory);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+    }
+    #pinGate[hidden] { display: none; }
+
+    .pin-box {
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: 16px;
+      padding: 2.5rem 2.5rem 2rem;
+      text-align: center;
+      max-width: 320px;
+      width: 90%;
+      box-shadow: var(--shadow);
+    }
+    .pin-couple {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2rem;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+    .pin-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--light);
+      margin-bottom: 1.5rem;
+    }
+    .pin-input {
+      display: block; width: 100%;
+      padding: 0.7rem 1rem;
+      background: var(--ivory);
+      border: 1px solid var(--gold-l);
+      border-radius: 8px;
+      color: var(--dark);
+      font-size: 1.4rem;
+      text-align: center;
+      letter-spacing: 0.3em;
+      outline: none;
+      margin-bottom: 1rem;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .pin-input:focus { border-color: var(--gold); }
+    .pin-submit {
+      width: 100%;
+      padding: 0.65rem;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .pin-error {
+      margin-top: 0.75rem;
+      font-size: 0.72rem;
+      color: #c0504a;
+    }
+    .pin-error[hidden] { display: none; }
+
+    /* ── DASHBOARD ── */
+    #dashboard[hidden] { display: none; }
+
+    header {
+      background: var(--cream);
+      border-bottom: 1px solid var(--gold-l);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .hdr-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.9rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hdr-meta {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--light);
+      text-align: right;
+    }
+    .hdr-meta strong { color: var(--mid); }
+
+    main { max-width: 940px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+    /* stats */
+    .stats-section {
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .stats-section-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 0.9rem;
+    }
+    .stats-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 500;
+      color: var(--dark);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-num.gold { color: var(--gold); font-size: 2.3rem; }
+    .stat-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-top: 0.3rem;
+    }
+    .stat-sep {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.6rem;
+      color: var(--gold-l);
+      flex-shrink: 0;
+    }
+
+    /* search */
+    .search-row { display: flex; gap: 0.6rem; margin-bottom: 1rem; }
+    .search-wrap { position: relative; flex: 1; }
+    .search-input {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.5rem;
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: 99px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      color: var(--dark);
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--gold); }
+    .search-icon {
+      position: absolute; left: 0.9rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem; color: var(--light);
+      pointer-events: none;
+    }
+    .search-btn {
+      flex-shrink: 0;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 99px;
+      padding: 0 1.4rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-btn:hover { background: #b8945d; }
+
+    /* table */
+    .guest-table {
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      padding: 0.7rem 1rem;
+      background: rgba(201,169,110,0.1);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--light);
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid var(--gold-l);
+    }
+    td {
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--dark);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr.has-gift { background: rgba(92,138,92,0.04); }
+
+    .table-text { color: var(--mid); font-size: 0.78rem; }
+    .amount-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--dark);
+      font-variant-numeric: tabular-nums;
+    }
+    .amount-text.zero { color: var(--light); font-family: inherit; font-size: 0.78rem; }
+
+    .method-pills { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .method-pill {
+      font-size: 0.58rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 0.15rem 0.5rem; border-radius: 99px; white-space: nowrap;
+    }
+    .method-pill.qris     { background: rgba(92,138,92,0.12); color: var(--green); }
+    .method-pill.transfer { background: rgba(155,114,163,0.14); color: var(--lilac); }
+    .method-pill.direct   { background: rgba(201,169,110,0.16); color: var(--gold); }
+
+    .add-btn {
+      background: none;
+      border: 1px solid var(--gold);
+      border-radius: 99px;
+      padding: 0.3rem 0.8rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--gold);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s;
+    }
+    .add-btn:hover { background: var(--gold); color: #fff; }
+
+    .empty-row td {
+      text-align: center;
+      padding: 3rem;
+      color: var(--light);
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* footer */
+    .refresh-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      color: var(--light);
+    }
+    .refresh-btn {
+      background: none;
+      border: 1px solid var(--gold-l);
+      border-radius: 99px;
+      padding: 0.35rem 0.9rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--mid);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* gift modal */
+    #giftModal {
+      position: fixed; inset: 0;
+      background: rgba(58,46,42,0.45);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+      padding: 1.5rem;
+    }
+    #giftModal[hidden] { display: none; }
+    .gift-modal-box {
+      background: var(--cream);
+      border: 1px solid var(--gold-l);
+      border-radius: 16px;
+      padding: 2rem 2rem 1.75rem;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: var(--shadow);
+    }
+    .gift-modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--dark);
+      margin-bottom: 0.2rem;
+    }
+    .gift-modal-sub {
+      font-size: 0.72rem;
+      color: var(--light);
+      margin-bottom: 1.5rem;
+    }
+    .field-label {
+      font-size: 0.63rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .amount-input-wrap { position: relative; margin-bottom: 1.25rem; }
+    .amount-prefix {
+      position: absolute; left: 1rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--light); font-size: 0.95rem;
+    }
+    .amount-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.4rem;
+      border: 1px solid var(--gold-l);
+      border-radius: 8px;
+      background: var(--ivory);
+      font-size: 1.1rem;
+      color: var(--dark);
+      font-family: 'Montserrat', sans-serif;
+      outline: none;
+    }
+    .amount-input:focus { border-color: var(--gold); }
+    .method-choices { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .method-choice {
+      flex: 1; text-align: center;
+      padding: 0.6rem 0.4rem;
+      border: 1px solid var(--gold-l);
+      border-radius: 8px;
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--mid);
+      cursor: pointer;
+      background: #fff;
+    }
+    .method-choice.selected { border-color: var(--gold); background: rgba(201,169,110,0.1); color: var(--gold); }
+    .tax-note {
+      background: rgba(92,138,92,0.08);
+      border: 1px dashed rgba(92,138,92,0.4);
+      border-radius: 8px;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.7rem;
+      color: var(--mid);
+      margin-bottom: 1.25rem;
+      line-height: 1.6;
+    }
+    .tax-note[hidden] { display: none; }
+    .tax-note b { color: var(--green); }
+    .gift-modal-actions { display: flex; gap: 0.75rem; }
+    .gift-modal-actions .btn {
+      flex: 1;
+      padding: 0.65rem;
+      border-radius: 99px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--gold);
+      transition: background 0.2s, color 0.2s;
+    }
+    .gift-modal-actions .btn-outline { background: transparent; color: var(--gold); }
+    .gift-modal-actions .btn-outline:hover { background: var(--gold); color: #fff; }
+    .gift-modal-actions .btn-primary { background: var(--gold); color: #fff; }
+    .gift-modal-actions .btn-primary:hover { background: #b8945d; }
+    .gift-modal-actions .btn:disabled { opacity: 0.55; cursor: default; }
+
+    @media (max-width: 600px) {
+      .stat-num { font-size: 1.5rem; }
+      .stat-num.gold { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PIN GATE -->
+  <div id="pinGate">
+    <div class="pin-box">
+      <p class="pin-couple">Jei &amp; Angie</p>
+      <p class="pin-label">Gifts Management — Enter PIN</p>
+      <input class="pin-input" type="password" id="pinInput"
+             maxlength="6" inputmode="numeric" autocomplete="off"
+             placeholder="• • • •" />
+      <button class="pin-submit" id="pinSubmit">Enter</button>
+      <p class="pin-error" id="pinError" hidden>Incorrect PIN.</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" hidden>
+
+    <header>
+      <p class="hdr-title">Gifts Management</p>
+      <div class="hdr-meta">
+        <div>Last updated: <strong id="lastUpdated">—</strong></div>
+        <div style="margin-top:0.2rem">Auto-refresh every 5s</div>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- Stats -->
+      <div class="stats-section">
+        <div class="stats-section-label">Total Collected</div>
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-num gold" id="statGrandTotal">Rp 0</div>
+            <div class="stat-label">Grand Total</div>
+          </div>
+          <div class="stat-sep">·</div>
+          <div class="stat">
+            <div class="stat-num" id="statQris">Rp 0</div>
+            <div class="stat-label">QRIS (after 0.7% tax)</div>
+          </div>
+          <div class="stat-sep">·</div>
+          <div class="stat">
+            <div class="stat-num" id="statTransfer">Rp 0</div>
+            <div class="stat-label">Transfer</div>
+          </div>
+          <div class="stat-sep">·</div>
+          <div class="stat">
+            <div class="stat-num" id="statDirect">Rp 0</div>
+            <div class="stat-label">Direct</div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="stat">
+            <div class="stat-num" id="statGuestsLogged">0</div>
+            <div class="stat-label">Guests logged</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-row">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="search" id="searchInput"
+                 placeholder="Search by name or table…" />
+        </div>
+        <button class="search-btn" id="searchBtn">Search</button>
+      </div>
+
+      <!-- Guest table -->
+      <div class="guest-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Table</th>
+              <th>Received</th>
+              <th>Method(s)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="guestTableBody">
+            <tr class="empty-row"><td colspan="5">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Refresh row -->
+      <div class="refresh-row">
+        <span id="countLabel">—</span>
+        <button class="refresh-btn" id="refreshBtn">↻ Refresh now</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Add Gift modal -->
+  <div id="giftModal" hidden>
+    <div class="gift-modal-box">
+      <p class="gift-modal-title" id="giftModalTitle">Add Gift</p>
+      <p class="gift-modal-sub" id="giftModalSub"></p>
+
+      <span class="field-label">Amount</span>
+      <div class="amount-input-wrap">
+        <span class="amount-prefix">Rp</span>
+        <input class="amount-input" type="text" inputmode="numeric" id="giftAmountInput" placeholder="0" autocomplete="off" />
+      </div>
+
+      <span class="field-label">Method</span>
+      <div class="method-choices">
+        <div class="method-choice" data-method="qris">QRIS</div>
+        <div class="method-choice" data-method="transfer">Transfer</div>
+        <div class="method-choice" data-method="direct">Direct</div>
+      </div>
+
+      <p class="tax-note" id="giftTaxNote" hidden></p>
+
+      <div class="gift-modal-actions">
+        <button class="btn btn-outline" id="giftModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="giftModalSave" disabled>Save Gift</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_ID = '1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o';
+    const APPS_SCRIPT_URL = localStorage.getItem('wb_script_url') || 'https://script.google.com/macros/s/AKfycby65CGQgJ0ox4BHohASwQoKrP93bhiZJvsYqkUo_28qKWj3Fi28UszslHUYuJVN4GLo3w/exec';
+    const PIN_HASHES = [
+      {
+        sha1:   '6590318a70806f5b81e1bab1d862f20e621bc1fd',
+        sha256: '3c8b996ee07b276ec0f915f23e940adbd1fb336db41a443edb4a089a63c79352',
+        sha512: '44e55ab12198cb01cb69e93a25ed1c6b58854b756b458126b14d3b04eb2cf3804cb78f8d72d9f84eb068272318f13fadad302a3bd529095f4384c8f84fd79777',
+      },
+    ];
+    const QRIS_TAX_THRESHOLD = 500000;
+    const QRIS_TAX_RATE      = 0.007;
+
+    /* ── PIN GATE ── */
+    const pinGate   = document.getElementById('pinGate');
+    const dashboard = document.getElementById('dashboard');
+    const pinInput  = document.getElementById('pinInput');
+    const pinError  = document.getElementById('pinError');
+
+    function unlock() {
+      pinGate.hidden   = true;
+      dashboard.hidden = false;
+      startDashboard();
+    }
+
+    async function checkPin(val) {
+      const enc  = new TextEncoder().encode(val.trim());
+      const toHex = buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      const [h1, h256, h512] = await Promise.all([
+        crypto.subtle.digest('SHA-1',   enc),
+        crypto.subtle.digest('SHA-256', enc),
+        crypto.subtle.digest('SHA-512', enc),
+      ]);
+      const ok = PIN_HASHES.some(p =>
+        p.sha1 === toHex(h1) && p.sha256 === toHex(h256) && p.sha512 === toHex(h512)
+      );
+      if (ok) {
+        localStorage.setItem('wb_gm_ok', '1');
+        unlock();
+      } else {
+        pinError.hidden = false;
+        pinInput.value = '';
+        pinInput.focus();
+      }
+    }
+
+    document.getElementById('pinSubmit').addEventListener('click', () => checkPin(pinInput.value));
+    pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') checkPin(pinInput.value); });
+
+    if (localStorage.getItem('wb_gm_ok') === '1') unlock();
+
+    /* ── DATA ── */
+    let allGuests = [];
+    let giftsMap  = {}; // guest_id → { total, methods: Set }
+    let methodTotals = { qris: 0, transfer: 0, direct: 0 };
+
+    function gvizUrl(sheet) {
+      return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}&_=${Date.now()}`;
+    }
+
+    function parseGviz(text) {
+      const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if (!match) return [];
+      return JSON.parse(match[1]).table?.rows || [];
+    }
+
+    function loadData() {
+      Promise.all([
+        fetch(gvizUrl('Guests')).then(r => r.text()),
+        fetch(gvizUrl('Gifts')).then(r => r.text())
+      ]).then(([gText, giftsText]) => {
+        const gRows     = parseGviz(gText);
+        const giftRows  = parseGviz(giftsText);
+
+        allGuests = gRows
+          .filter(row => row.c?.[1]?.v)
+          .map((row, i) => ({
+            idx:   i + 1,
+            id:    row.c?.[0]?.v || '',
+            name:  row.c?.[1]?.v || '',
+            table: row.c?.[2]?.v || '—',
+            pax:   row.c?.[4]?.v || 1
+          }));
+
+        /* Aggregate gift-log rows (method/amount/total set, unique_code
+           blank) per guest_id — the "Generate Unique Codes" rows have no
+           method, so they're naturally skipped here. */
+        giftsMap = {};
+        methodTotals = { qris: 0, transfer: 0, direct: 0 };
+        giftRows.forEach(row => {
+          const id     = row.c?.[0]?.v;
+          const method = row.c?.[3]?.v ? String(row.c[3].v).toLowerCase() : '';
+          const total  = Number(row.c?.[5]?.v) || 0;
+          if (!id || !method) return;
+          if (!giftsMap[id]) giftsMap[id] = { total: 0, methods: new Set() };
+          giftsMap[id].total += total;
+          giftsMap[id].methods.add(method);
+          if (methodTotals[method] != null) methodTotals[method] += total;
+        });
+
+        updateUI();
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('id-ID');
+      }).catch(() => {});
+    }
+
+    function fmtRupiah(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+
+    function updateUI() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      let grandTotal = 0, guestsLogged = 0;
+      allGuests.forEach(g => {
+        const gift = giftsMap[g.id];
+        if (!gift) return;
+        guestsLogged++;
+        grandTotal += gift.total;
+      });
+
+      document.getElementById('statGrandTotal').textContent   = fmtRupiah(grandTotal);
+      document.getElementById('statQris').textContent         = fmtRupiah(methodTotals.qris);
+      document.getElementById('statTransfer').textContent     = fmtRupiah(methodTotals.transfer);
+      document.getElementById('statDirect').textContent       = fmtRupiah(methodTotals.direct);
+      document.getElementById('statGuestsLogged').textContent = guestsLogged;
+
+      const filtered = allGuests.filter(g =>
+        !search || g.name.toLowerCase().includes(search) || g.table.toLowerCase().includes(search)
+      );
+
+      /* Sort: logged first (highest amount first), then not-yet-logged by name */
+      filtered.sort((a, b) => {
+        const aG = giftsMap[a.id], bG = giftsMap[b.id];
+        if (!!aG !== !!bG) return aG ? -1 : 1;
+        if (aG && bG) return bG.total - aG.total;
+        return a.name.localeCompare(b.name);
+      });
+
+      const tbody = document.getElementById('guestTableBody');
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No guests found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(g => {
+        const gift = giftsMap[g.id];
+        const amount = gift
+          ? `<span class="amount-text">${fmtRupiah(gift.total)}</span>`
+          : `<span class="amount-text zero">not yet logged</span>`;
+        const pills = gift
+          ? `<span class="method-pills">${Array.from(gift.methods).map(m => `<span class="method-pill ${m}">${m}</span>`).join('')}</span>`
+          : '';
+        return `<tr class="${gift ? 'has-gift' : ''}">
+          <td><strong>${esc(g.name)}</strong></td>
+          <td class="table-text">${esc(g.table)}</td>
+          <td>${amount}</td>
+          <td>${pills}</td>
+          <td><button class="add-btn" data-id="${esc(g.id)}">+ Add Gift</button></td>
+        </tr>`;
+      }).join('');
+
+      document.getElementById('countLabel').textContent = `${guestsLogged} of ${allGuests.length} guests logged`;
+    }
+
+    function esc(str) {
+      const d = document.createElement('div');
+      d.appendChild(document.createTextNode(String(str)));
+      return d.innerHTML;
+    }
+
+    function startDashboard() {
+      loadData();
+      setInterval(loadData, 5000);
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+    document.getElementById('searchInput').addEventListener('input', updateUI);
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      document.getElementById('searchInput').focus();
+      updateUI();
+    });
+
+    /* ── ADD GIFT MODAL ── */
+    const giftModal       = document.getElementById('giftModal');
+    const giftModalTitle  = document.getElementById('giftModalTitle');
+    const giftModalSub    = document.getElementById('giftModalSub');
+    const giftAmountInput = document.getElementById('giftAmountInput');
+    const giftTaxNote     = document.getElementById('giftTaxNote');
+    const giftModalCancel = document.getElementById('giftModalCancel');
+    const giftModalSave   = document.getElementById('giftModalSave');
+    const methodChoices   = document.querySelectorAll('.method-choice');
+
+    let activeGuest  = null;
+    let selectedMethod = null;
+
+    function computeTotal(amount, method) {
+      if (method === 'qris' && amount > QRIS_TAX_THRESHOLD) {
+        return Math.round(amount * (1 + QRIS_TAX_RATE));
+      }
+      return amount;
+    }
+
+    function currentAmount() {
+      return parseInt(giftAmountInput.value.replace(/\D/g, ''), 10) || 0;
+    }
+
+    function refreshModalState() {
+      const amount = currentAmount();
+      if (selectedMethod === 'qris' && amount > QRIS_TAX_THRESHOLD) {
+        const tax   = Math.round(amount * QRIS_TAX_RATE);
+        const total = amount + tax;
+        giftTaxNote.innerHTML = `Amount exceeds Rp 500.000 via QRIS — a <b>0.7% tax</b> is added.<br>${fmtRupiah(amount)} + ${fmtRupiah(tax)} = <b>${fmtRupiah(total)}</b>`;
+        giftTaxNote.hidden = false;
+      } else {
+        giftTaxNote.hidden = true;
+      }
+      giftModalSave.disabled = !(amount > 0 && selectedMethod);
+    }
+
+    document.getElementById('guestTableBody').addEventListener('click', e => {
+      const btn = e.target.closest('.add-btn');
+      if (!btn) return;
+      const guest = allGuests.find(g => g.id === btn.dataset.id);
+      if (!guest) return;
+
+      activeGuest    = guest;
+      selectedMethod = null;
+      giftAmountInput.value = '';
+      methodChoices.forEach(el => el.classList.remove('selected'));
+      giftModalTitle.textContent = `Add Gift — ${guest.name}`;
+      giftModalSub.textContent   = guest.table;
+      refreshModalState();
+      giftModal.hidden = false;
+      giftAmountInput.focus();
+    });
+
+    giftAmountInput.addEventListener('input', () => {
+      const digits = giftAmountInput.value.replace(/\D/g, '');
+      giftAmountInput.value = digits ? Number(digits).toLocaleString('id-ID') : '';
+      refreshModalState();
+    });
+
+    methodChoices.forEach(el => {
+      el.addEventListener('click', () => {
+        selectedMethod = el.dataset.method;
+        methodChoices.forEach(c => c.classList.toggle('selected', c === el));
+        refreshModalState();
+      });
+    });
+
+    function closeGiftModal() {
+      giftModal.hidden = true;
+      activeGuest = null;
+      selectedMethod = null;
+    }
+    giftModalCancel.addEventListener('click', closeGiftModal);
+    giftModal.addEventListener('click', e => { if (e.target === giftModal) closeGiftModal(); });
+
+    giftModalSave.addEventListener('click', () => {
+      if (!activeGuest || !selectedMethod) return;
+      const amount = currentAmount();
+      if (!amount) return;
+      const total = computeTotal(amount, selectedMethod);
+      const guest = activeGuest;
+
+      giftModalSave.disabled = true;
+      giftModalSave.textContent = 'Saving…';
+
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action:     'addGift',
+          guest_id:   guest.id,
+          guest_name: guest.name,
+          method:     selectedMethod,
+          amount:     amount,
+          total:      total
+        })
+      }).catch(() => {}).finally(() => {
+        // Optimistic update — the next 5s poll reconciles with the sheet.
+        if (!giftsMap[guest.id]) giftsMap[guest.id] = { total: 0, methods: new Set() };
+        giftsMap[guest.id].total += total;
+        giftsMap[guest.id].methods.add(selectedMethod);
+        if (methodTotals[selectedMethod] != null) methodTotals[selectedMethod] += total;
+        giftModalSave.textContent = 'Save Gift';
+        closeGiftModal();
+        updateUI();
+      });
+    });
+  </script>
+</body>
+</html>
