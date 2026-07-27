@@ -11,7 +11,7 @@
  *      Fill B–E (name, table, phone, pax). Leave column A blank.
  *    • "Scans"   → columns: scanned_at | guest_id | guest_name | table | pax
  *      Leave completely empty.
- *    • "gift_code" is created automatically the first time you run
+ *    • "Gifts" is created automatically the first time you run
  *      "Generate Unique Codes" from the admin panel (or the first gift
  *      logged from gifts_management.html) — no manual setup needed.
  *      Holds two kinds of rows sharing the same columns:
@@ -51,7 +51,7 @@
  *   RSVP:   Timestamp | Guest Name | Attendance | Guests | Message
  *   Guests: id (auto) | name       | table      | phone  | pax
  *   Scans:  scanned_at | guest_id  | guest_name | table  | pax
- *   gift_code: guest_id | guest_name | unique_code | method | amount | total
+ *   Gifts: guest_id | guest_name | unique_code | method | amount | total
  *   Config: key | value
  *   Link:   url (auto) | guest name
  */
@@ -213,13 +213,13 @@ function handleResetRsvp() {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* ─── Reset Scans, RSVP, Guests and gift_code sheets in one call ─── */
+/* ─── Reset Scans, RSVP, Guests and Gifts sheets in one call ─── */
 function handleResetAll() {
   var ss     = SpreadsheetApp.openById(SPREADSHEET_ID);
   var scans  = ss.getSheetByName('Scans');
   var rsvp   = ss.getSheetByName('RSVP') || ss.getActiveSheet();
   var guests = ss.getSheetByName('Guests');
-  var gifts  = ss.getSheetByName('gift_code');
+  var gifts  = ss.getSheetByName('Gifts');
   var link   = ss.getSheetByName('Link');
   if (scans  && scans.getLastRow()  > 1) scans.deleteRows(2,  scans.getLastRow()  - 1);
   if (rsvp   && rsvp.getLastRow()   > 1) rsvp.deleteRows(2,   rsvp.getLastRow()   - 1);
@@ -240,7 +240,7 @@ function handleResetAll() {
 function generateUniqueCodes() {
   var ss           = SpreadsheetApp.openById(SPREADSHEET_ID);
   var guestsSheet  = ss.getSheetByName('Guests');
-  var giftsSheet   = ss.getSheetByName('gift_code') || ss.insertSheet('gift_code');
+  var giftsSheet   = ss.getSheetByName('Gifts') || ss.insertSheet('Gifts');
   var MAX_CODE     = 850;
 
   if (giftsSheet.getLastRow() === 0) {
@@ -297,12 +297,12 @@ function runGenerateCodes() {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* ─── Reset gift_code sheet (keeps header row) ───
+/* ─── Reset Gifts sheet (keeps header row) ───
    Clears BOTH assigned unique codes and any logged gift entries, since
    gifts_management.html appends to this same sheet. ─── */
 function handleResetGifts() {
   var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var sheet = ss.getSheetByName('gift_code');
+  var sheet = ss.getSheetByName('Gifts');
   if (sheet && sheet.getLastRow() > 1)
     sheet.deleteRows(2, sheet.getLastRow() - 1);
   return ContentService
@@ -311,7 +311,7 @@ function handleResetGifts() {
 }
 
 /* ─── Gift log entry write (called from gifts_management.html) ───
-   Appends a new row to the reused "gift_code" sheet for each logged gift —
+   Appends a new row to the reused "Gifts" sheet for each logged gift —
    guest_id/guest_name identify who gave it, unique_code is left blank
    (that column is only ever set by generateUniqueCodes()), and
    method/amount/total record this specific gift. The 0.7% QRIS tax on
@@ -319,7 +319,7 @@ function handleResetGifts() {
    this just persists what it was sent. */
 function handleAddGift(data) {
   var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var sheet = ss.getSheetByName('gift_code') || ss.insertSheet('gift_code');
+  var sheet = ss.getSheetByName('Gifts') || ss.insertSheet('Gifts');
 
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(['guest_id', 'guest_name', 'unique_code', 'method', 'amount', 'total']);
