@@ -722,7 +722,7 @@
           .filter(row => row.c?.[1]?.v)
           .map((row, i) => ({
             idx:   i + 1,
-            id:    row.c?.[0]?.v || '',
+            id:    String(row.c?.[0]?.v || '').trim(),
             name:  row.c?.[1]?.v || '',
             table: row.c?.[2]?.v || '—',
             pax:   row.c?.[4]?.v || 1
@@ -736,17 +736,37 @@
         codesMap = {};
         methodTotals = { qris: 0, transfer: 0, direct: 0 };
         giftRows.forEach(row => {
-          const id     = row.c?.[0]?.v;
+          const id     = String(row.c?.[0]?.v || '').trim();
+          const name   = row.c?.[1]?.v || '';
           const code   = row.c?.[2]?.v;
           const method = row.c?.[3]?.v ? String(row.c[3].v).toLowerCase() : '';
           const total  = Number(row.c?.[5]?.v) || 0;
           if (!id) return;
           if (code != null && code !== '') codesMap[id] = Math.round(Number(code));
           if (!method) return;
-          if (!giftsMap[id]) giftsMap[id] = { total: 0, methods: new Set() };
+          if (!giftsMap[id]) giftsMap[id] = { total: 0, methods: new Set(), name };
           giftsMap[id].total += total;
           giftsMap[id].methods.add(method);
+          if (name && !giftsMap[id].name) giftsMap[id].name = name;
           if (methodTotals[method] != null) methodTotals[method] += total;
+        });
+
+        /* A logged gift's guest_id might not match any row in the Guests
+           sheet (typo, stale id, guest removed after the gift was logged,
+           etc). Rather than let that money silently disappear from the
+           summary and table, give it a row here using the guest_name
+           captured on the gift row itself — every logged gift is always
+           accounted for and visible. */
+        const knownIds = new Set(allGuests.map(g => g.id));
+        Object.keys(giftsMap).forEach(id => {
+          if (knownIds.has(id)) return;
+          allGuests.push({
+            idx:   allGuests.length + 1,
+            id,
+            name:  giftsMap[id].name || '(unmatched guest)',
+            table: '—',
+            pax:   1
+          });
         });
 
         errorEl.hidden = true;
@@ -763,13 +783,11 @@
     function updateUI() {
       const search = document.getElementById('searchInput').value.toLowerCase();
 
-      let grandTotal = 0, guestsLogged = 0;
-      allGuests.forEach(g => {
-        const gift = giftsMap[g.id];
-        if (!gift) return;
-        guestsLogged++;
-        grandTotal += gift.total;
-      });
+      // Computed directly from the gift rows / method totals, not by
+      // looking up each guest — so a gift never silently drops out of the
+      // summary just because its guest_id didn't match a Guests row.
+      const grandTotal   = methodTotals.qris + methodTotals.transfer + methodTotals.direct;
+      const guestsLogged = Object.keys(giftsMap).length;
 
       document.getElementById('statGrandTotal').textContent   = fmtRupiah(grandTotal);
       document.getElementById('statQris').textContent         = fmtRupiah(methodTotals.qris);
