@@ -619,7 +619,7 @@
           btn.textContent = '🔢 Generate Unique Codes';
           btn.disabled = false;
         }, 2500);
-        alert('Unique codes assigned to any new guests. Existing guests keep the code they already have. Verify in the Gifts sheet.');
+        alert('Unique codes assigned to any new guests. Existing guests keep the code they already have. Verify in the gift_code sheet.');
       });
     });
 
@@ -691,7 +691,7 @@
         body: JSON.stringify({ action: 'resetGifts' })
       }).catch(() => {}).finally(() => {
         setTimeout(() => { btn.textContent = '↺ Reset Unique Codes'; btn.disabled = false; }, 2500);
-        alert('Unique codes cleared. Verify in the Gifts sheet.');
+        alert('Unique codes cleared. Verify in the gift_code sheet.');
       });
     });
 

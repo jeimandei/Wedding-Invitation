@@ -291,7 +291,7 @@
 
 
 /* ─── PER-GUEST UNIQUE CODE ───
-   Looked up from the reused "Gifts" sheet (guest_id | guest_name |
+   Looked up from the reused "gift_code" sheet (guest_id | guest_name |
    unique_code), assigned once via the admin panel's "Generate Unique
    Codes" action. Only shown when the guest's identity is known from a
    personalized invite link and the couple has assigned them a code.
@@ -327,7 +327,7 @@
 
   function fetchCodeMap() {
     if (fetchPromise) return fetchPromise;
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Gifts&_=${Date.now()}`;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=gift_code&_=${Date.now()}`;
     fetchPromise = fetch(url)
       .then(r => r.text())
       .then(text => {

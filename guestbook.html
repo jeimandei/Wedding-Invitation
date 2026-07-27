@@ -588,7 +588,7 @@
         fetch(gvizUrl('Guests')).then(r => r.text()),
         fetch(gvizUrl('Scans')).then(r => r.text()),
         fetch(gvizUrl('RSVP')).then(r => r.text()),
-        fetch(gvizUrl('Gifts')).then(r => r.text()).catch(() => '')
+        fetch(gvizUrl('gift_code')).then(r => r.text()).catch(() => '')
       ]).then(([gText, sText, rText, giftsText]) => {
         const gRows     = parseGviz(gText);
         const sRows     = parseGviz(sText);
