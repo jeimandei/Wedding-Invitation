@@ -258,6 +258,15 @@
     tr.has-gift { background: rgba(92,138,92,0.04); }
 
     .table-text { color: var(--mid); font-size: 0.78rem; }
+    .code-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+    }
+    .code-text.none { color: var(--light); font-weight: 400; }
     .amount-text {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.05rem;
@@ -518,7 +527,7 @@
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
           <input class="search-input" type="search" id="searchInput"
-                 placeholder="Search by name or table…" />
+                 placeholder="Search by name, table, or code…" />
         </div>
         <button class="search-btn" id="searchBtn">Search</button>
         <button class="add-guest-btn" id="addGuestBtn">+ Add New Guest</button>
@@ -531,13 +540,14 @@
             <tr>
               <th>Name</th>
               <th>Table</th>
+              <th>Code</th>
               <th>Received</th>
               <th>Method(s)</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="guestTableBody">
-            <tr class="empty-row"><td colspan="5">Loading…</td></tr>
+            <tr class="empty-row"><td colspan="6">Loading…</td></tr>
           </tbody>
         </table>
       </div>
@@ -661,6 +671,7 @@
     /* ── DATA ── */
     let allGuests = [];
     let giftsMap  = {}; // guest_id → { total, methods: Set }
+    let codesMap  = {}; // guest_id → unique_code
     let methodTotals = { qris: 0, transfer: 0, direct: 0 };
 
     function gvizUrl(sheet) {
@@ -693,14 +704,19 @@
 
         /* Aggregate gift-log rows (method/amount/total set, unique_code
            blank) per guest_id — the "Generate Unique Codes" rows have no
-           method, so they're naturally skipped here. */
+           method, so they're naturally skipped here. Those same rows are
+           where unique_code lives, picked up separately into codesMap. */
         giftsMap = {};
+        codesMap = {};
         methodTotals = { qris: 0, transfer: 0, direct: 0 };
         giftRows.forEach(row => {
           const id     = row.c?.[0]?.v;
+          const code   = row.c?.[2]?.v;
           const method = row.c?.[3]?.v ? String(row.c[3].v).toLowerCase() : '';
           const total  = Number(row.c?.[5]?.v) || 0;
-          if (!id || !method) return;
+          if (!id) return;
+          if (code != null && code !== '') codesMap[id] = Math.round(Number(code));
+          if (!method) return;
           if (!giftsMap[id]) giftsMap[id] = { total: 0, methods: new Set() };
           giftsMap[id].total += total;
           giftsMap[id].methods.add(method);
@@ -731,9 +747,14 @@
       document.getElementById('statDirect').textContent       = fmtRupiah(methodTotals.direct);
       document.getElementById('statGuestsLogged').textContent = guestsLogged;
 
-      const filtered = allGuests.filter(g =>
-        !search || g.name.toLowerCase().includes(search) || g.table.toLowerCase().includes(search)
-      );
+      const filtered = allGuests.filter(g => {
+        if (!search) return true;
+        if (g.name.toLowerCase().includes(search) || g.table.toLowerCase().includes(search)) return true;
+        const code = codesMap[g.id];
+        if (code == null) return false;
+        const padded = String(code).padStart(3, '0');
+        return padded.includes(search) || String(code).includes(search);
+      });
 
       /* Sort: logged first (highest amount first), then not-yet-logged by name */
       filtered.sort((a, b) => {
@@ -745,12 +766,16 @@
 
       const tbody = document.getElementById('guestTableBody');
       if (!filtered.length) {
-        tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No guests found.</td></tr>';
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No guests found.</td></tr>';
         return;
       }
 
       tbody.innerHTML = filtered.map(g => {
         const gift = giftsMap[g.id];
+        const code = codesMap[g.id];
+        const codeText = code != null
+          ? `<span class="code-text">#${String(code).padStart(3, '0')}</span>`
+          : `<span class="code-text none">—</span>`;
         const amount = gift
           ? `<span class="amount-text">${fmtRupiah(gift.total)}</span>`
           : `<span class="amount-text zero">not yet logged</span>`;
@@ -760,6 +785,7 @@
         return `<tr class="${gift ? 'has-gift' : ''}">
           <td><strong>${esc(g.name)}</strong></td>
           <td class="table-text">${esc(g.table)}</td>
+          <td>${codeText}</td>
           <td>${amount}</td>
           <td>${pills}</td>
           <td><button class="add-btn" data-id="${esc(g.id)}">+ Add Gift</button></td>
