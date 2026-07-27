@@ -126,6 +126,18 @@
 
     main { max-width: 940px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 
+    .load-error {
+      background: rgba(192,80,74,0.08);
+      border: 1px solid rgba(192,80,74,0.35);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.25rem;
+      margin-bottom: 1rem;
+      font-size: 0.78rem;
+      color: #c0504a;
+      line-height: 1.6;
+    }
+    .load-error[hidden] { display: none; }
+
     /* stats */
     .stats-section {
       background: var(--cream);
@@ -486,11 +498,13 @@
       <p class="hdr-title">Gifts Management</p>
       <div class="hdr-meta">
         <div>Last updated: <strong id="lastUpdated">—</strong></div>
-        <div style="margin-top:0.2rem">Auto-refresh every 5s</div>
       </div>
     </header>
 
     <main>
+
+      <!-- Load error -->
+      <p class="load-error" id="loadError" hidden></p>
 
       <!-- Stats -->
       <div class="stats-section">
@@ -681,17 +695,28 @@
 
     function parseGviz(text) {
       const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
-      if (!match) return [];
+      if (!match) throw new Error('bad response');
       return JSON.parse(match[1]).table?.rows || [];
     }
 
     function loadData() {
+      const errorEl = document.getElementById('loadError');
+
       Promise.all([
         fetch(gvizUrl('Guests')).then(r => r.text()),
         fetch(gvizUrl('gift_code')).then(r => r.text())
       ]).then(([gText, giftsText]) => {
-        const gRows     = parseGviz(gText);
-        const giftRows  = parseGviz(giftsText);
+        let gRows, giftRows;
+        try {
+          gRows = parseGviz(gText);
+        } catch (e) {
+          throw new Error('Could not read the "Guests" sheet — make sure it exists and is shared as "Anyone with the link can view".');
+        }
+        try {
+          giftRows = parseGviz(giftsText);
+        } catch (e) {
+          throw new Error('Could not read the "gift_code" sheet — make sure it exists and is shared as "Anyone with the link can view".');
+        }
 
         allGuests = gRows
           .filter(row => row.c?.[1]?.v)
@@ -724,9 +749,13 @@
           if (methodTotals[method] != null) methodTotals[method] += total;
         });
 
+        errorEl.hidden = true;
         updateUI();
         document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('id-ID');
-      }).catch(() => {});
+      }).catch(err => {
+        errorEl.textContent = '⚠ ' + (err.message || 'Could not load data — check your connection and try again.');
+        errorEl.hidden = false;
+      });
     }
 
     function fmtRupiah(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
@@ -804,7 +833,6 @@
 
     function startDashboard() {
       loadData();
-      setInterval(loadData, 5000);
     }
 
     document.getElementById('refreshBtn').addEventListener('click', loadData);
