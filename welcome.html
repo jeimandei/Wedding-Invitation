@@ -469,7 +469,7 @@
     /* ── GUEST LOOKUP via public gviz API ── */
     function lookupGuest(id) {
       const guestsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Guests&_=${Date.now()}`;
-      const giftsUrl  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Gifts&_=${Date.now()}`;
+      const giftsUrl  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=gift_code&_=${Date.now()}`;
 
       Promise.all([fetch(guestsUrl).then(r => r.text()), fetch(giftsUrl).then(r => r.text())])
         .then(([guestsText, giftsText]) => {
