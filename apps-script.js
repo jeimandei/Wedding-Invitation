@@ -124,6 +124,7 @@ function doPost(e) {
   if (data.action === 'resetGifts')    return handleResetGifts();
   if (data.action === 'setLivestream') return runSetLivestream(data);
   if (data.action === 'addGift')       return handleAddGift(data);
+  if (data.action === 'addGuest')      return handleAddGuest(data);
 
   return handleRsvp(data);
 }
@@ -331,6 +332,34 @@ function handleAddGift(data) {
     data.method || '',
     data.amount != null ? Number(data.amount) : '',
     data.total  != null ? Number(data.total)  : ''
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ─── Add a single walk-in guest (called from gifts_management.html) ───
+   For guests who show up without being on the pre-imported list — e.g.
+   an unannounced plus-one who still wants to give a gift. Appends
+   straight to the "Guests" sheet with the same id scheme as
+   generateIds() (SHA-256 of the lowercased name), so this guest behaves
+   identically to an imported one everywhere else on the site. */
+function handleAddGuest(data) {
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('Guests');
+  if (!sheet) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: 'Guests sheet not found' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  sheet.appendRow([
+    data.id    || hashName(data.name || ''),
+    data.name  || '',
+    data.table || '',
+    '',
+    data.pax != null ? Number(data.pax) : 1
   ]);
 
   return ContentService

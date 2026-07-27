@@ -209,6 +209,23 @@
       transition: background 0.2s;
     }
     .search-btn:hover { background: #b8945d; }
+    .add-guest-btn {
+      flex-shrink: 0;
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      border-radius: 99px;
+      padding: 0 1.2rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s;
+    }
+    .add-guest-btn:hover { background: var(--gold); color: #fff; }
 
     /* table */
     .guest-table {
@@ -307,14 +324,35 @@
     .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
 
     /* gift modal */
-    #giftModal {
+    #giftModal, #addGuestModal {
       position: fixed; inset: 0;
       background: rgba(58,46,42,0.45);
       display: flex; align-items: center; justify-content: center;
       z-index: 200;
       padding: 1.5rem;
     }
-    #giftModal[hidden] { display: none; }
+    #giftModal[hidden], #addGuestModal[hidden] { display: none; }
+    .guest-form-input {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--gold-l);
+      border-radius: 8px;
+      background: var(--ivory);
+      font-size: 0.9rem;
+      color: var(--dark);
+      font-family: 'Montserrat', sans-serif;
+      outline: none;
+      margin-bottom: 1.1rem;
+    }
+    .guest-form-input:focus { border-color: var(--gold); }
+    .guest-form-row { display: flex; gap: 0.75rem; }
+    .guest-form-row .guest-form-input { flex: 1; }
+    .guest-form-note {
+      font-size: 0.7rem;
+      color: #c0504a;
+      margin: -0.6rem 0 1rem;
+    }
+    .guest-form-note[hidden] { display: none; }
     .gift-modal-box {
       background: var(--cream);
       border: 1px solid var(--gold-l);
@@ -410,6 +448,9 @@
     @media (max-width: 600px) {
       .stat-num { font-size: 1.5rem; }
       .stat-num.gold { font-size: 1.9rem; }
+      .search-row { flex-wrap: wrap; }
+      .search-wrap { flex-basis: 100%; }
+      .search-btn, .add-guest-btn { flex: 1; }
     }
   </style>
 </head>
@@ -480,6 +521,7 @@
                  placeholder="Search by name or table…" />
         </div>
         <button class="search-btn" id="searchBtn">Search</button>
+        <button class="add-guest-btn" id="addGuestBtn">+ Add New Guest</button>
       </div>
 
       <!-- Guest table -->
@@ -533,6 +575,34 @@
       <div class="gift-modal-actions">
         <button class="btn btn-outline" id="giftModalCancel">Cancel</button>
         <button class="btn btn-primary" id="giftModalSave" disabled>Save Gift</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Guest modal -->
+  <div id="addGuestModal" hidden>
+    <div class="gift-modal-box">
+      <p class="gift-modal-title">Add New Guest</p>
+      <p class="gift-modal-sub">For a guest who isn't on the imported list yet</p>
+
+      <span class="field-label">Name</span>
+      <input class="guest-form-input" type="text" id="newGuestName" placeholder="Full name" autocomplete="off" />
+      <p class="guest-form-note" id="newGuestNameWarning" hidden>A guest with this name already exists.</p>
+
+      <div class="guest-form-row">
+        <div>
+          <span class="field-label">Table</span>
+          <input class="guest-form-input" type="text" id="newGuestTable" placeholder="e.g. Table 5" autocomplete="off" />
+        </div>
+        <div>
+          <span class="field-label">Pax</span>
+          <input class="guest-form-input" type="text" inputmode="numeric" id="newGuestPax" placeholder="1" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="gift-modal-actions">
+        <button class="btn btn-outline" id="addGuestModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="addGuestModalSave" disabled>Add Guest</button>
       </div>
     </div>
   </div>
@@ -754,12 +824,7 @@
       giftModalSave.disabled = !(amount > 0 && selectedMethod);
     }
 
-    document.getElementById('guestTableBody').addEventListener('click', e => {
-      const btn = e.target.closest('.add-btn');
-      if (!btn) return;
-      const guest = allGuests.find(g => g.id === btn.dataset.id);
-      if (!guest) return;
-
+    function openGiftModalFor(guest) {
       activeGuest    = guest;
       selectedMethod = null;
       giftAmountInput.value = '';
@@ -769,6 +834,14 @@
       refreshModalState();
       giftModal.hidden = false;
       giftAmountInput.focus();
+    }
+
+    document.getElementById('guestTableBody').addEventListener('click', e => {
+      const btn = e.target.closest('.add-btn');
+      if (!btn) return;
+      const guest = allGuests.find(g => g.id === btn.dataset.id);
+      if (!guest) return;
+      openGiftModalFor(guest);
     });
 
     giftAmountInput.addEventListener('input', () => {
@@ -824,6 +897,81 @@
         giftModalSave.textContent = 'Save Gift';
         closeGiftModal();
         updateUI();
+      });
+    });
+
+    /* ── ADD NEW GUEST MODAL (for walk-ins not on the imported list) ── */
+    const addGuestModal       = document.getElementById('addGuestModal');
+    const newGuestNameInput   = document.getElementById('newGuestName');
+    const newGuestTableInput  = document.getElementById('newGuestTable');
+    const newGuestPaxInput    = document.getElementById('newGuestPax');
+    const newGuestNameWarning = document.getElementById('newGuestNameWarning');
+    const addGuestModalCancel = document.getElementById('addGuestModalCancel');
+    const addGuestModalSave   = document.getElementById('addGuestModalSave');
+
+    const GUEST_ID_SALT = 'ShadowRubyAsh120122';
+    // Same SHA-256(name + salt) scheme as generateIds() in apps-script.js /
+    // guestId() in script.js, so a walk-in guest behaves identically to an
+    // imported one everywhere else on the site.
+    async function computeGuestId(name) {
+      const normalized = name.trim().toLowerCase();
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(normalized + GUEST_ID_SALT));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+    }
+
+    function guestNameExists(name) {
+      const normalized = name.trim().toLowerCase();
+      return allGuests.some(g => g.name.trim().toLowerCase() === normalized);
+    }
+
+    function refreshAddGuestState() {
+      const name = newGuestNameInput.value.trim();
+      const collides = !!name && guestNameExists(name);
+      newGuestNameWarning.hidden = !collides;
+      addGuestModalSave.disabled = !name || collides;
+    }
+
+    document.getElementById('addGuestBtn').addEventListener('click', () => {
+      newGuestNameInput.value  = '';
+      newGuestTableInput.value = '';
+      newGuestPaxInput.value   = '';
+      newGuestNameWarning.hidden = true;
+      addGuestModalSave.disabled = true;
+      addGuestModal.hidden = false;
+      newGuestNameInput.focus();
+    });
+
+    newGuestNameInput.addEventListener('input', refreshAddGuestState);
+
+    function closeAddGuestModal() { addGuestModal.hidden = true; }
+    addGuestModalCancel.addEventListener('click', closeAddGuestModal);
+    addGuestModal.addEventListener('click', e => { if (e.target === addGuestModal) closeAddGuestModal(); });
+
+    addGuestModalSave.addEventListener('click', async () => {
+      const name = newGuestNameInput.value.trim();
+      if (!name || guestNameExists(name)) return;
+      const table = newGuestTableInput.value.trim() || '—';
+      const pax   = parseInt(newGuestPaxInput.value, 10) || 1;
+
+      addGuestModalSave.disabled = true;
+      addGuestModalSave.textContent = 'Adding…';
+
+      const id = await computeGuestId(name);
+
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'addGuest', id, name, table, pax })
+      }).catch(() => {}).finally(() => {
+        // Optimistic update — the next 5s poll reconciles with the sheet.
+        const guest = { idx: allGuests.length + 1, id, name, table, pax };
+        allGuests.push(guest);
+        addGuestModalSave.textContent = 'Add Guest';
+        closeAddGuestModal();
+        updateUI();
+        // Straight into logging their gift — that's the whole reason for adding them.
+        openGiftModalFor(guest);
       });
     });
   </script>
