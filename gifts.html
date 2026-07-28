@@ -875,7 +875,7 @@
 
     function computeTotal(amount, method) {
       if (method === 'qris' && amount > QRIS_TAX_THRESHOLD) {
-        return Math.round(amount * (1 + QRIS_TAX_RATE));
+        return Math.round(amount * (1 - QRIS_TAX_RATE));
       }
       return amount;
     }
@@ -888,8 +888,8 @@
       const amount = currentAmount();
       if (selectedMethod === 'qris' && amount > QRIS_TAX_THRESHOLD) {
         const tax   = Math.round(amount * QRIS_TAX_RATE);
-        const total = amount + tax;
-        giftTaxNote.innerHTML = `Amount exceeds Rp 500.000 via QRIS — a <b>0.7% tax</b> is added.<br>${fmtRupiah(amount)} + ${fmtRupiah(tax)} = <b>${fmtRupiah(total)}</b>`;
+        const total = amount - tax;
+        giftTaxNote.innerHTML = `Amount exceeds Rp 500.000 via QRIS — a <b>0.7% tax</b> is deducted.<br>${fmtRupiah(amount)} − ${fmtRupiah(tax)} = <b>${fmtRupiah(total)}</b>`;
         giftTaxNote.hidden = false;
       } else {
         giftTaxNote.hidden = true;

@@ -13,13 +13,13 @@
  *      Leave completely empty.
  *    • "Gifts" is created automatically the first time you run
  *      "Generate Unique Codes" from the admin panel (or the first gift
- *      logged from gifts_management.html) — no manual setup needed.
+ *      logged from gifts.html) — no manual setup needed.
  *      Holds two kinds of rows sharing the same columns:
  *        - a stable, append-only guest_id → unique_code mapping
  *          (0–850) the couple uses to reconcile incoming QRIS/transfer
  *          payments against the trailing digits of the amount a guest
  *          was asked to send (unique_code set, method/amount/total blank)
- *        - a log entry per gift recorded from gifts_management.html
+ *        - a log entry per gift recorded from gifts.html
  *          (method/amount/total set, unique_code blank)
  *    • "Config"  is created automatically the first time you save a
  *      setting (e.g. the live stream link) from the admin panel — no
@@ -44,7 +44,7 @@
  *    → Copy the Web App URL.
  *
  * 8. The URL is already set in js/script.js as APPS_SCRIPT_URL.
- *    welcome.html, guestbook.html, admin.html, and gifts_management.html
+ *    welcome.html, guestbook.html, admin.html, and gifts.html
  *    read it from there — no other files need changing.
  *
  * Sheet columns:
@@ -247,7 +247,7 @@ function generateUniqueCodes() {
     giftsSheet.appendRow(['guest_id', 'guest_name', 'unique_code', 'method', 'amount', 'total']);
   }
 
-  // Gift-log entries (added from gifts_management.html) also live in this
+  // Gift-log entries (added from gifts.html) also live in this
   // sheet and share the guest_id column, but leave unique_code blank — only
   // count a guest as already assigned if their row actually has a code, so
   // a logged gift doesn't accidentally block them from ever getting one.
@@ -299,7 +299,7 @@ function runGenerateCodes() {
 
 /* ─── Reset Gifts sheet (keeps header row) ───
    Clears BOTH assigned unique codes and any logged gift entries, since
-   gifts_management.html appends to this same sheet. ─── */
+   gifts.html appends to this same sheet. ─── */
 function handleResetGifts() {
   var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName('Gifts');
@@ -310,7 +310,7 @@ function handleResetGifts() {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* ─── Gift log entry write (called from gifts_management.html) ───
+/* ─── Gift log entry write (called from gifts.html) ───
    Appends a new row to the reused "Gifts" sheet for each logged gift —
    guest_id/guest_name identify who gave it, unique_code is left blank
    (that column is only ever set by generateUniqueCodes()), and
@@ -339,7 +339,7 @@ function handleAddGift(data) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* ─── Add a single walk-in guest (called from gifts_management.html) ───
+/* ─── Add a single walk-in guest (called from gifts.html) ───
    For guests who show up without being on the pre-imported list — e.g.
    an unannounced plus-one who still wants to give a gift. Appends
    straight to the "Guests" sheet with the same id scheme as
