@@ -38,7 +38,7 @@ COPY index.html            /usr/share/nginx/html/
 COPY welcome.html          /usr/share/nginx/html/
 COPY guestbook.html        /usr/share/nginx/html/
 COPY admin.html            /usr/share/nginx/html/
-COPY gifts_management.html /usr/share/nginx/html/
+COPY gifts.html            /usr/share/nginx/html/
 COPY css/        /usr/share/nginx/html/css/
 COPY js/         /usr/share/nginx/html/js/
 COPY images/     /usr/share/nginx/html/images/
