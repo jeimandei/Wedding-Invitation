@@ -2,6 +2,11 @@
 
 A bespoke, Bridgerton-inspired romantic garden wedding invitation website.
 
+> **Read [`SECURITY.md`](SECURITY.md) before reviving or reusing this.** Several of the
+> access controls below — the guest ids and the PIN gates — look stronger than they
+> are, and the setup steps deliberately make the spreadsheet public. This site is
+> superseded by [baundang.id](https://baundang.id).
+
 ---
 
 ## Project Structure
@@ -113,6 +118,7 @@ The same URL is the entrance scan code — no separate QR needed.
 1. Guest name is normalized: `trim().toLowerCase()`
 2. SHA-256 of `name + SALT` → first 16 hex characters = the guest ID
 3. The salt (`ShadowRubyAsh120122`) lives in `apps-script.js` and matches the client-side hash in `js/script.js`
+   — which means it is public, and a guest's id is derivable from their name alone. See [`SECURITY.md`](SECURITY.md#1-guest-invite-codes-can-be-forged-from-a-name-alone).
 4. IDs are stored in column A of the Guests sheet via `generateIds()` or `importGuests`
 
 ### Invite Link Flow (`index.html`)
@@ -148,7 +154,9 @@ The same URL is the entrance scan code — no separate QR needed.
 ```
 1d6gkH9MYtP8nxSwqBJf1_WmWUu_V31hfmIXNuG4E81o
 ```
-Share as **"Anyone with the link → Viewer"** (required for public gviz reads).
+Share as **"Anyone with the link → Viewer"** (required for public gviz reads) — note that
+this makes every name, phone number and gift record in it world-readable, and that the
+PIN gates do not change that. See [`SECURITY.md`](SECURITY.md).
 
 ### Sheet Tabs & Columns
 
